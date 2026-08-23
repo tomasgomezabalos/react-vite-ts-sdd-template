@@ -5,6 +5,7 @@ Plantilla mínima para iniciar aplicaciones React mediante Spec-Driven Developme
 ## Stack
 
 - React funcional, Vite y TypeScript estricto.
+- React Router 8 en modo declarativo para el enrutamiento base.
 - Vitest, React Testing Library, jest-dom, user-event y jsdom.
 - Mock Service Worker para desarrollo local explícito y pruebas HTTP.
 - i18next y react-i18next con un idioma inicial.
@@ -13,7 +14,7 @@ Plantilla mínima para iniciar aplicaciones React mediante Spec-Driven Developme
 
 ## Puesta en marcha
 
-Requiere Node.js 22.12 o posterior; `.nvmrc` fija la versión usada para validar la plantilla.
+Requiere Node.js 22.22 o posterior; `.nvmrc` fija la versión usada para validar la plantilla.
 
 ```bash
 nvm use
@@ -45,6 +46,12 @@ docs/architecture/    decisiones técnicas sustituibles
 ```
 
 `mocks/public/mockServiceWorker.js` es un artefacto generado por MSW para el navegador. El modo `dev:mocks` utiliza una entrada propia bajo `mocks/`, inicia el worker y después carga la aplicación. El desarrollo normal y la construcción de producción usan directamente `src/main.tsx` y no incluyen el worker.
+
+## Enrutamiento y despliegue
+
+`src/main.tsx` monta `BrowserRouter` y `src/app/App/index.tsx` declara la tabla de rutas. La baseline contiene únicamente la ruta `/`, que renderiza la página vacía inicial.
+
+Las URL limpias requieren que el alojamiento devuelva `index.html` cuando una ruta de aplicación no corresponda a un archivo físico. Sin ese fallback, el servidor puede responder con un error antes de que React Router resuelva la URL.
 
 ## Estilos
 
