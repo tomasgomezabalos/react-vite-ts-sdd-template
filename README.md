@@ -42,7 +42,7 @@ tests/                pruebas espejo de src y configuración compartida
 mocks/                worker, servidor, handlers y fixtures de MSW
 specs/                especificaciones de producto del proyecto derivado
 docs/sdd/             reglas, flujo y plantillas SDD
-docs/architecture/    decisiones técnicas sustituibles
+docs/architecture/    decisiones y guías técnicas sustituibles
 ```
 
 `mocks/public/mockServiceWorker.js` es un artefacto generado por MSW para el navegador. El modo `dev:mocks` utiliza una entrada propia bajo `mocks/`, inicia el worker y después carga la aplicación. El desarrollo normal y la construcción de producción usan directamente `src/main.tsx` y no incluyen el worker.
@@ -52,6 +52,10 @@ docs/architecture/    decisiones técnicas sustituibles
 `src/main.tsx` monta `BrowserRouter` y `src/app/App/index.tsx` declara la tabla de rutas. La baseline contiene únicamente la ruta `/`, que renderiza la página vacía inicial.
 
 Las URL limpias requieren que el alojamiento devuelva `index.html` cuando una ruta de aplicación no corresponda a un archivo físico. Sin ese fallback, el servidor puede responder con un error antes de que React Router resuelva la URL.
+
+## Capacidades opcionales
+
+RTK Query no forma parte de la baseline. Cuando una feature real de un proyecto derivado necesite datos remotos, su adopción debe justificarse mediante la especificación y el plan técnico correspondientes, aplicando [ADR-0005](docs/architecture/decisions/0005-rtk-query-capacidad-opcional.md) y la [guía de adopción](docs/architecture/guides/adoptar-rtk-query.md).
 
 ## Estilos
 
