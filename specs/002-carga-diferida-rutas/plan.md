@@ -10,6 +10,8 @@
 
 **Validación:** 2026-08-25
 
+**Modificado por:** `amendment-001-plan.md` implementa la obligatoriedad aprobada para todas las páginas y sustituye la excepción técnica de `Home`. El resto de este plan histórico permanece vigente.
+
 ## Especificación y alcance autorizado
 
 - Especificación: `specs/002-carga-diferida-rutas/spec.md` (`VALIDATED`).

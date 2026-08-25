@@ -6,7 +6,7 @@
 
 **Relación:** Amplía la plataforma definida en ADR-0001.
 
-**Modificada por:** ADR-0006 sustituye únicamente la exclusión general de carga diferida por una convención predeterminada con excepciones justificadas. El resto de esta decisión permanece vigente.
+**Modificada por:** ADR-0006 sustituye la exclusión general de carga diferida; ADR-0007 elimina las excepciones estáticas para páginas y aplica la convención también a la ruta inicial. El resto de esta decisión permanece vigente.
 
 ## Contexto
 

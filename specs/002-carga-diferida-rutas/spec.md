@@ -10,6 +10,8 @@
 
 **Validación:** 2026-08-25
 
+**Modificada por:** `amendment-001-obligatoriedad-paginas.md` elimina las excepciones estáticas para páginas, incluida `Home`. El resto de esta especificación histórica permanece vigente.
+
 ## Problema y resultado esperado
 
 La plantilla dispone de enrutamiento, pero no establece una convención para evitar que las páginas y sus dependencias se incorporen anticipadamente a la carga inicial aunque su ruta no llegue a visitarse.

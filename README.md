@@ -55,7 +55,7 @@ Las URL limpias requieren que el alojamiento devuelva `index.html` cuando una ru
 
 ### Carga diferida de páginas
 
-Las nuevas páginas reales de ruta se cargan por defecto mediante `React.lazy`, importación dinámica y una frontera `Suspense`. La frontera debe cubrir únicamente el área pendiente y mantener visibles el layout y la navegación persistentes. Su fallback será visible, ligero, accesible y traducido mediante la infraestructura i18n del proyecto.
+Todas las páginas reales de ruta se cargan obligatoriamente mediante `React.lazy`, importación dinámica y una frontera `Suspense`, incluida la página inicial. No se admiten excepciones con importaciones estáticas para páginas. La frontera debe cubrir únicamente el área pendiente y mantener visibles el layout y la navegación persistentes. Su fallback será visible, ligero, accesible y traducido mediante la infraestructura i18n del proyecto.
 
 Los componentes conservan exports nombrados. El adaptador de la importación dinámica proporciona a `lazy` el contrato `default` sin cambiar el contrato público del módulo:
 
@@ -77,9 +77,11 @@ const Reports = lazy(() =>
 />
 ```
 
-`RouteLoading` representa un componente real del proyecto derivado, con texto traducido y comportamiento accesible; la plantilla no incorpora uno ficticio. La página vacía `Home` permanece estática porque es mínima y se necesita inmediatamente. Cualquier otra excepción deberá justificarse en el plan técnico.
+`RouteLoading` es un componente real de la baseline, con texto traducido y comportamiento accesible. La página vacía `Home` utiliza este mismo patrón en `/`, de modo que los proyectos derivados reciben un ejemplo ejecutable de la regla desde su creación.
 
-La separación debe comprobarse en la salida del build y en la red del navegador. Solo debe afirmarse una mejora de rendimiento cuando exista una comparación antes/después del tamaño transferido o del tiempo de carga. `Suspense` en este patrón representa espera de código: no sustituye la estrategia de datos ni modifica `useSuspense` de react-i18next. Véase [ADR-0006](docs/architecture/decisions/0006-carga-diferida-rutas-suspense.md).
+Los componentes que no sean páginas se evalúan individualmente en el plan técnico. Solo se cargan de forma diferida cuando su peso, sus dependencias, su aparición bajo demanda o su posición fuera de la interfaz inicial compensan las solicitudes, esperas y complejidad añadidas. No se aplica `lazy` mecánicamente a componentes pequeños o inmediatamente visibles.
+
+La separación debe comprobarse en la salida del build y en la red del navegador. Solo debe afirmarse una mejora de rendimiento cuando exista una comparación antes/después del tamaño transferido o del tiempo de carga. `Suspense` en este patrón representa espera de código: no sustituye la estrategia de datos ni modifica `useSuspense` de react-i18next. Véanse [ADR-0006](docs/architecture/decisions/0006-carga-diferida-rutas-suspense.md) y [ADR-0007](docs/architecture/decisions/0007-carga-diferida-obligatoria-paginas.md).
 
 ## Capacidades opcionales
 

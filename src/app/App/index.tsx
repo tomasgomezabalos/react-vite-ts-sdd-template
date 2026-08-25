@@ -1,8 +1,22 @@
+import { lazy, Suspense } from 'react'
 import { Route, Routes } from 'react-router'
-import { Home } from '../../pages/Home'
+import { RouteLoading } from '../RouteLoading'
+
+const Home = lazy(() =>
+  import('../../pages/Home').then(({ Home: HomePage }) => ({
+    default: HomePage,
+  })),
+)
 
 export const App = () => (
   <Routes>
-    <Route path="/" element={<Home />} />
+    <Route
+      path="/"
+      element={
+        <Suspense fallback={<RouteLoading />}>
+          <Home />
+        </Suspense>
+      }
+    />
   </Routes>
 )

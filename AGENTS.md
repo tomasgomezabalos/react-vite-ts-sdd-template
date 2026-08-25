@@ -21,9 +21,9 @@
 - Antes de crear o modificar componentes React propios, cargar `@react-ts-feature-pattern` y declarar el modo utilizado.
 - Crear componentes propios en `ComponentName/index.tsx` y sus pruebas espejo en `tests/.../ComponentName/index.test.tsx`.
 - Si la skill contradice documentación aprobada, detenerse y solicitar una decisión.
-- Cargar las nuevas páginas reales de ruta mediante `React.lazy` e importaciones dinámicas por defecto, dentro de una frontera `Suspense` que no retire el layout ni la navegación persistentes.
+- Cargar obligatoriamente todas las páginas reales de ruta mediante `React.lazy` e importaciones dinámicas, incluida la página inicial, dentro de una frontera `Suspense` que no retire el layout ni la navegación persistentes.
 - Utilizar para cada página diferida un fallback visible, ligero, accesible y traducido mediante i18n; `Suspense` de código no sustituye los estados de obtención de datos ni `useSuspense` de react-i18next.
-- Documentar en el plan técnico cualquier importación estática excepcional. No aplicar carga diferida mecánicamente a componentes pequeños o inmediatamente visibles; `Home` es la excepción aprobada de la baseline según ADR-0006.
+- No permitir importaciones estáticas excepcionales para páginas. Evaluar en el plan técnico los componentes que no sean páginas y aplicarles carga diferida solo cuando su peso, dependencias o aparición bajo demanda compensen las solicitudes, esperas y complejidad añadidas.
 - Aplicar SOLID de forma pragmática y favorecer composición frente a herencia.
 - Separar presentación, estado y acceso a datos solo cuando la complejidad lo justifique.
 - No añadir clases, capas, patrones o abstracciones sin una necesidad concreta documentada.
