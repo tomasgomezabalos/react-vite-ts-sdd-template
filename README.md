@@ -53,6 +53,34 @@ docs/architecture/    decisiones y guías técnicas sustituibles
 
 Las URL limpias requieren que el alojamiento devuelva `index.html` cuando una ruta de aplicación no corresponda a un archivo físico. Sin ese fallback, el servidor puede responder con un error antes de que React Router resuelva la URL.
 
+### Carga diferida de páginas
+
+Las nuevas páginas reales de ruta se cargan por defecto mediante `React.lazy`, importación dinámica y una frontera `Suspense`. La frontera debe cubrir únicamente el área pendiente y mantener visibles el layout y la navegación persistentes. Su fallback será visible, ligero, accesible y traducido mediante la infraestructura i18n del proyecto.
+
+Los componentes conservan exports nombrados. El adaptador de la importación dinámica proporciona a `lazy` el contrato `default` sin cambiar el contrato público del módulo:
+
+```tsx
+import { lazy, Suspense } from 'react'
+import { Route } from 'react-router'
+
+const Reports = lazy(() =>
+  import('../../pages/Reports').then(({ Reports }) => ({ default: Reports })),
+)
+
+<Route
+  path="/reports"
+  element={
+    <Suspense fallback={<RouteLoading />}>
+      <Reports />
+    </Suspense>
+  }
+/>
+```
+
+`RouteLoading` representa un componente real del proyecto derivado, con texto traducido y comportamiento accesible; la plantilla no incorpora uno ficticio. La página vacía `Home` permanece estática porque es mínima y se necesita inmediatamente. Cualquier otra excepción deberá justificarse en el plan técnico.
+
+La separación debe comprobarse en la salida del build y en la red del navegador. Solo debe afirmarse una mejora de rendimiento cuando exista una comparación antes/después del tamaño transferido o del tiempo de carga. `Suspense` en este patrón representa espera de código: no sustituye la estrategia de datos ni modifica `useSuspense` de react-i18next. Véase [ADR-0006](docs/architecture/decisions/0006-carga-diferida-rutas-suspense.md).
+
 ## Capacidades opcionales
 
 RTK Query no forma parte de la baseline. Cuando una feature real de un proyecto derivado necesite datos remotos, su adopción debe justificarse mediante la especificación y el plan técnico correspondientes, aplicando [ADR-0005](docs/architecture/decisions/0005-rtk-query-capacidad-opcional.md) y la [guía de adopción](docs/architecture/guides/adoptar-rtk-query.md).

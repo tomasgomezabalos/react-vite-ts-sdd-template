@@ -6,6 +6,8 @@
 
 **Relación:** Amplía la plataforma definida en ADR-0001.
 
+**Modificada por:** ADR-0006 sustituye únicamente la exclusión general de carga diferida por una convención predeterminada con excepciones justificadas. El resto de esta decisión permanece vigente.
+
 ## Contexto
 
 La plantilla proporciona una aplicación React mínima y sin comportamiento de producto. Los proyectos derivados que presentan varias vistas necesitan relacionar URL, navegación e interfaz, pero incorporar esa infraestructura durante una feature obliga a repetir la misma decisión y reorganizar el punto de entrada.
