@@ -9,11 +9,37 @@
 
 ## Spec-Driven Development
 
-- No implementar una feature sin especificación funcional y plan técnico aprobados.
+- No implementar una capacidad nueva ni un cambio de comportamiento observable sin el respaldo documental aprobado que corresponda a su clasificación.
 - Mantener trazabilidad entre requisito, escenario, decisión, implementación y prueba.
 - No convertir un artefacto `DRAFT` en `APPROVED` sin aprobación expresa.
 - Una aprobación autoriza solo el alcance indicado en la puerta correspondiente.
 - Ante un cambio de alcance, actualizar y aprobar primero la documentación afectada.
+
+## Clasificación obligatoria de cambios
+
+Antes de modificar documentación o código, clasificar la petición como `FULL`, `QUICK`, `DIRECT` o `ADR` siguiendo `docs/sdd/change-policy.md`.
+
+- `FULL`: capacidad nueva o cambio amplio o multiárea. Requiere el flujo SDD completo aplicable.
+- `QUICK`: cambio observable pequeño y localizado. Actualizar únicamente los requisitos, criterios, pruebas y documentación realmente afectados.
+- `DIRECT`: cambio interno sin modificación de comportamiento, contrato, requisito ni arquitectura. Puede modificarse código y pruebas directamente sin actualizar una spec.
+- `ADR`: decisión arquitectónica duradera o transversal. Crear o actualizar el ADR antes de aplicar la decisión.
+
+Cuando exista duda entre `DIRECT` y `QUICK`, utilizar `QUICK`.
+Cuando un cambio inicialmente clasificado revele mayor impacto, detener la implementación y reclasificarlo.
+
+Las reglas de aprobación de `docs/sdd/workflow.md` siguen siendo obligatorias para los artefactos que realmente deban cambiar. No regenerar documentación que continúe siendo correcta únicamente por formalidad.
+
+### Antes de implementar
+
+1. Leer `AGENTS.md`.
+2. Leer la constitución vigente.
+3. Leer `docs/sdd/change-policy.md`.
+4. Clasificar la petición.
+5. Leer solamente los artefactos funcionales y arquitectónicos relevantes para el cambio.
+6. Comprobar que la clasificación no contradice requisitos ni ADR vigentes.
+7. Ejecutar el flujo correspondiente.
+
+Para `DIRECT`, no se exige una nueva spec, plan o tareas si se ha confirmado que no cambia el comportamiento observable ni ningún contrato.
 
 ## React y diseño
 
