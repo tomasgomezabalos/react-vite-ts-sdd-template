@@ -41,6 +41,20 @@ Las reglas de aprobación de `docs/sdd/workflow.md` siguen siendo obligatorias p
 
 Para `DIRECT`, no se exige una nueva spec, plan o tareas si se ha confirmado que no cambia el comportamiento observable ni ningún contrato.
 
+## Organización modular
+
+- Aplicar ADR-0008 mediante las capas semánticas `app`, `pages`, `features`, `entities` y `shared`; crear únicamente las que tengan contenido real.
+- Mantener cada componente, hook, modelo, acceso a datos, utilidad y asset junto a su propietario más cercano.
+- Una página es la frontera de composición de una ruta y posee sus elementos privados; no crear una feature paralela con el mismo nombre por defecto.
+- Crear `features/<capacidad>/` únicamente para una capacidad o acción de usuario con propietario propio y reutilización real.
+- Crear `entities/<entidad>/` únicamente para un concepto de dominio estable compartido por varios propietarios.
+- Utilizar `shared/ui`, `shared/api`, `shared/lib` o `shared/config` solo para elementos realmente compartidos que no dependan de capas superiores.
+- Permitir `components`, `model`, `api`, `lib` y `assets` dentro de páginas, features o entidades solo cuando el segmento sea necesario.
+- Promover un elemento únicamente hasta el menor propietario común cuando sus consumidores compartan contrato, responsabilidad y motivo de cambio; no abstraer similitudes accidentales.
+- No crear carpetas técnicas globales `src/components`, `src/hooks`, `src/services` ni `src/slices`.
+- Respetar la dirección `app → pages → features → entities → shared`; una página no importa otra página y ninguna capa importa desde otra situada por encima.
+- Mantener tipos de props con su componente, tipos de dominio compartidos en `entities/<entidad>/model`, DTO y adaptadores junto al módulo `api`, y assets con su propietario.
+
 ## React y diseño
 
 - Utilizar React funcional y TypeScript estricto.
@@ -53,6 +67,16 @@ Para `DIRECT`, no se exige una nueva spec, plan o tareas si se ha confirmado que
 - Aplicar SOLID de forma pragmática y favorecer composición frente a herencia.
 - Separar presentación, estado y acceso a datos solo cuando la complejidad lo justifique.
 - No añadir clases, capas, patrones o abstracciones sin una necesidad concreta documentada.
+
+## Estado y acceso a datos
+
+- Mantener estado local de interfaz en el componente o hook propietario y elevarlo solo cuando varios consumidores necesiten coordinación.
+- Si se adopta Redux Toolkit, colocar cada reducer creado con `createSlice` y sus selectors en el `model/` de la página, feature o entidad propietaria; `app/store` solo compone reducers, middleware, tipos inferidos y hooks Redux pretipados.
+- Mantener el estado remoto en la caché de RTK Query cuando se adopte; no duplicarlo por defecto en un Redux slice.
+- RTK Query continúa siendo opcional según ADR-0005 y no se instalará ni configurará antes de que una necesidad y un plan aprobados lo justifiquen.
+- Utilizar normalmente una API slice creada con `createApi` por URL base. Si tiene un único propietario puede vivir en su `api/`; cuando varios propietarios la compartan, promover su base a `shared/api` y separar endpoints mediante `injectEndpoints` junto a cada propietario.
+- Exportar los hooks generados desde el módulo que define o inyecta los endpoints; los componentes no importan reducer, middleware ni detalles internos de caché.
+- Mantener argumentos y DTO en `api/types.ts`, adaptadores en `api/mappers.ts` cuando sean necesarios y contratos de dominio compartidos en `entities/<entidad>/model`.
 
 ## Pruebas y calidad
 

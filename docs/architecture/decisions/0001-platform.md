@@ -4,6 +4,8 @@
 
 **Aprobación:** 2026-08-22
 
+**Ampliada por:** ADR-0008 define la organización modular por propiedad, promoción progresiva y dirección de dependencias para los proyectos derivados.
+
 ## Contexto
 
 La plantilla necesita una base frontend tipada, pruebas de interfaz, simulación HTTP e internacionalización sin incorporar comportamiento de producto.

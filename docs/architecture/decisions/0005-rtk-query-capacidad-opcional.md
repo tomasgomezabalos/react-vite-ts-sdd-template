@@ -6,6 +6,8 @@
 
 **Relación:** Precisa la plataforma definida en ADR-0001 sin modificar su baseline.
 
+**Precisada por:** ADR-0008 define la ubicación de store, API slices, módulos de endpoints, Redux slices, contratos, adaptadores, handlers y fixtures cuando se adopte esta capacidad.
+
 ## Contexto
 
 La plantilla incluye MSW para simular contratos HTTP, pero no presupone que todos los proyectos consuman datos remotos ni que necesiten estado global. RTK Query resuelve obtención, caché, deduplicación, estados de petición e invalidación sobre Redux Toolkit, pero su adopción también introduce Redux Toolkit, React Redux, un store y convenciones que no aportan valor a una aplicación que no tenga esas necesidades.
@@ -22,7 +24,7 @@ La URL base, los endpoints, la forma de los datos, los errores y las reglas de c
 - Integrar cada API slice con su reducer y middleware, y montar el `Provider` de React Redux desde el punto de composición de proveedores.
 - Configurar `setupListeners` únicamente cuando el proyecto necesite revalidación por foco o reconexión.
 - Utilizar como orientación una API slice por URL base. Cualquier agrupación o separación diferente deberá justificarse por el contrato real del proyecto.
-- Mantener API slices, tipos, transformación de respuestas y normalización de errores en módulos de servicio del dominio; los componentes consumirán los hooks o contratos React expuestos por esos módulos.
+- Mantener API slices, módulos de endpoints, tipos, transformación de respuestas y normalización de errores con su propietario arquitectónico según ADR-0008; los componentes consumirán los hooks o contratos React expuestos por esos módulos.
 - Mantener handlers y fixtures HTTP en `mocks/`, respetando el aislamiento de MSW definido en ADR-0001.
 - Añadir pruebas del comportamiento observable de petición, deduplicación, caché e invalidación cuando sean aplicables, además del aislamiento de store, handlers y estado entre pruebas. Probar la serialización de claves de caché únicamente cuando el proyecto la personalice o forme parte de un contrato relevante.
 

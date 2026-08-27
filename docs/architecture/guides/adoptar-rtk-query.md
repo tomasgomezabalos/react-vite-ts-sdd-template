@@ -4,7 +4,9 @@
 
 **Aprobación:** 2026-08-23
 
-**Relación:** Aplica [ADR-0005](../decisions/0005-rtk-query-capacidad-opcional.md).
+**Actualización:** 2026-08-27
+
+**Relación:** Aplica [ADR-0005](../decisions/0005-rtk-query-capacidad-opcional.md) y [ADR-0008](../decisions/0008-organizacion-modular-por-propiedad.md).
 
 ## Objetivo
 
@@ -58,7 +60,9 @@ Si se elige RTK Query, el plan debe concretar al menos:
 - montaje de `Provider` en el punto de composición de proveedores;
 - reducer y middleware de cada API slice registrados en el store;
 - una API slice por URL base como orientación, justificando cualquier excepción;
-- ubicación de servicios, tipos, transformaciones y normalización de errores por dominio;
+- propietario de cada API slice, módulo de endpoints, Redux slice, selector, DTO, modelo de dominio y adaptador;
+- promoción de una API base a `shared/api` e inyección de endpoints cuando varios propietarios compartan la misma URL base;
+- separación entre estado local, estado cliente compartido y estado remoto cacheado;
 - handlers y fixtures HTTP correspondientes dentro de `mocks/`;
 - reglas de caché, deduplicación e invalidación que responden a escenarios aprobados;
 - uso de `setupListeners` solo si se requiere revalidación por foco o reconexión;
@@ -74,16 +78,65 @@ Este comando no debe ejecutarse en la plantilla ni en un proyecto derivado antes
 
 ## Organización esperada
 
-El plan decidirá los nombres exactos según el dominio. Como orientación de responsabilidades:
+El plan decidirá nombres concretos únicamente a partir del dominio y los contratos aprobados. La estructura de referencia es:
 
 ```text
-src/app/                     composición y factoría del store
-src/services/<dominio>/      API slice, contratos, tipos y transformaciones
-mocks/                       handlers y fixtures del contrato HTTP
-tests/                       pruebas espejo y utilidades de store aislado
+src/
+├── app/
+│   ├── store/
+│   │   ├── createAppStore.ts
+│   │   ├── hooks.ts
+│   │   └── types.ts                  # solo para tipos no inferibles
+│   └── providers/
+│       └── AppStoreProvider/
+│           └── index.tsx
+├── pages/<Page>/
+│   ├── api/                          # endpoints exclusivos de la ruta
+│   └── model/                        # estado cliente exclusivo de la ruta
+├── features/<capacidad>/
+│   ├── api/
+│   └── model/
+├── entities/<entidad>/
+│   ├── api/
+│   └── model/
+└── shared/
+    └── api/                          # transporte o API base compartidos
+
+mocks/
+├── handlers/
+└── fixtures/
+
+tests/                                # espejo de src
 ```
 
-No se debe crear infraestructura vacía para anticipar necesidades futuras. El primer endpoint, su consumidor y sus pruebas deben pertenecer a la misma feature aprobada.
+Responsabilidades:
+
+- `app/store/createAppStore.ts`: factoría con `configureStore`, registro de reducers y middleware e inferencia de `AppStore`, `RootState` y `AppDispatch`.
+- `app/store/hooks.ts`: hooks Redux pretipados separados del store para evitar dependencias circulares de runtime.
+- `<propietario>/model/<nombre>Slice.ts`: estado cliente creado con `createSlice` y propiedad de una página, feature o entidad.
+- `<propietario>/model/selectors.ts`: selectors de ese estado, cuando sean necesarios.
+- `<propietario>/api/<nombre>Api.ts`: `createApi` mientras exista un único propietario y no sea necesaria la división.
+- `shared/api/<servicio>Api.ts`: API base promovida cuando varios propietarios compartan la misma URL base.
+- `<propietario>/api/<nombre>Endpoints.ts`: endpoints añadidos mediante `injectEndpoints` y hooks generados exportados por el mismo módulo.
+- `<propietario>/api/types.ts`: argumentos, DTO y errores específicos del contrato remoto.
+- `<propietario>/api/mappers.ts`: transformación entre DTO y dominio únicamente cuando difieran.
+- `entities/<entidad>/model/types.ts`: modelo de dominio estable compartido.
+- `mocks/handlers/<dominio>.ts` y `mocks/fixtures/<dominio>.ts`: escenarios HTTP aprobados.
+
+Los endpoints de una entidad pertenecen a `entities/<entidad>/api`; una acción de negocio pertenece a `features/<capacidad>/api`; y un endpoint exclusivo de una ruta puede permanecer en `pages/<Page>/api`. Cuando el ámbito real cambie, se promoverá al menor propietario común.
+
+Se utilizará normalmente una API slice por URL base. Si varios propietarios comparten esa API, se mantendrá una definición base común y se dividirán los endpoints mediante `injectEndpoints`, conservando la invalidación de tags dentro de la misma API slice.
+
+El estado remoto permanecerá en la caché de RTK Query. Solo se añadirá un Redux slice separado para estado cliente que no sea una copia del servidor y que necesite coordinación entre consumidores. El estado exclusivamente local permanecerá en React.
+
+No se crearán `src/services/`, `src/slices/`, una API vacía, un store sin consumidores ni ningún segmento anticipatorio. El primer endpoint, su consumidor, su contrato MSW y sus pruebas pertenecerán a la misma capacidad aprobada.
+
+## Terminología
+
+- **Módulo arquitectónico:** carpeta con propietario semántico, como `entities/account`.
+- **Redux slice:** estado cliente creado con `createSlice`.
+- **API slice:** servicio creado con `createApi`.
+- **Módulo de endpoints:** archivo que define o inyecta endpoints y exporta sus contratos de consumo.
 
 ## Criterio de finalización
 
@@ -101,4 +154,7 @@ La adopción estará terminada cuando:
 - Redux Toolkit, «RTK Query Overview»: <https://redux-toolkit.js.org/rtk-query/overview>.
 - Redux Toolkit, «Getting Started»: <https://redux-toolkit.js.org/introduction/getting-started>.
 - Redux Toolkit, «createApi»: <https://redux-toolkit.js.org/rtk-query/api/createApi>.
+- Redux Toolkit, «Generated API Slices»: <https://redux-toolkit.js.org/rtk-query/api/created-api/overview>.
+- Redux Toolkit, «Code Splitting»: <https://redux-toolkit.js.org/rtk-query/usage/code-splitting>.
 - Redux Toolkit, «setupListeners»: <https://redux-toolkit.js.org/rtk-query/api/setupListeners>.
+- Redux, «Usage with TypeScript»: <https://redux.js.org/usage/usage-with-typescript>.

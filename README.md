@@ -47,6 +47,27 @@ docs/architecture/    decisiones y guías técnicas sustituibles
 
 `mocks/public/mockServiceWorker.js` es un artefacto generado por MSW para el navegador. El modo `dev:mocks` utiliza una entrada propia bajo `mocks/`, inicia el worker y después carga la aplicación. El desarrollo normal y la construcción de producción usan directamente `src/main.tsx` y no incluyen el worker.
 
+### Organización modular extensible
+
+La estructura de aplicación se basa en propiedad semántica y promoción progresiva:
+
+```text
+src/
+├── app/          composición global, rutas, providers, store y layouts
+├── pages/        páginas de ruta y todos sus elementos privados
+├── features/     capacidades de usuario reutilizables, cuando existan
+├── entities/     conceptos de dominio compartidos, cuando existan
+└── shared/       UI e infraestructura realmente compartidas, cuando existan
+```
+
+La baseline no crea `features`, `entities` ni `shared` mientras estén vacías. Dentro de una página, feature o entidad pueden aparecer `components`, `model`, `api`, `lib` y `assets`, pero solo cuando tengan contenido real.
+
+Un componente o módulo permanece junto a su propietario más cercano. Si adquiere consumidores adicionales, se promueve únicamente hasta el menor ámbito común y solo cuando los usos compartan contrato, responsabilidad y motivo de cambio. No se crean árboles técnicos globales como `src/components`, `src/services` o `src/slices`.
+
+Las dependencias siguen la dirección `app → pages → features → entities → shared`; pueden omitirse capas intermedias. Una página no importa otra página y las capas inferiores no dependen de las superiores. Las pruebas bajo `tests/` reflejan la ubicación efectiva de `src/`.
+
+La convención completa, incluidas las ubicaciones futuras de Redux Toolkit y RTK Query, está definida en [ADR-0008](docs/architecture/decisions/0008-organizacion-modular-por-propiedad.md).
+
 ## Enrutamiento y despliegue
 
 `src/main.tsx` monta `BrowserRouter` y `src/app/App/index.tsx` declara la tabla de rutas. La baseline contiene únicamente la ruta `/`, que renderiza la página vacía inicial.
@@ -85,7 +106,7 @@ La separación debe comprobarse en la salida del build y en la red del navegador
 
 ## Capacidades opcionales
 
-RTK Query no forma parte de la baseline. Cuando una feature real de un proyecto derivado necesite datos remotos, su adopción debe justificarse mediante la especificación y el plan técnico correspondientes, aplicando [ADR-0005](docs/architecture/decisions/0005-rtk-query-capacidad-opcional.md) y la [guía de adopción](docs/architecture/guides/adoptar-rtk-query.md).
+RTK Query no forma parte de la baseline. Cuando una feature real de un proyecto derivado necesite datos remotos, su adopción debe justificarse mediante la especificación y el plan técnico correspondientes, aplicando [ADR-0005](docs/architecture/decisions/0005-rtk-query-capacidad-opcional.md), la organización de [ADR-0008](docs/architecture/decisions/0008-organizacion-modular-por-propiedad.md) y la [guía de adopción](docs/architecture/guides/adoptar-rtk-query.md).
 
 ## Estilos
 
