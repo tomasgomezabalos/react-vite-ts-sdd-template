@@ -1,23 +1,23 @@
 # Informe de validación — PLAT-004 Puerta de calidad automatizada
 
-**Estado de entrega:** IMPLEMENTED
+**Estado de entrega:** VALIDATED
 
 **Fecha de creación:** 2026-08-28
 
 **Fecha de implementación:** 2026-08-28
 
-**Fecha de validación:** Pendiente
+**Fecha de validación:** 2026-08-28
 
-**Aceptado por:** Pendiente
+**Aceptado por:** Tomás, usuario solicitante
 
-**Evidencia de aceptación:** Pendiente
+**Evidencia de aceptación:** Aceptación expresa registrada en la conversación de trabajo tras contrastar la ejecución local y las ejecuciones reales de GitHub Actions.
 
 ## Alcance aprobado
 
 - Especificación: `docs/platform/specs/004-puerta-calidad-automatizada/spec.md`, versión `1.0.0`, `APPROVED`.
 - Plan técnico: `docs/platform/specs/004-puerta-calidad-automatizada/plan.md`, versión `1.0.0`, `APPROVED`.
 - ADR aplicables: ADR-0001, ADR-0002, ADR-0008, ADR-0009, ADR-0010 y ADR-0011.
-- Criterios cubiertos: REQ-01 a REQ-10 y AC-01 a AC-12, con evidencia remota pendiente para la ejecución y cancelación reales de GitHub Actions.
+- Criterios cubiertos: REQ-01 a REQ-10 y AC-01 a AC-12. AC-10 dispone de ejecución remota correcta; la persona solicitante acepta que AC-11 conserva como límite declarado la cancelación real no observada, sin presentarla como probada.
 
 ## Implementación realizada
 
@@ -57,6 +57,7 @@
 | `npm run check` | Node `22.23.2`, npm `10.9.8` | Correcto; 13 archivos y 44 pruebas, cobertura y build correctos |
 | [GitHub Actions `33210972020`](https://github.com/tomasgomezabalos/react-vite-ts-sdd-template/actions/runs/33210972020) | Ubuntu, Node/npm declarados, commit `ef0129c` | Fallo: dos pruebas de integración de PLAT-003 superaron el timeout predeterminado de 5 s; lint, documentación y arquitectura habían finalizado correctamente |
 | [GitHub Actions `33211404839`](https://github.com/tomasgomezabalos/react-vite-ts-sdd-template/actions/runs/33211404839) | Ubuntu, Node/npm declarados, commit `3804a52` | Correcto; instalación y puerta completa superadas en 40 s |
+| [GitHub Actions `33211618417`](https://github.com/tomasgomezabalos/react-vite-ts-sdd-template/actions/runs/33211618417) | Ubuntu, Node/npm declarados, commit `2ba05af` | Correcto; commit documental final y puerta completa superados en 41 s |
 
 Cobertura observada en la puerta completa: statements `79,70 %`, branches `64,98 %`, functions `85,92 %` y lines `82,16 %`. Todos los valores superan los umbrales globales aprobados.
 
@@ -70,10 +71,10 @@ Cobertura observada en la puerta completa: statements `79,70 %`, branches `64,98
 
 - Desviación: la primera ejecución remota necesitó más de 5 s para dos pruebas de integración válidas. Se aplicó un timeout explícito de 30 s solo para esos casos, sin relajar el resto de la suite ni cambiar el comportamiento probado.
 - Riesgo residual: el parser Markdown cubre las formas documentadas, pero no sustituye una implementación completa de CommonMark; las dependencias laterales entre features o entidades continúan requiriendo revisión semántica; los umbrales son globales y no por archivo.
-- Bloqueo: no existe para `IMPLEMENTED`. La cancelación de una ejecución sustituida no se ha provocado artificialmente y permanece como evidencia operativa pendiente de AC-11.
+- Bloqueo: ninguno. La cancelación de una ejecución sustituida no se ha provocado artificialmente y permanece como límite de evidencia aceptado para AC-11.
 
 ## Puerta de entrega
 
-- Estado actual: `IMPLEMENTED`.
-- Para `VALIDATED`: contrastar la evidencia final, mantener identificado el límite de evidencia de AC-11 y obtener aceptación expresa.
-- Commit, push, merge, despliegue y publicación no están autorizados por esta implementación.
+- Estado actual: `VALIDATED`.
+- Aceptación: expresa, registrada el 2026-08-28 con el límite de evidencia de AC-11 indicado en este informe.
+- Commit, push, merge, despliegue y publicación requieren autorización independiente.
