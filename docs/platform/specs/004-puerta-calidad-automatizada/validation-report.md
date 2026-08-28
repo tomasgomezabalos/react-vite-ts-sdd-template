@@ -43,7 +43,7 @@
 | REQ-06 / AC-03 / AC-09 | `vite.config.ts` | Cobertura real por encima del umbral y fixture subumbral bloqueado. | Correcto |
 | REQ-07 / AC-04 a AC-08 | modelo, salida y fixtures | Orden determinista, códigos `0`, `1` y `2`, y snapshots sin cambios. | Correcto |
 | REQ-08 / AC-06 / AC-08 | `tests/tools/quality/` | Casos positivos y negativos sin red ni estado Git externo. | Correcto |
-| REQ-09 / AC-10 / AC-11 | workflow y `workflow.test.ts` | Contrato local inspeccionado; primera ejecución real observada y corrección de portabilidad temporal preparada. | Implementado; repetición remota correcta y cancelación real pendientes |
+| REQ-09 / AC-10 / AC-11 | workflow y `workflow.test.ts` | Contrato local inspeccionado y ejecución real correcta tras corregir el timeout observado en el primer run. | Correcto para AC-10; cancelación real de AC-11 no observada |
 | REQ-10 / AC-10 / AC-12 | README, AGENTS e informe | Revisión documental de garantías y exclusiones. | Correcto |
 
 ## Comprobaciones automatizadas
@@ -56,6 +56,7 @@
 | `npm test -- tests/tools/quality/runtime-config.test.ts` | Vitest `4.1.11` | Correcto; 1 archivo y 5 pruebas, incluido el bloqueo subumbral |
 | `npm run check` | Node `22.23.2`, npm `10.9.8` | Correcto; 13 archivos y 44 pruebas, cobertura y build correctos |
 | [GitHub Actions `33210972020`](https://github.com/tomasgomezabalos/react-vite-ts-sdd-template/actions/runs/33210972020) | Ubuntu, Node/npm declarados, commit `ef0129c` | Fallo: dos pruebas de integración de PLAT-003 superaron el timeout predeterminado de 5 s; lint, documentación y arquitectura habían finalizado correctamente |
+| [GitHub Actions `33211404839`](https://github.com/tomasgomezabalos/react-vite-ts-sdd-template/actions/runs/33211404839) | Ubuntu, Node/npm declarados, commit `3804a52` | Correcto; instalación y puerta completa superadas en 40 s |
 
 Cobertura observada en la puerta completa: statements `79,70 %`, branches `64,98 %`, functions `85,92 %` y lines `82,16 %`. Todos los valores superan los umbrales globales aprobados.
 
@@ -63,16 +64,16 @@ Cobertura observada en la puerta completa: statements `79,70 %`, branches `64,98
 
 - Cobertura: revisión local de los mensajes de éxito y error de ambos comprobadores y del contrato textual del workflow.
 - Resultado: los diagnósticos incluyen código, archivo, ubicación disponible y mensaje; el orden se comprueba mediante pruebas.
-- Consola y red: navegador no aplica. Los comprobadores no usan red. El workflow se publicó y ejecutó; la primera ejecución expuso un timeout específico del runner que no se reprodujo localmente.
+- Consola y red: navegador no aplica. Los comprobadores no usan red. La primera ejecución remota expuso un timeout específico del runner; la segunda ejecución confirmó la corrección y completó la puerta.
 
 ## Desviaciones y riesgos residuales
 
-- Desviación: la primera ejecución remota necesitó más de 5 s para dos pruebas de integración válidas. Se preparó un timeout explícito de 30 s solo para esos casos, sin relajar el resto de la suite ni cambiar el comportamiento probado.
+- Desviación: la primera ejecución remota necesitó más de 5 s para dos pruebas de integración válidas. Se aplicó un timeout explícito de 30 s solo para esos casos, sin relajar el resto de la suite ni cambiar el comportamiento probado.
 - Riesgo residual: el parser Markdown cubre las formas documentadas, pero no sustituye una implementación completa de CommonMark; las dependencias laterales entre features o entidades continúan requiriendo revisión semántica; los umbrales son globales y no por archivo.
-- Bloqueo: no existe para `IMPLEMENTED`. Una ejecución remota correcta tras la corrección y la observación de `cancel-in-progress` siguen pendientes de autorizaciones separadas de commit y push.
+- Bloqueo: no existe para `IMPLEMENTED`. La cancelación de una ejecución sustituida no se ha provocado artificialmente y permanece como evidencia operativa pendiente de AC-11.
 
 ## Puerta de entrega
 
 - Estado actual: `IMPLEMENTED`.
-- Para `VALIDATED`: contrastar la evidencia final, publicar la corrección cuando se autorice, observar una ejecución correcta, registrar cualquier evidencia de concurrencia disponible y obtener aceptación expresa.
+- Para `VALIDATED`: contrastar la evidencia final, mantener identificado el límite de evidencia de AC-11 y obtener aceptación expresa.
 - Commit, push, merge, despliegue y publicación no están autorizados por esta implementación.
