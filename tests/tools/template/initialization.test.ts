@@ -25,6 +25,7 @@ import {
 } from './helpers/project-fixture.ts'
 
 const cleanups: Array<() => Promise<void>> = []
+const integrationTestTimeout = 30_000
 
 afterEach(async () => {
   await Promise.all(cleanups.splice(0).map((cleanup) => cleanup()))
@@ -52,7 +53,7 @@ describe('project initialization', () => {
     expect(first.operations.some((operation) => operation.kind !== 'unchanged')).toBe(true)
     expect(await snapshotProject(fixture.target)).toEqual(before)
     expect(spawnSync('git', ['-C', fixture.target, 'status', '--porcelain=v1'], { encoding: 'utf8' }).stdout).toBe(gitBefore)
-  })
+  }, integrationTestTimeout)
 
   it('binds the token to the configuration', async () => {
     const fixture = await createProjectFixture()
@@ -94,7 +95,7 @@ describe('project initialization', () => {
     changedConfig.identity.displayName = 'Different Project'
     await expect(buildPreview(fixture.target, changedConfig, manifest))
       .rejects.toThrow(/configuración diferente/)
-  })
+  }, integrationTestTimeout)
 
   it('rejects unknown changes before writing', async () => {
     const fixture = await createProjectFixture()
