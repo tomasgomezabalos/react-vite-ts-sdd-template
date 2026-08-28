@@ -1,10 +1,20 @@
 # Política de gestión de cambios SDD
 
-**Estado:** APPROVED
+**Estado documental:** APPROVED
 
-**Versión:** 1.0.0
+**Versión:** 2.0.0
 
 **Fecha:** 2026-08-27
+
+**Revisión:** 2026-08-28
+
+**Aprobado por:** Tomás, usuario solicitante
+
+**Fecha de aprobación:** 2026-08-28
+
+**Evidencia de aprobación:** Aprobación expresa registrada en la conversación de trabajo.
+
+**Decisión aplicable:** ADR-0009 (`APPROVED`).
 
 ## Propósito
 
@@ -28,15 +38,15 @@ Usar `FULL` cuando el cambio:
 ### Flujo
 
 1. Revisar la visión y las especificaciones vigentes.
-2. Crear o evolucionar la especificación funcional afectada.
+2. Crear la especificación funcional o preparar una nueva versión o enmienda de la afectada.
 3. Actualizar requisitos y criterios de aceptación.
 4. Revisar o crear ADR si existe impacto arquitectónico.
 5. Actualizar diseño/plan técnico.
 6. Actualizar tareas.
 7. Obtener las aprobaciones exigidas por el workflow.
 8. Implementar.
-9. Ejecutar validaciones.
-10. Actualizar la documentación final afectada.
+9. Registrar implementación, trazabilidad, comprobaciones y desviaciones en `validation-report.md`.
+10. Contrastar los criterios y obtener aceptación antes de registrar la entrega como `VALIDATED`.
 
 No se debe implementar un cambio `FULL` mientras la documentación requerida por el workflow no esté preparada y aprobada.
 
@@ -53,12 +63,12 @@ Usar `QUICK` cuando el cambio:
 ### Flujo
 
 1. Identificar el requisito, criterio de aceptación o contrato afectado.
-2. Actualizar únicamente la documentación que realmente cambia.
+2. Preparar un `quick-change.md` con el delta y actualizar únicamente la documentación que realmente cambia.
 3. Comprobar referencias cruzadas y ausencia de contradicciones.
-4. Actualizar o añadir las pruebas necesarias.
-5. Implementar el cambio.
-6. Validar el comportamiento afectado.
-7. Registrar archivos modificados, comprobaciones y desviaciones.
+4. Obtener aprobación del delta antes de implementar.
+5. Actualizar o añadir las pruebas necesarias e implementar el cambio.
+6. Registrar archivos, comprobaciones y desviaciones en `validation-report.md` o, cuando sea trivial, en la sección de entrega separada del propio registro `QUICK`.
+7. Validar el comportamiento afectado y obtener aceptación expresa antes de registrar `VALIDATED`.
 
 Un cambio `QUICK` no exige regenerar automáticamente visión, plan completo ni desglose completo de tareas si esos artefactos continúan siendo correctos.
 
@@ -114,13 +124,13 @@ Usar `ADR` cuando se toma o modifica una decisión técnica con impacto duradero
 ### Flujo
 
 1. Identificar la decisión y su contexto.
-2. Crear o actualizar el ADR correspondiente.
+2. Crear o actualizar el ADR correspondiente mediante `docs/sdd/templates/adr.md`.
 3. Documentar alternativas y consecuencias.
 4. Actualizar las referencias desde los artefactos afectados.
 5. Obtener la aprobación exigida.
 6. Solo entonces implementar la decisión cuando el workflow lo permita.
 
-Un ADR puede acompañar a un cambio `FULL`; `ADR` describe la decisión arquitectónica y `FULL` describe el cambio funcional/técnico que la utiliza.
+Un ADR puede acompañar a un cambio `FULL`; `ADR` describe la decisión arquitectónica y `FULL` describe el cambio funcional/técnico que la utiliza. La aprobación del ADR no autoriza automáticamente su aplicación, commit ni publicación.
 
 ## 5. Regla de clasificación
 
@@ -139,24 +149,32 @@ En caso de duda entre `DIRECT` y `QUICK`, usar `QUICK`.
 
 En caso de duda entre `QUICK` y `FULL`, valorar alcance, número de áreas afectadas, riesgo, reversibilidad y cantidad de requisitos modificados. Ante impacto significativo, usar `FULL`.
 
-## 6. Trazabilidad proporcional
+## 6. Estados y estabilidad documental
+
+Los artefactos de intención y decisión utilizan `Estado documental`: `DRAFT`, `APPROVED` o `SUPERSEDED`. La ejecución utiliza `Estado de entrega`: `NOT_STARTED`, `IMPLEMENTED`, `VALIDATED`, `BLOCKED` o `NOT_APPLICABLE`.
+
+Una especificación, plan, cambio `QUICK` o ADR aprobado no se modifica silenciosamente para incorporar alcance ni para registrar progreso. Los cambios sustantivos requieren un delta, enmienda, nueva versión o decisión aprobados. Las evidencias de implementación y validación se mantienen separadas conforme a ADR-0009.
+
+Los documentos nuevos registran versión, persona que aprueba, fecha y evidencia disponible. No se inventan referencias y un commit posterior no sustituye la aprobación expresa.
+
+## 7. Trazabilidad proporcional
 
 La trazabilidad debe conservarse al nivel adecuado:
 
-- `FULL`: requisito → criterio → diseño/plan → tarea → prueba → código.
-- `QUICK`: requisito/criterio afectado → prueba → código.
+- `FULL`: requisito → criterio → diseño/plan → tarea → prueba → código → informe de validación.
+- `QUICK`: delta aprobado → requisito/criterio afectado → prueba → código → evidencia proporcional.
 - `DIRECT`: código → prueba/validación → commit o historial de cambios, cuando exista.
-- `ADR`: ADR → documentación afectada → implementación.
+- `ADR`: ADR aprobado → autorización de aplicación → documentación o implementación afectada.
 
 No se debe crear documentación artificial que no aporte información adicional únicamente para satisfacer una cadena documental.
 
-## 7. Retroalimentación desde la implementación
+## 8. Retroalimentación desde la implementación
 
 Durante la implementación pueden descubrirse hechos que invaliden o completen la documentación.
 
 Cuando ocurra:
 
-- si afecta comportamiento o requisito, actualizar la spec mediante `QUICK` o `FULL`;
+- si afecta comportamiento o requisito, preparar un delta, enmienda o nueva versión mediante `QUICK` o `FULL`;
 - si afecta arquitectura, actualizar o crear ADR;
 - si es únicamente un detalle interno equivalente, mantenerlo como `DIRECT`.
 

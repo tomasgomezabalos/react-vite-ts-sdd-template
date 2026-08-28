@@ -12,7 +12,7 @@
 
 ## Especificación y alcance autorizado
 
-- Especificación: `specs/002-carga-diferida-rutas/amendment-001-obligatoriedad-paginas.md` (`VALIDATED`).
+- Especificación: `docs/platform/specs/002-carga-diferida-rutas/amendment-001-obligatoriedad-paginas.md` (`VALIDATED`, alias `PLAT-002`).
 - Decisión: ADR-0007 (`APPROVED`).
 - Criterios cubiertos: AC-A01 a AC-A04.
 - Alcance ejecutable: convertir `Home` en una página de ruta diferida, incorporar un fallback de ruta traducido y accesible, adaptar las pruebas y verificar la separación generada.

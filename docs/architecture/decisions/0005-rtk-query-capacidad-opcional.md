@@ -14,7 +14,7 @@ La plantilla incluye MSW para simular contratos HTTP, pero no presupone que todo
 
 La URL base, los endpoints, la forma de los datos, los errores y las reglas de caché pertenecen al dominio de cada proyecto. Crear una API o un store ficticios en la plantilla contradiría su objetivo de no inventar comportamiento de producto.
 
-## Decisión propuesta
+## Decisión
 
 - Mantener RTK Query y los paquetes `@reduxjs/toolkit` y `react-redux` fuera de las dependencias predeterminadas de la plantilla.
 - Considerar RTK Query una capacidad opcional que un proyecto derivado puede adoptar mediante una especificación y un plan técnico aprobados cuando aparezca la primera necesidad real de datos remotos.

@@ -6,9 +6,9 @@
 
 **Aprobación:** 2026-08-25
 
-**Relación:** Propone modificar ADR-0006 eliminando las excepciones de importación estática para páginas. El resto de ADR-0006 permanecerá vigente.
+**Relación:** Modifica ADR-0006 eliminando las excepciones de importación estática para páginas. El resto de ADR-0006 permanece vigente.
 
-**Especificación:** `specs/002-carga-diferida-rutas/amendment-001-obligatoriedad-paginas.md` (`APPROVED`).
+**Especificación:** `docs/platform/specs/002-carga-diferida-rutas/amendment-001-obligatoriedad-paginas.md` (`VALIDATED`, alias `PLAT-002`).
 
 ## Contexto
 
@@ -18,7 +18,7 @@ Esa flexibilidad hace que los proyectos derivados puedan adoptar criterios disti
 
 Los componentes que no representan páginas tienen un perfil diferente. Dividirlos siempre puede aumentar el número de solicitudes, introducir esperas visibles y fragmentar la experiencia sin reducir de forma significativa la entrada inicial. Para ellos se mantiene una decisión basada en evidencia.
 
-## Decisión propuesta
+## Decisión
 
 - Declarar todas las páginas reales asociadas a rutas mediante `React.lazy` e importaciones dinámicas, incluida la página de la ruta inicial.
 - No permitir excepciones con importación estática para páginas por tamaño, prioridad de renderizado o presencia inmediata.

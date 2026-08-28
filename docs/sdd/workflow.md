@@ -1,19 +1,40 @@
 # Flujo SDD
 
-**Estado:** APPROVED
+**Estado documental:** APPROVED
 
-**Versión:** 1.1.0
+**Versión:** 2.0.0
 
-**Aprobación:** 2026-08-27
+**Fecha:** 2026-08-28
 
-## Estados
+**Aprobado por:** Tomás, usuario solicitante
 
-- `DRAFT`: artefacto aún no aprobado.
-- `APPROVED`: contenido aprobado expresamente.
-- `IMPLEMENTED`: alcance aprobado implementado, pendiente de validación.
-- `VALIDATED`: criterios verificados y resultado aceptado expresamente.
-- `BLOCKED`: una cuestión impide avanzar.
-- `SUPERSEDED`: otro artefacto aprobado lo sustituye.
+**Fecha de aprobación:** 2026-08-28
+
+**Evidencia de aprobación:** Aprobación expresa registrada en la conversación de trabajo.
+
+**Decisión aplicable:** ADR-0009 (`APPROVED`).
+
+## Estados documentales
+
+- `DRAFT`: contenido en preparación; no vincula ni autoriza la etapa siguiente.
+- `APPROVED`: versión aprobada expresamente y vigente.
+- `SUPERSEDED`: contenido sustituido por otro artefacto aprobado identificado explícitamente.
+
+Las especificaciones, planes, cambios `QUICK` y ADR utilizan estos estados. Una modificación sustantiva requiere nueva versión y aprobación; el progreso de ejecución no se registra cambiando su estado documental.
+
+## Estados de entrega
+
+- `NOT_STARTED`: alcance aprobado todavía no implementado.
+- `IMPLEMENTED`: alcance implementado y comprobado, pendiente de aceptación.
+- `VALIDATED`: criterios contrastados y resultado aceptado expresamente.
+- `BLOCKED`: una cuestión concreta impide avanzar.
+- `NOT_APPLICABLE`: decisión o artefacto sin entrega ejecutable independiente.
+
+Los estados de entrega se registran en `validation-report.md` cuando el flujo lo exige. `IN_PROGRESS` puede mantenerse en la tarea, issue o conversación y no requiere editar el repositorio en cada avance.
+
+## Aprobaciones
+
+Todo artefacto nuevo que alcance `APPROVED` registra versión, persona que aprueba, fecha y evidencia disponible. Una aprobación autoriza únicamente la puerta descrita. Implementación, validación, commit, push, merge, despliegue y publicación permanecen separados.
 
 ## Clasificación inicial
 
@@ -24,43 +45,50 @@ Antes de modificar documentación o código, clasificar la petición conforme a 
 - `DIRECT`: cambio interno equivalente, sin impacto observable, contractual, funcional ni arquitectónico.
 - `ADR`: decisión técnica duradera o transversal; puede acompañar a `FULL`.
 
-La clasificación determina qué artefactos y puertas son aplicables. No elimina las aprobaciones exigidas para los artefactos que deban cambiar.
+La clasificación determina los artefactos y puertas aplicables. Si el impacto crece, se detiene el trabajo y se reclasifica antes de continuar.
 
-## Etapas y puertas del flujo FULL
+## Flujo FULL
 
-1. **Especificación funcional.** Define problema, alcance, comportamiento y criterios verificables. Su aprobación autoriza preparar decisiones y plan técnico; no autoriza instalaciones ni implementación.
-2. **Decisiones arquitectónicas.** Un ADR documenta una decisión técnica sustituible. Su aprobación permite usarla en planes; por sí sola no autoriza instalaciones ni implementación.
-3. **Plan técnico y tareas.** Define solución, archivos, dependencias, pruebas, riesgos y tareas. Su aprobación autoriza exclusivamente lo enumerado y solo cuando el usuario autorice implementar.
-4. **Implementación.** Ejecuta el alcance aprobado y registra comprobaciones. Al finalizar pasa a `IMPLEMENTED`; todavía no está validado.
-5. **Validación.** Contrasta evidencias con los criterios de aceptación. La aceptación expresa permite pasar a `VALIDATED`.
+1. **Visión y contexto.** Revisar la visión vigente; crearla o actualizarla solo cuando el cambio altere problema, usuarios, objetivos, límites o métricas del producto.
+2. **Especificación funcional.** Preparar requisitos y criterios observables en `DRAFT`. Su aprobación autoriza preparar decisiones y plan; no autoriza implementación.
+3. **Decisiones arquitectónicas.** Crear un ADR únicamente cuando exista una decisión duradera o transversal. Su aprobación permite usarla en planes; no autoriza por sí sola aplicarla.
+4. **Plan técnico.** Definir solución, archivos, dependencias, pruebas, riesgos y tareas. Su aprobación limita el alcance implementable; la ejecución requiere autorización expresa.
+5. **Implementación.** Ejecutar solo el alcance aprobado y registrar archivos, pruebas, comandos, resultados y desviaciones en `validation-report.md`. Al terminar, el informe pasa a `IMPLEMENTED`.
+6. **Validación.** Contrastar el informe con los criterios. Solo la aceptación expresa permite registrar `VALIDATED`.
 
-## Flujos proporcionales
-
-### QUICK
+## Flujo QUICK
 
 1. Identificar el requisito, criterio o contrato afectado.
-2. Actualizar únicamente la documentación que realmente cambia.
+2. Preparar `quick-change.md` con el delta, alcance mínimo y pruebas necesarias.
 3. Comprobar referencias cruzadas y ausencia de contradicciones.
-4. Obtener aprobación de los artefactos modificados antes de implementar.
-5. Actualizar o añadir pruebas e implementar el cambio.
-6. Validar el comportamiento afectado y registrar resultados y desviaciones.
+4. Obtener aprobación del cambio antes de implementar.
+5. Actualizar o añadir pruebas e implementar únicamente el delta aprobado.
+6. Registrar resultados en `validation-report.md`; si el cambio es trivial, la evidencia puede añadirse al registro `QUICK` en una sección de entrega separada del contrato aprobado.
+7. Validar el comportamiento afectado y registrar desviaciones y aceptación.
 
-### DIRECT
+## Flujo DIRECT
 
-1. Confirmar que no cambia comportamiento observable, contrato, requisito ni arquitectura.
-2. Modificar el código y las pruebas necesarias sin exigir una nueva spec, plan o tareas.
-3. Ejecutar las validaciones aplicables y registrar los resultados.
+1. Confirmar que no cambia comportamiento observable, contrato, requisito, dependencia ni arquitectura.
+2. Modificar código y pruebas sin exigir una spec, plan o artefacto SDD nuevo.
+3. Ejecutar las validaciones aplicables y conservar trazabilidad en el historial de cambios o informe final.
+4. Reclasificar antes de continuar si aparece impacto observable o contractual.
 
-### ADR
+## Flujo ADR
 
-1. Identificar la decisión, su contexto, alternativas y consecuencias.
-2. Crear o actualizar el ADR y sus referencias.
-3. Obtener su aprobación antes de implementar la decisión.
-4. Aplicar además `FULL` cuando exista un cambio funcional significativo.
+1. Identificar decisión, contexto, alternativas, consecuencias y relaciones.
+2. Preparar el ADR en `DRAFT` mediante su plantilla.
+3. Obtener aprobación antes de aplicar la decisión.
+4. Solicitar por separado la aplicación concreta, con archivos y alcance definidos.
+5. Aplicar además `FULL` cuando exista un cambio funcional significativo.
 
-## Cambios
+## Cambios y consolidación
 
-- Una petición nueva no modifica silenciosamente el alcance aprobado.
-- Primero se clasifica la petición; después se actualiza únicamente el artefacto afectado y se obtiene la aprobación correspondiente.
-- Si el impacto real supera la clasificación inicial, se detiene la implementación y se reclasifica antes de continuar.
+- Una petición nueva no modifica silenciosamente contenido aprobado.
+- `QUICK`, una enmienda, una nueva versión o un ADR actúan como delta explícito según el impacto.
+- Cuando varios deltas dificulten conocer el contrato efectivo, se prepara una consolidación en `DRAFT`; solo su aprobación permite marcar los artefactos anteriores como `SUPERSEDED`.
+- Las correcciones editoriales `DIRECT` no cambian significado y permanecen trazadas en el historial.
 - Las contradicciones entre documentos aprobados bloquean el trabajo hasta que se resuelvan.
+
+## Compatibilidad histórica
+
+Los artefactos anteriores a ADR-0009 pueden conservar el encabezado y las evidencias del modelo histórico. No se migran por formalidad. Cuando deban cambiar, adoptarán el modelo vigente de forma proporcional.

@@ -1,0 +1,27 @@
+# Índice de arquitectura
+
+Este directorio registra decisiones técnicas vinculantes y guías para aplicarlas. Los ADR continúan vigentes mientras no estén marcados como `SUPERSEDED` o exista una relación explícita que modifique parte de su decisión.
+
+## Decisiones vigentes
+
+| ADR | Estado | Decisión efectiva | Relaciones principales |
+| --- | --- | --- | --- |
+| [ADR-0001](decisions/0001-platform.md) | `APPROVED` | Plataforma React, Vite, TypeScript, pruebas, MSW e i18n. | ADR-0002 sustituye su elección inicial de lint; ADR-0008 amplía su organización. |
+| [ADR-0002](decisions/0002-eslint.md) | `APPROVED` | ESLint con configuración plana. | Sustituye la elección de Oxlint en ADR-0001. |
+| [ADR-0003](decisions/0003-sass.md) | `APPROVED` | Sass/SCSS y estilos locales proporcionales. | Complementa la plataforma. |
+| [ADR-0004](decisions/0004-react-router-base-spa.md) | `APPROVED` | React Router 8 declarativo como base obligatoria. | ADR-0006 y ADR-0007 modifican su exclusión histórica de carga diferida. |
+| [ADR-0005](decisions/0005-rtk-query-capacidad-opcional.md) | `APPROVED` | RTK Query permanece fuera de la baseline y se adopta solo con necesidad aprobada. | ADR-0008 precisa la propiedad de su infraestructura futura. |
+| [ADR-0006](decisions/0006-carga-diferida-rutas-suspense.md) | `APPROVED` | Fronteras, fallback, datos, errores y verificación de carga diferida. | ADR-0007 elimina sus excepciones para páginas. |
+| [ADR-0007](decisions/0007-carga-diferida-obligatoria-paginas.md) | `APPROVED` | Todas las páginas de ruta utilizan carga diferida sin excepciones estáticas. | Modifica ADR-0004 y ADR-0006. |
+| [ADR-0008](decisions/0008-organizacion-modular-por-propiedad.md) | `APPROVED` | Propiedad semántica, promoción progresiva y dependencias descendentes. | Amplía ADR-0001 y precisa ADR-0005. |
+| [ADR-0009](decisions/0009-ciclo-vida-sdd-y-evidencias.md) | `APPROVED` | Separa vigencia documental, entrega y evidencias de validación. | Modifica el workflow y precisa constitución y política de cambios. |
+| [ADR-0010](decisions/0010-alcance-y-derivacion-de-la-plantilla.md) | `APPROVED` | Limita la baseline a SPA cliente y define derivación, bootstrap y diagnóstico seguros. | Precisa ADR-0001 y ADR-0004; separa plataforma y producto. |
+| [ADR-0011](decisions/0011-calidad-automatizada-y-runtime.md) | `APPROVED` | Fija runtime y una única puerta local/CI con cobertura, integridad documental y límites arquitectónicos. | Amplía ADR-0001, ADR-0002 y ADR-0008; su aplicación se definirá en PLAT-004. |
+
+## Guías vigentes
+
+- [Adoptar RTK Query](guides/adoptar-rtk-query.md): criterios y estructura para proyectos que aprueben esta capacidad opcional.
+
+## Regla de lectura
+
+El índice resume el contrato efectivo, pero no sustituye el contenido de cada ADR. Cuando una decisión haya sido modificada parcialmente, se leerán conjuntamente el ADR original y sus modificadores. Una decisión nueva o transversal debe aprobarse mediante el flujo `ADR` antes de implementarse. Los ADR anteriores a ADR-0009 pueden conservar su encabezado histórico y adoptarán el modelo nuevo únicamente cuando deban cambiar.

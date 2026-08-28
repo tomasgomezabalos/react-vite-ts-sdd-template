@@ -10,7 +10,7 @@
 
 **Validación:** 2026-08-25
 
-**Especificación afectada:** `specs/002-carga-diferida-rutas/spec.md` (`VALIDATED`)
+**Especificación afectada:** `docs/platform/specs/002-carga-diferida-rutas/spec.md` (`VALIDATED`, alias `PLAT-002`)
 
 **ADR afectado:** ADR-0006 (`APPROVED`)
 

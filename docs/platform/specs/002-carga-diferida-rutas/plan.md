@@ -14,7 +14,7 @@
 
 ## Especificación y alcance autorizado
 
-- Especificación: `specs/002-carga-diferida-rutas/spec.md` (`VALIDATED`).
+- Especificación: `docs/platform/specs/002-carga-diferida-rutas/spec.md` (`VALIDATED`, alias `PLAT-002`).
 - Criterios cubiertos: AC-01 a AC-08.
 - Fuera de alcance: modificar `Home`, `App`, rutas, componentes, pruebas, traducciones, configuración i18n, dependencias, Data Mode o Framework Mode; crear helpers sin consumidores; incorporar una página de demostración; aplicar el cambio a repositorios ya derivados.
 
@@ -36,8 +36,8 @@
 | `AGENTS.md` | Incorporar la regla operativa para páginas de ruta diferidas, fronteras, fallback y excepciones. | AC-01, AC-03, AC-04, AC-05, AC-06 |
 | `README.md` | Documentar el patrón para proyectos derivados, la adaptación de exports nombrados y las evidencias de verificación. | AC-01 a AC-06, AC-08 |
 | `docs/architecture/decisions/0004-react-router-base-spa.md` | Añadir la relación de modificación por ADR-0006 sin reescribir la decisión histórica. | AC-06, AC-07 |
-| `specs/002-carga-diferida-rutas/spec.md` | Registrar el estado de implementación cuando se completen las comprobaciones. | AC-01 a AC-08 |
-| `specs/002-carga-diferida-rutas/plan.md` | Registrar tareas, evidencias y estado de implementación. | AC-01 a AC-08 |
+| `docs/platform/specs/002-carga-diferida-rutas/spec.md` | Registrar el estado de implementación cuando se completen las comprobaciones. | AC-01 a AC-08 |
+| `docs/platform/specs/002-carga-diferida-rutas/plan.md` | Registrar tareas, evidencias y estado de implementación. | AC-01 a AC-08 |
 
 ## Dependencias e instalaciones
 

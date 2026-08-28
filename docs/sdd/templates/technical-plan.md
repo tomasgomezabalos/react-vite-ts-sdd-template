@@ -1,14 +1,22 @@
 # Plan técnico — <ID> <Nombre>
 
-**Estado:** DRAFT
+**Estado documental:** DRAFT
+
+**Versión:** 0.1.0
 
 **Fecha:** <AAAA-MM-DD>
 
-**Aprobación:** Pendiente
+**Aprobado por:** Pendiente
+
+**Fecha de aprobación:** Pendiente
+
+**Evidencia de aprobación:** Pendiente
+
+**Clasificación:** FULL
 
 ## Especificación y alcance autorizado
 
-- Especificación: `<ruta>`
+- Especificación: `<ruta y versión aprobada>`
 - Criterios cubiertos: <AC-...>
 - Fuera de alcance: <límites técnicos y funcionales>
 
@@ -24,6 +32,12 @@
 | Archivo o área | Cambio | Requisito relacionado |
 | --- | --- | --- |
 | `<ruta>` | <cambio> | <AC-...> |
+
+## Trazabilidad prevista
+
+| Requisito o criterio | Implementación prevista | Prueba o validación prevista |
+| --- | --- | --- |
+| `<REQ/AC>` | `<ruta o área>` | `<prueba o comprobación>` |
 
 ## Dependencias e instalaciones
 
@@ -46,3 +60,7 @@
 - Reversión: <cómo deshacer el cambio de forma segura>.
 - Comandos de validación: <comandos concretos>.
 - Evidencias necesarias para pasar a `VALIDATED`: <lista>.
+
+## Puerta documental
+
+La aprobación de esta versión limita el alcance implementable a los cambios enumerados. La implementación requiere autorización expresa y se registra en un `validation-report.md` separado. No autoriza commit ni publicación.

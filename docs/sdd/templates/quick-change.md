@@ -1,0 +1,73 @@
+# QUICK-<ID> — <Nombre del cambio>
+
+**Estado documental:** DRAFT
+
+**Versión:** 0.1.0
+
+**Fecha:** <AAAA-MM-DD>
+
+**Aprobado por:** Pendiente
+
+**Fecha de aprobación:** Pendiente
+
+**Evidencia de aprobación:** Pendiente
+
+**Clasificación:** QUICK
+
+## Contrato afectado
+
+- Especificación, requisito o criterio vigente: `<referencia y versión>`
+- Motivo de clasificación: <por qué es observable, pequeño, localizado y no arquitectónico>.
+
+## Delta funcional
+
+### Comportamiento vigente
+
+<Resultado observable antes del cambio.>
+
+### Comportamiento aprobado propuesto
+
+<Únicamente el cambio esperado.>
+
+### Fuera de alcance
+
+- <Límite explícito.>
+
+## Criterios afectados
+
+### QC-AC-01 — <Nombre>
+
+- **Dado** <contexto>
+- **Cuando** <acción>
+- **Entonces** <resultado verificable>
+
+## Alcance técnico mínimo
+
+| Archivo o área | Cambio previsto | Criterio |
+| --- | --- | --- |
+| `<ruta>` | <cambio> | QC-AC-01 |
+
+## Pruebas y validación previstas
+
+- Automatizadas: <pruebas necesarias>.
+- Manuales o navegador: <comprobaciones o no aplica con justificación>.
+- Comando de regresión: <comando>.
+
+## Riesgos y reclasificación
+
+- Riesgo: <riesgo localizado>.
+- Reclasificar como `FULL` o `ADR` si: <condición concreta>.
+
+## Puerta documental
+
+La aprobación autoriza implementar únicamente este delta cuando exista autorización expresa de implementación. No autoriza commit ni publicación.
+
+## Registro de entrega opcional
+
+Utilizar esta sección solo cuando el cambio sea trivial y un informe independiente no aporte claridad. No modificar el contrato aprobado anterior.
+
+- Estado de entrega: `NOT_STARTED`
+- Archivos modificados: Pendiente
+- Pruebas y resultados: Pendiente
+- Desviaciones: Pendiente
+- Aceptación: Pendiente

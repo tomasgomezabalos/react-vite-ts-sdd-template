@@ -14,7 +14,7 @@ La plantilla proporciona una aplicación React mínima y sin comportamiento de p
 
 Aunque una SPA inicial tenga una sola vista, esta plantilla está orientada a aplicaciones web de producto y establece el enrutamiento como una capacidad transversal obligatoria de su plataforma base.
 
-## Decisión propuesta
+## Decisión
 
 - Incluir el paquete `react-router` como dependencia de producción obligatoria de la plantilla.
 - Adoptar la línea estable 8.x de React Router.

@@ -1,6 +1,6 @@
 # React Vite TypeScript SDD Template
 
-Plantilla mínima para iniciar aplicaciones React mediante Spec-Driven Development. La aplicación muestra deliberadamente una página en blanco: incluye infraestructura y reglas, pero ninguna feature de producto.
+Plantilla mínima para iniciar SPA React renderizadas en cliente mediante Spec-Driven Development. La aplicación muestra deliberadamente una página en blanco: incluye infraestructura y reglas, pero ninguna feature de producto.
 
 ## Stack
 
@@ -14,11 +14,11 @@ Plantilla mínima para iniciar aplicaciones React mediante Spec-Driven Developme
 
 ## Puesta en marcha
 
-Requiere Node.js 22.22 o posterior; `.nvmrc` fija la versión usada para validar la plantilla.
+Requiere Node.js `22.23.2` y npm `10.9.8`. `.nvmrc`, `packageManager`, `engines` y `devEngines` mantienen el contrato coordinado y npm detiene los scripts cuando el entorno de desarrollo soportado no coincide.
 
 ```bash
 nvm use
-npm install
+npm ci
 npm run dev
 ```
 
@@ -28,10 +28,18 @@ El modo normal no inicia MSW. Para activarlo expresamente:
 npm run dev:mocks
 ```
 
-Comprobación completa:
+Comprobación completa, utilizada también por CI:
 
 ```bash
 npm run check
+```
+
+La puerta ejecuta una sola vez lint, integridad documental, límites arquitectónicos, pruebas con cobertura y build. Para aislar un diagnóstico pueden utilizarse:
+
+```bash
+npm run docs:check
+npm run architecture:check
+npm run test:coverage
 ```
 
 Cobertura del código ejecutable:
@@ -40,7 +48,11 @@ Cobertura del código ejecutable:
 npm run test:coverage
 ```
 
-La cobertura utiliza V8 e incluye únicamente `src/**/*.{ts,tsx}`. Excluye las declaraciones `*.d.ts`, los módulos exclusivamente de tipos `types.ts` y, por extensión, estilos y assets. El informe generado se guarda en `coverage/`, que queda fuera de Git y ESLint. La baseline informa los porcentajes, pero no impone umbrales mínimos.
+La cobertura utiliza V8 e incluye `src/**/*.{ts,tsx}` y `tools/**/*.ts`. Excluye pruebas, declaraciones `*.d.ts`, módulos exclusivamente de tipos y, por extensión, estilos y assets. El informe generado se guarda en `coverage/`, que queda fuera de Git y ESLint. Los mínimos globales son 70 % de statements, 55 % de branches, 75 % de functions y 75 % de lines; no se aplican umbrales por archivo ni actualización automática.
+
+`docs:check` valida enlaces Markdown locales, índices y metadatos SDD objetivos sin acceder a la red ni decidir si una aprobación es auténtica. `architecture:check` valida imports resolubles y las fronteras objetivas de ADR-0008; no infiere si dos features o entidades hermanas comparten semántica. Superar la puerta no demuestra por sí solo corrección funcional completa, accesibilidad visual, ausencia de vulnerabilidades ni validez jurídica.
+
+`.github/workflows/quality.yml` ejecuta `npm ci` y la misma puerta en pushes a `main` y pull requests. Una inspección local del YAML no equivale a una ejecución real en GitHub.
 
 ## Estructura
 
@@ -48,10 +60,15 @@ La cobertura utiliza V8 e incluye únicamente `src/**/*.{ts,tsx}`. Excluye las d
 src/                  código de aplicación, i18n y traducciones
 tests/                pruebas espejo de src y configuración compartida
 mocks/                worker, servidor, handlers y fixtures de MSW
-specs/                especificaciones de producto del proyecto derivado
+tools/                herramientas de bootstrap, diagnóstico y calidad
+specs/                visión, features y cambios del producto derivado
+docs/platform/        contrato e histórico de la plataforma heredada
 docs/sdd/             reglas, flujo y plantillas SDD
 docs/architecture/    decisiones y guías técnicas sustituibles
+.github/workflows/     automatización de la puerta de calidad
 ```
+
+Los índices de [plataforma](docs/platform/README.md), [SDD](docs/sdd/README.md) y [arquitectura](docs/architecture/README.md) identifican los documentos vigentes y sus relaciones. `specs/` queda reservado para el producto derivado.
 
 `mocks/public/mockServiceWorker.js` es un artefacto generado por MSW para el navegador. El modo `dev:mocks` utiliza una entrada propia bajo `mocks/`, inicia el worker y después carga la aplicación. El desarrollo normal y la construcción de producción usan directamente `src/main.tsx` y no incluyen el worker.
 
@@ -75,6 +92,12 @@ Un componente o módulo permanece junto a su propietario más cercano. Si adquie
 Las dependencias siguen la dirección `app → pages → features → entities → shared`; pueden omitirse capas intermedias. Una página no importa otra página y las capas inferiores no dependen de las superiores. Las pruebas bajo `tests/` reflejan la ubicación efectiva de `src/`.
 
 La convención completa, incluidas las ubicaciones futuras de Redux Toolkit y RTK Query, está definida en [ADR-0008](docs/architecture/decisions/0008-organizacion-modular-por-propiedad.md).
+
+## Alcance arquitectónico
+
+Esta baseline está destinada a aplicaciones React renderizadas en el navegador, construidas como SPA con Vite, React Router declarativo y un backend externo cuando exista.
+
+Antes de derivar un proyecto deben evaluarse SEO e indexación, SSR, SSG, RSC, routing y datos integrados, backend o rutas de servidor, rendimiento inicial, alojamiento y navegadores. Si un requisito confirmado necesita otra estrategia, se elegirá y aprobará otra arquitectura antes de reutilizar la plantilla. [ADR-0010](docs/architecture/decisions/0010-alcance-y-derivacion-de-la-plantilla.md) define la puerta completa.
 
 ## Enrutamiento y despliegue
 
@@ -120,16 +143,49 @@ RTK Query no forma parte de la baseline. Cuando una feature real de un proyecto 
 
 `src/index.scss` contiene únicamente los estilos globales mínimos. Las futuras features pueden utilizar `styles.module.scss` para estilos locales. Los módulos Sass compartidos deben usar `@use` y `@forward`; no se crean variables, mixins o abstracciones hasta que exista una necesidad aprobada.
 
-## Crear la primera feature
+## Iniciar un cambio
 
-1. Copiar `docs/sdd/templates/feature-spec.md` a `specs/<id>-<nombre>/spec.md` y completar únicamente requisitos observables.
-2. Obtener aprobación expresa de la especificación.
-3. Copiar `docs/sdd/templates/technical-plan.md` al mismo directorio y describir decisiones, archivos, dependencias, pruebas y tareas.
-4. Obtener aprobación expresa del plan.
-5. Implementar solo su alcance, validar y presentar evidencias.
+1. Leer `AGENTS.md`, la constitución, el workflow y la política de cambios enlazados desde el [índice SDD](docs/sdd/README.md).
+2. Clasificar la petición como `FULL`, `QUICK`, `DIRECT` o `ADR` antes de modificar documentación o código.
+3. Para `FULL`, copiar `docs/sdd/templates/feature-spec.md` a `specs/<id>-<nombre>/spec.md`, completar únicamente requisitos observables y obtener su aprobación expresa antes de preparar el plan técnico.
+4. Preparar y aprobar `docs/sdd/templates/technical-plan.md` únicamente cuando el flujo aplicable lo exija.
+5. Para `QUICK`, actualizar solo los requisitos, criterios, pruebas y documentación realmente afectados; para `DIRECT`, confirmar primero que no cambia comportamiento, contrato, requisito ni arquitectura.
+6. Crear o actualizar un ADR antes de aplicar una decisión técnica duradera o transversal.
+7. Implementar exclusivamente el alcance aprobado, validar y presentar evidencias sin inferir autorización de commit o publicación.
 
 No se incluye una feature de ejemplo para evitar decisiones ficticias y mantener limpia la plantilla.
 
 ## Reutilización
 
-Cuando esta base esté aceptada, puede publicarse como repositorio plantilla de GitHub o copiarse localmente eliminando el historial Git. El proyecto derivado deberá sustituir este README, definir su visión y aprobar sus propias especificaciones y decisiones.
+Cuando esta base esté aceptada, puede utilizarse como repositorio plantilla o copiarse localmente. La derivación no elimina historial Git, crea remotos, instala dependencias ni publica nada sin autorización expresa. El proyecto derivado deberá confirmar la idoneidad SPA, sustituir su identidad y este README, definir su visión y perfil transversal, y aprobar sus propias especificaciones y decisiones.
+
+### Inicialización segura
+
+1. Crear una copia derivada y revisar `tools/template/project.config.example.json`.
+2. Crear `project.config.json` con datos reales, decisiones explícitas y sin secretos. El esquema está en `tools/template/project.schema.json`.
+3. Previsualizar sin escritura:
+
+```bash
+npm run template:init -- --target . --config project.config.json
+```
+
+4. Revisar todos los archivos y conservar el token SHA-256 mostrado.
+5. Aplicar exactamente ese estado:
+
+```bash
+npm run template:init -- --target . --config project.config.json --apply --preview-token <sha256>
+```
+
+El token deja de ser válido si cambia la configuración, el destino o cualquier archivo gestionado. La aplicación rechaza el remoto canónico de la plantilla, archivos desconocidos y una inicialización distinta. Utiliza un diario transaccional y solo escribe `.template-state.json` al completar el conjunto. Si una interrupción deja un diario, la herramienta bloqueará otra aplicación e indicará el identificador que debe revisarse antes de ejecutar `--recover <id>`.
+
+La configuración y `.template-state.json` no contienen secretos y están pensados para versionarse. La inicialización no instala dependencias, no modifica Git, no usa la red y no publica ni despliega.
+
+### Diagnóstico
+
+```bash
+npm run template:doctor -- --target . --config project.config.json
+```
+
+`template:doctor` es de solo lectura: clasifica comprobaciones como `PASS`, `WARN`, `FAIL` o `UNKNOWN` y admite `--format json`. La búsqueda de secretos, placeholders y vulnerabilidades está limitada a patrones observables y no sustituye una auditoría.
+
+[PLAT-003](docs/platform/specs/003-inicializacion-segura-proyecto/spec.md) y su [plan técnico](docs/platform/specs/003-inicializacion-segura-proyecto/plan.md) definen el contrato y los límites completos.

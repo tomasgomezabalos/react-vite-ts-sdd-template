@@ -11,7 +11,10 @@
 
 - No implementar una capacidad nueva ni un cambio de comportamiento observable sin el respaldo documental aprobado que corresponda a su clasificación.
 - Mantener trazabilidad entre requisito, escenario, decisión, implementación y prueba.
-- No convertir un artefacto `DRAFT` en `APPROVED` sin aprobación expresa.
+- Utilizar `Estado documental` (`DRAFT`, `APPROVED`, `SUPERSEDED`) para intención y decisiones, y `Estado de entrega` (`NOT_STARTED`, `IMPLEMENTED`, `VALIDATED`, `BLOCKED`, `NOT_APPLICABLE`) para ejecución, conforme a ADR-0009.
+- No convertir un artefacto `DRAFT` en `APPROVED` ni una entrega `IMPLEMENTED` en `VALIDATED` sin aprobación o aceptación expresas.
+- Registrar versión, persona, fecha y evidencia disponible al aprobar nuevos artefactos; no inventar identificadores ni utilizar un commit como sustituto de la aprobación.
+- Mantener estable el contenido aprobado y registrar implementación y validación por separado cuando corresponda.
 - Una aprobación autoriza solo el alcance indicado en la puerta correspondiente.
 - Ante un cambio de alcance, actualizar y aprobar primero la documentación afectada.
 
@@ -20,7 +23,7 @@
 Antes de modificar documentación o código, clasificar la petición como `FULL`, `QUICK`, `DIRECT` o `ADR` siguiendo `docs/sdd/change-policy.md`.
 
 - `FULL`: capacidad nueva o cambio amplio o multiárea. Requiere el flujo SDD completo aplicable.
-- `QUICK`: cambio observable pequeño y localizado. Actualizar únicamente los requisitos, criterios, pruebas y documentación realmente afectados.
+- `QUICK`: cambio observable pequeño y localizado. Preparar el delta proporcional mediante `docs/sdd/templates/quick-change.md` y actualizar únicamente los requisitos, criterios, pruebas y documentación realmente afectados.
 - `DIRECT`: cambio interno sin modificación de comportamiento, contrato, requisito ni arquitectura. Puede modificarse código y pruebas directamente sin actualizar una spec.
 - `ADR`: decisión arquitectónica duradera o transversal. Crear o actualizar el ADR antes de aplicar la decisión.
 
@@ -32,7 +35,7 @@ Las reglas de aprobación de `docs/sdd/workflow.md` siguen siendo obligatorias p
 ### Antes de implementar
 
 1. Leer `AGENTS.md`.
-2. Leer la constitución vigente.
+2. Leer el índice SDD y la constitución vigente.
 3. Leer `docs/sdd/change-policy.md`.
 4. Clasificar la petición.
 5. Leer solamente los artefactos funcionales y arquitectónicos relevantes para el cambio.
@@ -40,6 +43,21 @@ Las reglas de aprobación de `docs/sdd/workflow.md` siguen siendo obligatorias p
 7. Ejecutar el flujo correspondiente.
 
 Para `DIRECT`, no se exige una nueva spec, plan o tareas si se ha confirmado que no cambia el comportamiento observable ni ningún contrato.
+
+Al finalizar un alcance `FULL` o un `QUICK` que necesite evidencia persistente, utilizar `docs/sdd/templates/validation-report.md`. El informe pasa a `IMPLEMENTED` cuando el alcance termina y solo a `VALIDATED` tras contrastar criterios y obtener aceptación expresa. Commit, push, merge, despliegue y publicación requieren autorizaciones independientes.
+
+## Alcance y derivación de la plantilla
+
+- Aplicar ADR-0010: esta baseline está destinada a SPA React renderizadas en cliente, construidas con Vite y React Router declarativo.
+- Antes de derivar un proyecto, evaluar SEO e indexación, SSR, SSG, RSC, routing y datos integrados, backend o rutas de servidor, rendimiento inicial, alojamiento y navegadores.
+- Detener la derivación y aprobar otra arquitectura cuando un requisito confirmado no encaje con la SPA cliente.
+- Mantener el contrato e histórico de plataforma en `docs/platform/` y reservar `specs/` para visión, features, cambios y validaciones del producto derivado.
+- No renombrar ni eliminar artefactos históricos de plataforma para reutilizar sus identificadores; utilizar los alias definidos en `docs/platform/README.md`.
+- No asumir remoto, credenciales, licencia, visibilidad ni estrategia Git durante una derivación.
+- Mantener bootstrap y diagnóstico separados conforme a PLAT-003: `template:doctor` será de solo lectura y no corregirá archivos.
+- Antes de ejecutar el bootstrap, revisar `project.config.json`, ejecutar el modo preview y presentar su lista de operaciones y token; `--apply` requiere autorización expresa para ese token y estado.
+- No aplicar el bootstrap sobre el remoto canónico de la plantilla ni forzar archivos, symlinks o contenido divergente. Una recuperación transaccional requiere revisar el identificador y autorizar `--recover` expresamente.
+- No añadir secretos a `project.config.json`; la inicialización no autoriza instalaciones, cambios Git, red, commit, despliegue ni publicación.
 
 ## Organización modular
 
@@ -80,7 +98,13 @@ Para `DIRECT`, no se exige una nueva spec, plan o tareas si se ha confirmado que
 
 ## Pruebas y calidad
 
-- Mantener las pruebas en `tests/`, reflejando la estructura de `src/`; reservar `tests/setup/` para configuración compartida.
+- Utilizar Node `22.23.2` y npm `10.9.8` conforme a `.nvmrc`, `packageManager` y `devEngines`; no relajar sus rangos ni actualizar una declaración de forma aislada.
+- Utilizar `npm ci` para instalaciones limpias basadas en el lockfile.
+- Mantener `npm run check` como fuente única local y de CI: lint, `docs:check`, `architecture:check`, pruebas con cobertura y build.
+- No omitir ni duplicar etapas de la puerta en CI; los comandos focalizados sirven para diagnóstico, no sustituyen el resultado completo.
+- Mantener `docs:check` y `architecture:check` deterministas, sin red y de solo lectura respecto al repositorio.
+- No presentar una inspección local del workflow como ejecución real de GitHub Actions ni una puerta correcta como garantía de aspectos fuera de su alcance declarado.
+- Mantener las pruebas en `tests/`, reflejando la estructura de `src/` o `tools/` según su propietario; reservar `tests/setup/` para configuración compartida.
 - Usar Vitest y React Testing Library para componentes y hooks React; no usar React Testing Library para código ajeno a React.
 - Probar comportamiento observable y priorizar consultas accesibles.
 - Usar `user-event` para interacciones normales y `fireEvent` solo para eventos de bajo nivel.

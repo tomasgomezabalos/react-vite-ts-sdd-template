@@ -1,0 +1,268 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://github.com/tomasgomezabalos/react-vite-ts-sdd-template/blob/main/tools/template/project.schema.json",
+  "title": "Configuración de proyecto derivado",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "schemaVersion",
+    "derivation",
+    "identity",
+    "localization",
+    "productVision",
+    "support",
+    "deployment",
+    "environments",
+    "repository",
+    "quality"
+  ],
+  "properties": {
+    "$schema": { "type": "string", "minLength": 1 },
+    "schemaVersion": { "const": 1 },
+    "derivation": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["status", "evidence", "suitability"],
+      "properties": {
+        "status": { "const": "confirmed-derived" },
+        "evidence": { "$ref": "#/$defs/nonEmptyString" },
+        "suitability": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": ["status", "criteria"],
+          "properties": {
+            "status": { "const": "suitable" },
+            "criteria": {
+              "type": "object",
+              "additionalProperties": false,
+              "required": [
+                "seoAndPreRenderedHtml",
+                "serverRendering",
+                "serverCapabilities",
+                "initialPerformance",
+                "hostingAndPlatforms"
+              ],
+              "properties": {
+                "seoAndPreRenderedHtml": { "$ref": "#/$defs/compatibleCriterion" },
+                "serverRendering": { "$ref": "#/$defs/compatibleCriterion" },
+                "serverCapabilities": { "$ref": "#/$defs/compatibleCriterion" },
+                "initialPerformance": { "$ref": "#/$defs/compatibleCriterion" },
+                "hostingAndPlatforms": { "$ref": "#/$defs/compatibleCriterion" }
+              }
+            }
+          }
+        }
+      }
+    },
+    "identity": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["displayName", "packageName", "packageVersion", "htmlTitle"],
+      "properties": {
+        "displayName": { "$ref": "#/$defs/nonEmptyString" },
+        "packageName": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 214,
+          "pattern": "^(?:@[a-z0-9][a-z0-9._-]*/)?[a-z0-9][a-z0-9._-]*$"
+        },
+        "packageVersion": {
+          "type": "string",
+          "pattern": "^(0|[1-9][0-9]*)\\.(0|[1-9][0-9]*)\\.(0|[1-9][0-9]*)(?:-[0-9A-Za-z.-]+)?(?:\\+[0-9A-Za-z.-]+)?$"
+        },
+        "htmlTitle": { "$ref": "#/$defs/nonEmptyString" }
+      }
+    },
+    "localization": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["defaultLanguage", "fallbackLanguage", "htmlLanguage", "resources"],
+      "properties": {
+        "defaultLanguage": { "$ref": "#/$defs/locale" },
+        "fallbackLanguage": { "$ref": "#/$defs/locale" },
+        "htmlLanguage": { "$ref": "#/$defs/locale" },
+        "resources": {
+          "type": "object",
+          "minProperties": 1,
+          "additionalProperties": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": ["common"],
+            "properties": {
+              "common": {
+                "type": "object",
+                "additionalProperties": false,
+                "required": ["routes"],
+                "properties": {
+                  "routes": {
+                    "type": "object",
+                    "additionalProperties": false,
+                    "required": ["loading"],
+                    "properties": {
+                      "loading": { "$ref": "#/$defs/nonEmptyString" }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "productVision": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "documentDate",
+        "problemAndContext",
+        "users",
+        "outcomes",
+        "included",
+        "excluded",
+        "metrics",
+        "constraints",
+        "assumptions",
+        "accessibility",
+        "responsive",
+        "securityAndPrivacy",
+        "performance",
+        "observability",
+        "risks",
+        "openQuestions"
+      ],
+      "properties": {
+        "documentDate": { "type": "string", "format": "date" },
+        "problemAndContext": { "$ref": "#/$defs/nonEmptyString" },
+        "users": { "$ref": "#/$defs/nonEmptyStringList" },
+        "outcomes": { "$ref": "#/$defs/nonEmptyStringList" },
+        "included": { "$ref": "#/$defs/nonEmptyStringList" },
+        "excluded": { "$ref": "#/$defs/stringList" },
+        "metrics": {
+          "type": "array",
+          "minItems": 1,
+          "items": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": ["metric", "baseline", "target", "measurement"],
+            "properties": {
+              "metric": { "$ref": "#/$defs/nonEmptyString" },
+              "baseline": { "$ref": "#/$defs/resolvedOrPending" },
+              "target": { "$ref": "#/$defs/resolvedOrPending" },
+              "measurement": { "$ref": "#/$defs/nonEmptyString" }
+            }
+          }
+        },
+        "constraints": { "$ref": "#/$defs/stringList" },
+        "assumptions": { "$ref": "#/$defs/stringList" },
+        "accessibility": { "$ref": "#/$defs/resolvedOrPending" },
+        "responsive": { "$ref": "#/$defs/resolvedOrPending" },
+        "securityAndPrivacy": { "$ref": "#/$defs/resolvedOrPending" },
+        "performance": { "$ref": "#/$defs/resolvedOrPending" },
+        "observability": { "$ref": "#/$defs/resolvedOrPending" },
+        "risks": { "$ref": "#/$defs/stringList" },
+        "openQuestions": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": ["question", "responsible", "resolutionCondition"],
+            "properties": {
+              "question": { "$ref": "#/$defs/nonEmptyString" },
+              "responsible": { "$ref": "#/$defs/nonEmptyString" },
+              "resolutionCondition": { "$ref": "#/$defs/nonEmptyString" }
+            }
+          }
+        }
+      }
+    },
+    "support": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["browsersAndDevices"],
+      "properties": {
+        "browsersAndDevices": { "$ref": "#/$defs/resolvedOrPending" }
+      }
+    },
+    "deployment": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["hosting", "basePath", "spaFallback"],
+      "properties": {
+        "hosting": { "$ref": "#/$defs/resolvedOrPending" },
+        "basePath": { "type": "string", "pattern": "^/(?:[^?#]*?/)?$" },
+        "spaFallback": { "$ref": "#/$defs/resolvedOrPending" }
+      }
+    },
+    "environments": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["names", "publicVariables", "secretsPolicy"],
+      "properties": {
+        "names": { "$ref": "#/$defs/nonEmptyStringList" },
+        "publicVariables": {
+          "type": "array",
+          "uniqueItems": true,
+          "items": { "type": "string", "pattern": "^VITE_[A-Z][A-Z0-9_]*$" }
+        },
+        "secretsPolicy": { "$ref": "#/$defs/nonEmptyString" }
+      }
+    },
+    "repository": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["url", "visibility", "license", "historyStrategy"],
+      "properties": {
+        "url": { "$ref": "#/$defs/resolvedOrPending" },
+        "visibility": { "$ref": "#/$defs/resolvedOrPending" },
+        "license": { "$ref": "#/$defs/resolvedOrPending" },
+        "historyStrategy": { "$ref": "#/$defs/resolvedOrPending" }
+      }
+    },
+    "quality": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["commands"],
+      "properties": {
+        "commands": { "$ref": "#/$defs/nonEmptyStringList" }
+      }
+    }
+  },
+  "$defs": {
+    "nonEmptyString": { "type": "string", "minLength": 1, "pattern": "\\S" },
+    "locale": { "type": "string", "minLength": 2, "pattern": "^[A-Za-z0-9]+(?:-[A-Za-z0-9]+)*$" },
+    "stringList": {
+      "type": "array",
+      "items": { "$ref": "#/$defs/nonEmptyString" }
+    },
+    "nonEmptyStringList": {
+      "type": "array",
+      "minItems": 1,
+      "items": { "$ref": "#/$defs/nonEmptyString" }
+    },
+    "pending": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["status", "responsible", "resolutionCondition"],
+      "properties": {
+        "status": { "const": "pending" },
+        "responsible": { "$ref": "#/$defs/nonEmptyString" },
+        "resolutionCondition": { "$ref": "#/$defs/nonEmptyString" }
+      }
+    },
+    "resolvedOrPending": {
+      "oneOf": [
+        { "$ref": "#/$defs/nonEmptyString" },
+        { "$ref": "#/$defs/pending" }
+      ]
+    },
+    "compatibleCriterion": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["decision", "rationale"],
+      "properties": {
+        "decision": { "const": "compatible" },
+        "rationale": { "$ref": "#/$defs/nonEmptyString" }
+      }
+    }
+  }
+}

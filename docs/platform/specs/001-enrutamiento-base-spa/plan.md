@@ -10,7 +10,7 @@
 
 ## Especificación y alcance autorizado
 
-- Especificación: `specs/001-enrutamiento-base-spa/spec.md` (`VALIDATED`).
+- Especificación: `docs/platform/specs/001-enrutamiento-base-spa/spec.md` (`VALIDATED`, alias `PLAT-001`).
 - Criterios cubiertos: AC-01, AC-02, AC-03 y AC-04.
 - Fuera de alcance: navegación visual, layouts, página de ruta desconocida, rutas de dominio adicionales, Data Mode, Framework Mode, loaders, actions, carga diferida, obtención de datos, Redux, RTK Query y cambios en MSW o internacionalización.
 
@@ -36,8 +36,8 @@
 | `src/main.tsx` | Montar `BrowserRouter` y delegar las rutas en `App`. | AC-01, AC-03 |
 | `tests/app/App/index.test.tsx` | Verificar la ruta raíz y la ausencia de contenido de ruta para una URL sin coincidencia. | AC-01, AC-02 |
 | `README.md` | Documentar React Router, Node mínimo y fallback de SPA para URL limpias. | AC-04 |
-| `specs/001-enrutamiento-base-spa/spec.md` | Registrar el estado de implementación cuando se completen las comprobaciones. | AC-01 a AC-04 |
-| `specs/001-enrutamiento-base-spa/plan.md` | Registrar tareas, evidencias y estado de implementación. | AC-01 a AC-04 |
+| `docs/platform/specs/001-enrutamiento-base-spa/spec.md` | Registrar el estado de implementación cuando se completen las comprobaciones. | AC-01 a AC-04 |
+| `docs/platform/specs/001-enrutamiento-base-spa/plan.md` | Registrar tareas, evidencias y estado de implementación. | AC-01 a AC-04 |
 
 ## Dependencias e instalaciones
 

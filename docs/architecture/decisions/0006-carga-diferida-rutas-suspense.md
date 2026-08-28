@@ -8,7 +8,7 @@
 
 **Modificada por:** ADR-0007 elimina las excepciones de importación estática para páginas, incluida `Home`. Las reglas de este ADR para fronteras, fallbacks, componentes, datos, errores y verificación permanecen vigentes.
 
-**Especificación:** `specs/002-carga-diferida-rutas/spec.md` (`VALIDATED`).
+**Especificación:** `docs/platform/specs/002-carga-diferida-rutas/spec.md` (`VALIDATED`, alias `PLAT-002`).
 
 ## Contexto
 
