@@ -18,6 +18,11 @@ export default defineConfig(({ mode }) => {
       setupFiles: ['./tests/setup/vitest.setup.ts'],
       clearMocks: true,
       restoreMocks: true,
+      coverage: {
+        provider: 'v8',
+        include: ['src/**/*.{ts,tsx}'],
+        exclude: ['src/**/*.d.ts', 'src/**/types.ts'],
+      },
     },
   }
 })

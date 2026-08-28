@@ -34,6 +34,14 @@ Comprobación completa:
 npm run check
 ```
 
+Cobertura del código ejecutable:
+
+```bash
+npm run test:coverage
+```
+
+La cobertura utiliza V8 e incluye únicamente `src/**/*.{ts,tsx}`. Excluye las declaraciones `*.d.ts`, los módulos exclusivamente de tipos `types.ts` y, por extensión, estilos y assets. El informe generado se guarda en `coverage/`, que queda fuera de Git y ESLint. La baseline informa los porcentajes, pero no impone umbrales mínimos.
+
 ## Estructura
 
 ```text
