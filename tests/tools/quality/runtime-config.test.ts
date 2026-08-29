@@ -121,7 +121,7 @@ describe('quality runtime and coverage configuration', () => {
       managedFiles?: Record<string, string>
     }
 
-    expect(manifest.baselineId).toBe('react-vite-ts-sdd-template@2026-08-28-plat-004')
+    expect(manifest.baselineId).toBe('react-vite-ts-sdd-template@2026-08-29-plat-005')
     expect(manifest.managedFiles).toBeDefined()
 
     for (const [path, expectedHash] of Object.entries(manifest.managedFiles ?? {})) {

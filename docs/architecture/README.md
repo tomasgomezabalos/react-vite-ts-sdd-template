@@ -18,6 +18,12 @@ Este directorio registra decisiones técnicas vinculantes y guías para aplicarl
 | [ADR-0010](decisions/0010-alcance-y-derivacion-de-la-plantilla.md) | `APPROVED` | Limita la baseline a SPA cliente y define derivación, bootstrap y diagnóstico seguros. | Precisa ADR-0001 y ADR-0004; separa plataforma y producto. |
 | [ADR-0011](decisions/0011-calidad-automatizada-y-runtime.md) | `APPROVED` | Fija runtime y una única puerta local/CI con cobertura, integridad documental y límites arquitectónicos. | Amplía ADR-0001, ADR-0002 y ADR-0008; su aplicación se definirá en PLAT-004. |
 
+## Decisiones vigentes incorporadas posteriormente
+
+| ADR | Estado | Decisión efectiva | Relaciones principales |
+| --- | --- | --- | --- |
+| [ADR-0012](decisions/0012-bootstrap-minimo-y-descubrimiento-progresivo.md) | `APPROVED` | Reduce el bootstrap a destino e identidad y pospone el producto al flujo SDD. | Modifica parcialmente ADR-0010; su aplicación se especifica mediante PLAT-005. |
+
 ## Guías vigentes
 
 - [Adoptar RTK Query](guides/adoptar-rtk-query.md): criterios y estructura para proyectos que aprueben esta capacidad opcional.

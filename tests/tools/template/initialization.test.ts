@@ -62,7 +62,6 @@ describe('project initialization', () => {
     const first = await buildPreview(fixture.target, fixture.config, manifest)
     const changedConfig = structuredClone(fixture.config)
     changedConfig.identity.displayName = 'Another Example'
-    changedConfig.identity.htmlTitle = 'Another Example'
 
     const second = await buildPreview(fixture.target, changedConfig, manifest)
 
@@ -83,6 +82,15 @@ describe('project initialization', () => {
     expect(first.changed).toBeGreaterThan(0)
     expect(packageJson).toMatchObject({ name: 'example-project', version: '0.1.0' })
     expect(await readProjectFile(fixture.target, '.template-state.json')).not.toBeNull()
+    expect(preview.operations.map(({ path }) => path).sort()).toEqual([
+      '.template-state.json',
+      'README.md',
+      'index.html',
+      'package-lock.json',
+      'package.json',
+    ])
+    expect(await readProjectFile(fixture.target, '.env.example')).toBeNull()
+    expect(await readProjectFile(fixture.target, 'specs/product-vision.md')).toBeNull()
 
     const repeatedPreview = await buildPreview(fixture.target, fixture.config, manifest)
     expect(repeatedPreview.operations.every((operation) => operation.kind === 'unchanged')).toBe(true)
@@ -126,7 +134,6 @@ describe('project initialization', () => {
     const rollbackConfig = structuredClone(fixture.config)
     rollbackConfig.identity.displayName = 'Rollback Example'
     rollbackConfig.identity.packageName = 'rollback-example'
-    rollbackConfig.identity.htmlTitle = 'Rollback Example'
     const preview = await buildPreview(fixture.target, rollbackConfig, manifest)
 
     await expect(applyPreview(preview, { failAfter: 2 })).rejects.toThrow(/se revirtió/)

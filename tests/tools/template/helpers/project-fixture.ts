@@ -45,20 +45,8 @@ export const createProjectFixture = async (): Promise<{
 }> => {
   const target = await mkdtemp(join(tmpdir(), 'template-project-'))
   const sourceManifest = await readFixtureManifest()
-  let initializedFiles: Record<string, string | null> = {}
-  try {
-    const state = await readJson<{ managedFiles: Record<string, string | null> }>(
-      resolve(repositoryRoot, '.template-state.json'),
-    )
-    initializedFiles = state.managedFiles
-  } catch {
-    // La plantilla fuente todavía no tiene un estado derivado.
-  }
   const required = new Set([
     ...Object.keys(sourceManifest.managedFiles),
-    ...Object.entries(initializedFiles)
-      .filter(([path, hash]) => path !== '.template-state.json' && hash !== null)
-      .map(([path]) => path),
     '.nvmrc',
     'docs/platform/README.md',
   ])

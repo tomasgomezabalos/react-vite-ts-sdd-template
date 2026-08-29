@@ -9,7 +9,7 @@ import {
 } from 'node:fs/promises'
 import { dirname, isAbsolute, relative, resolve, sep } from 'node:path'
 import { fileURLToPath } from 'node:url'
-import { hashText } from './config.ts'
+import { hashText, QUALITY_COMMAND } from './config.ts'
 import type {
   BaselineManifest,
   InitializationState,
@@ -157,6 +157,9 @@ export const assertProjectContext = async (
   config: ProjectConfig,
   manifest: BaselineManifest,
 ) => {
+  if (config.schemaVersion !== 2) {
+    throw new ProjectError('La configuración no utiliza el contrato mínimo v2.')
+  }
   for (const required of ['package.json', 'package-lock.json', 'index.html', 'docs/platform/README.md']) {
     if (!(await readProjectFile(target, required))) {
       throw new ProjectError(`El destino no conserva la estructura reconocible: falta ${required}.`)
@@ -167,10 +170,17 @@ export const assertProjectContext = async (
   if (remote && remote === normalizeRemote(manifest.canonicalRemote)) {
     throw new ProjectError('El destino conserva el remoto canónico de la plantilla fuente.')
   }
-  if (!remote && config.derivation.evidence.trim().length < 12) {
-    throw new ProjectError(
-      'No se puede comprobar un remoto distinto y la evidencia de copia derivada es insuficiente.',
-    )
+
+  const existingState = await readInitializationState(target)
+  if (!existingState) {
+    for (const [path, expectedHash] of Object.entries(manifest.managedFiles)) {
+      const file = await readProjectFile(target, path)
+      if (!file || file.hash !== expectedHash) {
+        throw new ProjectError(
+          `El destino no coincide con la baseline reconocida: ${path}.`,
+        )
+      }
+    }
   }
 
   const packageFile = await readProjectFile(target, 'package.json')
@@ -181,11 +191,10 @@ export const assertProjectContext = async (
   } catch {
     throw new ProjectError('package.json no contiene JSON válido.')
   }
-  for (const command of config.quality.commands) {
-    const match = command.match(/^npm run ([a-zA-Z0-9:_-]+)$/)
-    if (!match || typeof packageJson.scripts?.[match[1]] !== 'string') {
-      throw new ProjectError(`El comando de calidad no corresponde a un script npm existente: ${command}`)
-    }
+  if (typeof packageJson.scripts?.check !== 'string') {
+    throw new ProjectError(
+      `La baseline no contiene el comando de calidad heredado: ${QUALITY_COMMAND}`,
+    )
   }
 }
 
@@ -197,7 +206,7 @@ export const readInitializationState = async (
   try {
     const value = JSON.parse(file.content) as InitializationState
     if (
-      value.schemaVersion !== 1
+      value.schemaVersion !== 2
       || typeof value.baselineId !== 'string'
       || typeof value.configDigest !== 'string'
       || typeof value.managedFiles !== 'object'

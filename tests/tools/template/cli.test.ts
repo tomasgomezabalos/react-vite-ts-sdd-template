@@ -57,7 +57,9 @@ describe('template command line interfaces', () => {
 
     expect(formatPreview(preview, 'human')).toContain('MODIFICAR')
     expect(formatPreview(preview, 'json')).not.toContain('private file content')
-    expect(formatDiagnostics('/tmp/example', [], 'json')).toContain('"FAIL": 0')
+    const diagnostics = formatDiagnostics('/tmp/example', [], 'json')
+    expect(diagnostics).toContain('"FAIL": 0')
+    expect(diagnostics).toContain('"scope": "technical-derivation"')
     expect(formatError(new Error('example'), 'human')).toBe('ERROR: example')
   })
 
@@ -90,6 +92,7 @@ describe('template command line interfaces', () => {
     const doctor = run('tools/template/doctor.ts', common)
     expect(doctor.status, doctor.stderr).toBe(0)
     expect(JSON.parse(doctor.stdout)).toMatchObject({
+      scope: 'technical-derivation',
       summary: expect.objectContaining({ FAIL: 0 }),
     })
 

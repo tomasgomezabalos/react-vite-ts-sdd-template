@@ -97,7 +97,7 @@ La convención completa, incluidas las ubicaciones futuras de Redux Toolkit y RT
 
 Esta baseline está destinada a aplicaciones React renderizadas en el navegador, construidas como SPA con Vite, React Router declarativo y un backend externo cuando exista.
 
-Antes de derivar un proyecto deben evaluarse SEO e indexación, SSR, SSG, RSC, routing y datos integrados, backend o rutas de servidor, rendimiento inicial, alojamiento y navegadores. Si un requisito confirmado necesita otra estrategia, se elegirá y aprobará otra arquitectura antes de reutilizar la plantilla. [ADR-0010](docs/architecture/decisions/0010-alcance-y-derivacion-de-la-plantilla.md) define la puerta completa.
+Elegir expresamente esta plantilla selecciona esa arquitectura SPA cliente sin exigir un cuestionario técnico previo. Si ya se conoce un requisito confirmado de SSR, SSG, RSC, backend o rutas de servidor, la derivación debe detenerse y elegir otra arquitectura; si la necesidad aparece después, se resolverá mediante el flujo SDD antes del alcance afectado. [ADR-0010](docs/architecture/decisions/0010-alcance-y-derivacion-de-la-plantilla.md) y [ADR-0012](docs/architecture/decisions/0012-bootstrap-minimo-y-descubrimiento-progresivo.md) definen el límite vigente.
 
 ## Enrutamiento y despliegue
 
@@ -157,12 +157,15 @@ No se incluye una feature de ejemplo para evitar decisiones ficticias y mantener
 
 ## Reutilización
 
-Cuando esta base esté aceptada, puede utilizarse como repositorio plantilla o copiarse localmente. La derivación no elimina historial Git, crea remotos, instala dependencias ni publica nada sin autorización expresa. El proyecto derivado deberá confirmar la idoneidad SPA, sustituir su identidad y este README, definir su visión y perfil transversal, y aprobar sus propias especificaciones y decisiones.
+Esta base se utiliza siempre para crear una copia nueva; el bootstrap no adopta ni reconfigura proyectos existentes. La derivación no elimina historial Git, crea remotos, instala dependencias ni publica nada sin autorización expresa. Solo establece la identidad técnica inicial. La visión, las features y las decisiones de producto se crean después, cuando exista información real y mediante la puerta SDD correspondiente.
 
 ### Inicialización segura
 
-1. Crear una copia derivada y revisar `tools/template/project.config.example.json`.
-2. Crear `project.config.json` con datos reales, decisiones explícitas y sin secretos. El esquema está en `tools/template/project.schema.json`.
+1. Crear una copia nueva de la plantilla en el destino absoluto elegido, sin reutilizar `.git`, `node_modules`, `dist` ni `coverage`.
+2. Elegir el nombre visible. Proponer el nombre npm de forma determinista en minúsculas y con separadores `-`, confirmarlo o corregirlo, y crear `project.config.json` con únicamente `schemaVersion: 2` e `identity.displayName` / `identity.packageName`. El ejemplo y el esquema están en `tools/template/`.
+
+La versión inicial es `0.1.0`, el título HTML coincide con el nombre visible y el idioma, la ruta base y `npm run check` se heredan de la baseline. No son preguntas ni campos configurables del bootstrap.
+
 3. Previsualizar sin escritura:
 
 ```bash
@@ -178,7 +181,7 @@ npm run template:init -- --target . --config project.config.json --apply --previ
 
 El token deja de ser válido si cambia la configuración, el destino o cualquier archivo gestionado. La aplicación rechaza el remoto canónico de la plantilla, archivos desconocidos y una inicialización distinta. Utiliza un diario transaccional y solo escribe `.template-state.json` al completar el conjunto. Si una interrupción deja un diario, la herramienta bloqueará otra aplicación e indicará el identificador que debe revisarse antes de ejecutar `--recover <id>`.
 
-La configuración y `.template-state.json` no contienen secretos y están pensados para versionarse. La inicialización no instala dependencias, no modifica Git, no usa la red y no publica ni despliega.
+La configuración y `.template-state.json` no contienen secretos ni decisiones de producto y están pensados para versionarse. La inicialización no genera visión, métricas, despliegue ni `.env.example`; tampoco instala dependencias, modifica Git, usa la red, publica o despliega.
 
 ### Diagnóstico
 
@@ -186,6 +189,6 @@ La configuración y `.template-state.json` no contienen secretos y están pensad
 npm run template:doctor -- --target . --config project.config.json
 ```
 
-`template:doctor` es de solo lectura: clasifica comprobaciones como `PASS`, `WARN`, `FAIL` o `UNKNOWN` y admite `--format json`. La búsqueda de secretos, placeholders y vulnerabilidades está limitada a patrones observables y no sustituye una auditoría.
+`template:doctor` es de solo lectura: clasifica comprobaciones técnicas como `PASS`, `WARN`, `FAIL` o `UNKNOWN` y admite `--format json`. No evalúa preparación funcional ni decisiones de producto o despliegue. La búsqueda de secretos, placeholders y vulnerabilidades está limitada a patrones observables y no sustituye una auditoría.
 
-[PLAT-003](docs/platform/specs/003-inicializacion-segura-proyecto/spec.md) y su [plan técnico](docs/platform/specs/003-inicializacion-segura-proyecto/plan.md) definen el contrato y los límites completos.
+[PLAT-003](docs/platform/specs/003-inicializacion-segura-proyecto/spec.md) conserva las garantías operativas y [PLAT-005](docs/platform/specs/005-bootstrap-minimo-progresivo/spec.md) define el contrato mínimo vigente.

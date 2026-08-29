@@ -43,10 +43,10 @@ describe('template doctor', () => {
     const diagnostics = await runDiagnostics(fixture.target, fixture.config, manifest)
 
     expect(diagnostics.some((diagnostic) => diagnostic.status === 'FAIL')).toBe(false)
-    expect(diagnostics).toContainEqual(expect.objectContaining({
-      code: 'PRODUCT_VISION',
-      status: 'WARN',
-    }))
+    expect(diagnostics.some((diagnostic) => diagnostic.code === 'PRODUCT_VISION')).toBe(false)
+    expect(diagnostics.some((diagnostic) => diagnostic.code === 'DEPLOYMENT_DECISIONS')).toBe(false)
+    expect(diagnostics.some((diagnostic) => diagnostic.code === 'PENDING_DECISION')).toBe(false)
+    expect(diagnostics.some((diagnostic) => diagnostic.code === 'PUBLIC_ENVIRONMENT')).toBe(false)
     expect(diagnostics).toContainEqual(expect.objectContaining({
       code: 'SOURCE_REMOTE',
       status: 'UNKNOWN',
@@ -70,5 +70,20 @@ describe('template doctor', () => {
     expect(finding?.message).toContain('.env.production')
     expect(JSON.stringify(finding)).not.toContain(secretValue)
     expect(finding?.limitation).toMatch(/no demuestra ausencia/)
+  })
+
+  it('checks public environment names only when an example file exists', async () => {
+    const fixture = await createProjectFixture()
+    cleanups.push(fixture.cleanup)
+    const manifest = fixture.manifest
+    await applyPreview(await buildPreview(fixture.target, fixture.config, manifest))
+    await writeFile(resolve(fixture.target, '.env.example'), 'VITE_PUBLIC_URL=\nAPI_TOKEN=\n')
+
+    const diagnostics = await runDiagnostics(fixture.target, fixture.config, manifest)
+
+    expect(diagnostics).toContainEqual(expect.objectContaining({
+      code: 'PUBLIC_ENVIRONMENT',
+      status: 'FAIL',
+    }))
   })
 })

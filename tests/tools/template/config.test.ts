@@ -6,7 +6,9 @@ import { describe, expect, it } from 'vitest'
 import {
   ConfigError,
   configDigest,
+  effectiveProjectConfig,
   hashText,
+  suggestPackageName,
   validateProjectConfig,
 } from '../../../tools/template/config.ts'
 import {
@@ -17,13 +19,27 @@ import {
 import type { ProjectConfig } from '../../../tools/template/types.ts'
 
 describe('project configuration', () => {
-  it('accepts the reviewed example deterministically', async () => {
+  it('accepts the minimal example and derives deterministic defaults', async () => {
     const config = await readExampleConfig()
 
     const first = validateProjectConfig(config)
     const second = validateProjectConfig(JSON.parse(JSON.stringify(config)))
 
     expect(configDigest(first)).toBe(configDigest(second))
+    expect(effectiveProjectConfig(first)).toMatchObject({
+      identity: {
+        displayName: 'Example Project',
+        packageName: 'example-project',
+        packageVersion: '0.1.0',
+        htmlTitle: 'Example Project',
+      },
+    })
+  })
+
+  it('suggests an npm package name deterministically', () => {
+    expect(suggestPackageName('  Ágil / Café 2026  ')).toBe('agil-cafe-2026')
+    expect(suggestPackageName('---')).toBe('')
+    expect(suggestPackageName('My.Project')).toBe('my-project')
   })
 
   it('keeps schema and example top-level fields aligned', async () => {
@@ -62,29 +78,29 @@ describe('project configuration', () => {
     }
   })
 
-  it('rejects unsuitable projects, invalid packages and secret fields', async () => {
-    const config = await readExampleConfig() as unknown as Record<string, unknown>
-    const invalid = JSON.parse(JSON.stringify(config)) as {
-      identity: { packageName: string; apiToken?: string }
-      derivation: { suitability: { status: string } }
+  it('rejects legacy fields, invalid packages and secret-shaped keys', async () => {
+    const invalid = {
+      ...await readExampleConfig(),
+      identity: {
+        displayName: 'Example',
+        packageName: 'Invalid Package',
+        apiToken: 'must-not-be-here',
+      },
+      productVision: {},
     }
-    invalid.identity.packageName = 'Invalid Package'
-    invalid.identity.apiToken = 'must-not-be-here'
-    invalid.derivation.suitability.status = 'not-suitable'
 
     expect(() => validateProjectConfig(invalid)).toThrow(ConfigError)
-    expect(() => validateProjectConfig(invalid)).toThrow(/apiToken|packageName|idónea/)
+    expect(() => validateProjectConfig(invalid)).toThrow(
+      /apiToken|packageName|productVision/,
+    )
   })
 
-  it('rejects a pending suitability criterion', async () => {
-    const config = JSON.parse(JSON.stringify(await readExampleConfig())) as ProjectConfig
-    config.derivation.suitability.criteria.serverRendering = {
-      decision: 'pending',
-      rationale: 'Falta confirmar el requisito.',
-      responsible: 'Arquitectura',
-      resolutionCondition: 'Cerrar la decisión de renderizado.',
+  it('rejects the former schema version instead of migrating it', async () => {
+    const legacy = {
+      ...await readExampleConfig(),
+      schemaVersion: 1,
     }
 
-    expect(() => validateProjectConfig(config)).toThrow(/serverRendering sigue pendiente/)
+    expect(() => validateProjectConfig(legacy)).toThrow(/contrato v1 ya no es compatible/)
   })
 })

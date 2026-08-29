@@ -1,94 +1,15 @@
-export type PendingValue = {
-  status: 'pending'
-  responsible: string
-  resolutionCondition: string
-}
-
-export type ResolvedOrPending = string | PendingValue
-
-export type SuitabilityCriterion = {
-  decision: 'compatible' | 'incompatible' | 'pending'
-  rationale: string
-  responsible?: string
-  resolutionCondition?: string
-}
-
 export type ProjectConfig = {
-  schemaVersion: 1
-  derivation: {
-    status: 'confirmed-derived'
-    evidence: string
-    suitability: {
-      status: 'suitable' | 'not-suitable'
-      criteria: {
-        seoAndPreRenderedHtml: SuitabilityCriterion
-        serverRendering: SuitabilityCriterion
-        serverCapabilities: SuitabilityCriterion
-        initialPerformance: SuitabilityCriterion
-        hostingAndPlatforms: SuitabilityCriterion
-      }
-    }
-  }
+  schemaVersion: 2
   identity: {
     displayName: string
     packageName: string
-    packageVersion: string
+  }
+}
+
+export type EffectiveProjectConfig = ProjectConfig & {
+  identity: ProjectConfig['identity'] & {
+    packageVersion: '0.1.0'
     htmlTitle: string
-  }
-  localization: {
-    defaultLanguage: string
-    fallbackLanguage: string
-    htmlLanguage: string
-    resources: Record<string, { common: { routes: { loading: string } } }>
-  }
-  productVision: {
-    documentDate: string
-    problemAndContext: string
-    users: string[]
-    outcomes: string[]
-    included: string[]
-    excluded: string[]
-    metrics: Array<{
-      metric: string
-      baseline: ResolvedOrPending
-      target: ResolvedOrPending
-      measurement: string
-    }>
-    constraints: string[]
-    assumptions: string[]
-    accessibility: ResolvedOrPending
-    responsive: ResolvedOrPending
-    securityAndPrivacy: ResolvedOrPending
-    performance: ResolvedOrPending
-    observability: ResolvedOrPending
-    risks: string[]
-    openQuestions: Array<{
-      question: string
-      responsible: string
-      resolutionCondition: string
-    }>
-  }
-  support: {
-    browsersAndDevices: ResolvedOrPending
-  }
-  deployment: {
-    hosting: ResolvedOrPending
-    basePath: string
-    spaFallback: ResolvedOrPending
-  }
-  environments: {
-    names: string[]
-    publicVariables: string[]
-    secretsPolicy: string
-  }
-  repository: {
-    url: ResolvedOrPending
-    visibility: ResolvedOrPending
-    license: ResolvedOrPending
-    historyStrategy: ResolvedOrPending
-  }
-  quality: {
-    commands: string[]
   }
 }
 
@@ -111,7 +32,7 @@ export type FileOperation = {
 }
 
 export type InitializationState = {
-  schemaVersion: 1
+  schemaVersion: 2
   baselineId: string
   configDigest: string
   managedFiles: Record<string, string | null>

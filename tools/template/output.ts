@@ -52,7 +52,7 @@ export const formatApplyResult = (
     changed,
     nextSteps: [
       'Ejecutar template:doctor.',
-      'Revisar y aprobar la visión de producto antes de especificar features.',
+      'Iniciar el descubrimiento SDD cuando exista una necesidad de producto real.',
       'Autorizar separadamente instalación, commit y publicación cuando proceda.',
     ],
   }
@@ -82,10 +82,16 @@ export const formatDiagnostics = (
     status,
     diagnostics.filter((diagnostic) => diagnostic.status === status).length,
   ]))
-  const value = { target, summary, diagnostics }
+  const value = {
+    target,
+    scope: 'technical-derivation',
+    summary,
+    diagnostics,
+  }
   if (format === 'json') return JSON.stringify(value, null, 2)
   const lines = [
     `Destino: ${target}`,
+    'Alcance: derivación técnica; no valida decisiones de producto.',
     `Resumen: ${Object.entries(summary).map(([status, count]) => `${status}=${count}`).join(' ')}`,
     '',
   ]

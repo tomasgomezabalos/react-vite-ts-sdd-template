@@ -1,7 +1,7 @@
 // @vitest-environment node
 
 import { spawnSync } from 'node:child_process'
-import { mkdtemp, rm, symlink, writeFile } from 'node:fs/promises'
+import { mkdtemp, readFile, rm, symlink, writeFile } from 'node:fs/promises'
 import { tmpdir } from 'node:os'
 import { join, resolve } from 'node:path'
 import { afterEach, describe, expect, it } from 'vitest'
@@ -10,6 +10,7 @@ import {
   ProjectError,
   resolveSafePath,
 } from '../../../tools/template/project.ts'
+import { hashText } from '../../../tools/template/config.ts'
 import {
   createProjectFixture,
 } from './helpers/project-fixture.ts'
@@ -51,13 +52,31 @@ describe('project safety', () => {
       .rejects.toThrow(/remoto canónico/)
   })
 
-  it('rejects quality commands that are not declared npm scripts', async () => {
+  it('accepts a matching baseline without requiring a remote or declared evidence', async () => {
+    const fixture = await createProjectFixture()
+    cleanups.push(fixture.cleanup)
+
+    await expect(assertProjectContext(
+      fixture.target,
+      fixture.config,
+      fixture.manifest,
+    )).resolves.toBeUndefined()
+  })
+
+  it('rejects a baseline without the inherited quality command', async () => {
     const fixture = await createProjectFixture()
     cleanups.push(fixture.cleanup)
     const manifest = fixture.manifest
-    fixture.config.quality.commands.push('npm run missing-command')
+    const packagePath = resolve(fixture.target, 'package.json')
+    const packageJson = JSON.parse(await readFile(packagePath, 'utf8')) as {
+      scripts: Record<string, string>
+    }
+    delete packageJson.scripts.check
+    const content = `${JSON.stringify(packageJson, null, 2)}\n`
+    await writeFile(packagePath, content)
+    manifest.managedFiles['package.json'] = hashText(content)
 
     await expect(assertProjectContext(fixture.target, fixture.config, manifest))
-      .rejects.toThrow(/missing-command/)
+      .rejects.toThrow(/npm run check/)
   })
 })
