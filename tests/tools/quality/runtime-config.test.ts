@@ -35,6 +35,10 @@ describe('quality runtime and coverage configuration', () => {
         packageManager: { name: 'npm', version: '10.9.8', onFail: 'error' },
       },
     })
+    expect(packageJson.scripts?.test).toBe('vitest run --exclude "tests/tools/**"')
+    expect(packageJson.scripts?.['test:coverage']).toBe('vitest run --coverage --exclude "tests/tools/**"')
+    expect(packageJson.scripts?.['test:tools']).toBe('vitest run tests/tools')
+    expect(packageJson.scripts?.['test:watch']).toBe('vitest --exclude "tests/tools/**"')
     expect(packageJson.scripts?.check).toBe('npm run lint && npm run docs:check && npm run architecture:check && npm run test:coverage && npm run build')
     expect(packageLock.packages?.['']?.engines).toEqual(packageJson.engines)
   })
@@ -65,7 +69,8 @@ describe('quality runtime and coverage configuration', () => {
   it('declares global thresholds without auto-update or per-file enforcement', async () => {
     const viteConfig = await readFile(resolve(repositoryRoot, 'vite.config.ts'), 'utf8')
 
-    expect(viteConfig).toContain("include: ['src/**/*.{ts,tsx}', 'tools/**/*.ts']")
+    expect(viteConfig).toContain("include: ['src/**/*.{ts,tsx}']")
+    expect(viteConfig).not.toContain("'tools/**/*.ts'")
     expect(viteConfig).toContain('statements: 70')
     expect(viteConfig).toContain('branches: 55')
     expect(viteConfig).toContain('functions: 75')
@@ -121,7 +126,7 @@ describe('quality runtime and coverage configuration', () => {
       managedFiles?: Record<string, string>
     }
 
-    expect(manifest.baselineId).toBe('react-vite-ts-sdd-template@2026-08-29-plat-005')
+    expect(manifest.baselineId).toBe('react-vite-ts-sdd-template@2026-08-31-plat-006')
     expect(manifest.managedFiles).toBeDefined()
 
     for (const [path, expectedHash] of Object.entries(manifest.managedFiles ?? {})) {

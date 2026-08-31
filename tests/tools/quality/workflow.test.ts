@@ -21,7 +21,8 @@ describe('quality workflow', () => {
     expect(workflow).toContain('cache-dependency-path: package-lock.json')
 
     const commands = [...workflow.matchAll(/^\s+run:\s+(.+)$/gm)].map((match) => match[1])
-    expect(commands).toEqual(['npm ci', 'npm run check'])
+    expect(commands).toEqual(['npm ci', 'npm run check', 'npm run test:tools'])
+    expect(workflow).toContain("if: github.repository == 'tomasgomezabalos/react-vite-ts-sdd-template'")
     expect(workflow).not.toMatch(/secrets\.|npm publish|deploy/i)
   })
 })

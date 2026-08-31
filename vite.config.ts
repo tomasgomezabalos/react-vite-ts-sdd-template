@@ -20,11 +20,10 @@ export default defineConfig(({ mode }) => {
       restoreMocks: true,
       coverage: {
         provider: 'v8',
-        include: ['src/**/*.{ts,tsx}', 'tools/**/*.ts'],
+        include: ['src/**/*.{ts,tsx}'],
         exclude: [
           'src/**/*.d.ts',
           'src/**/types.ts',
-          'tools/**/types.ts',
           'tests/**',
         ],
         thresholds: {

@@ -34,7 +34,7 @@ Comprobación completa, utilizada también por CI:
 npm run check
 ```
 
-La puerta ejecuta una sola vez lint, integridad documental, límites arquitectónicos, pruebas con cobertura y build. Para aislar un diagnóstico pueden utilizarse:
+La puerta de aplicación ejecuta una sola vez lint, integridad documental, límites arquitectónicos, pruebas con cobertura y build. Excluye las pruebas propias de `tools/`. Para aislar un diagnóstico pueden utilizarse:
 
 ```bash
 npm run docs:check
@@ -48,11 +48,17 @@ Cobertura del código ejecutable:
 npm run test:coverage
 ```
 
-La cobertura utiliza V8 e incluye `src/**/*.{ts,tsx}` y `tools/**/*.ts`. Excluye pruebas, declaraciones `*.d.ts`, módulos exclusivamente de tipos y, por extensión, estilos y assets. El informe generado se guarda en `coverage/`, que queda fuera de Git y ESLint. Los mínimos globales son 70 % de statements, 55 % de branches, 75 % de functions y 75 % de lines; no se aplican umbrales por archivo ni actualización automática.
+La cobertura utiliza V8 e incluye únicamente `src/**/*.{ts,tsx}`. `npm test`, `npm run test:watch` y `npm run test:coverage` excluyen `tests/tools/**`; también quedan fuera declaraciones `*.d.ts`, módulos exclusivamente de tipos y, por extensión, estilos y assets. El informe generado se guarda en `coverage/`, que queda fuera de Git y ESLint. Los mínimos globales son 70 % de statements, 55 % de branches, 75 % de functions y 75 % de lines; no se aplican umbrales por archivo ni actualización automática.
+
+Las utilidades de la plantilla conservan una suite separada, sin formar parte de la cobertura de aplicación:
+
+```bash
+npm run test:tools
+```
 
 `docs:check` valida enlaces Markdown locales, índices y metadatos SDD objetivos sin acceder a la red ni decidir si una aprobación es auténtica. `architecture:check` valida imports resolubles y las fronteras objetivas de ADR-0008; no infiere si dos features o entidades hermanas comparten semántica. Superar la puerta no demuestra por sí solo corrección funcional completa, accesibilidad visual, ausencia de vulnerabilidades ni validez jurídica.
 
-`.github/workflows/quality.yml` ejecuta `npm ci` y la misma puerta en pushes a `main` y pull requests. Una inspección local del YAML no equivale a una ejecución real en GitHub.
+`.github/workflows/quality.yml` ejecuta `npm ci` y la misma puerta de aplicación en pushes a `main` y pull requests. Solo en el repositorio canónico `tomasgomezabalos/react-vite-ts-sdd-template` ejecuta además `npm run test:tools`; los proyectos derivados no incorporan esa suite a su puerta. Una inspección local del YAML no equivale a una ejecución real en GitHub.
 
 ## Estructura
 

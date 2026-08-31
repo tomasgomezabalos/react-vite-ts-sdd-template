@@ -23,6 +23,7 @@ Este directorio registra decisiones técnicas vinculantes y guías para aplicarl
 | ADR | Estado | Decisión efectiva | Relaciones principales |
 | --- | --- | --- | --- |
 | [ADR-0012](decisions/0012-bootstrap-minimo-y-descubrimiento-progresivo.md) | `APPROVED` | Reduce el bootstrap a destino e identidad y pospone el producto al flujo SDD. | Modifica parcialmente ADR-0010; su aplicación se especifica mediante PLAT-005. |
+| [ADR-0013](decisions/0013-separacion-pruebas-aplicacion-y-plantilla.md) | `APPROVED` | Separa las pruebas y cobertura de aplicación de la suite de mantenimiento de la plantilla. | Modifica parcialmente ADR-0011; su aplicación se especifica mediante PLAT-006. |
 
 ## Guías vigentes
 
