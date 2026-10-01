@@ -141,40 +141,53 @@ describe('project initialization', () => {
     expect(stableSnapshot(await snapshotProject(fixture.target))).toEqual(before)
   })
 
-  it('recovers an interrupted transaction only from matching hashes', async () => {
-    const fixture = await createProjectFixture()
-    cleanups.push(fixture.cleanup)
-    const id = randomUUID()
-    const originalPath = resolve(fixture.target, 'README.md')
-    const original = await readFile(originalPath, 'utf8')
-    const originalMode = (await stat(originalPath)).mode & 0o777
-    const changed = 'Interrupted output\n'
-    const root = resolve(fixture.target, '.template-transaction', id)
-    const backup = resolve(root, 'backup/README.md')
-    await mkdir(dirname(backup), { recursive: true })
-    await writeFile(backup, original)
-    await writeFile(originalPath, changed)
-    const journal: TransactionJournal = {
-      schemaVersion: 1,
-      id,
-      target: fixture.target,
-      status: 'applying',
-      operations: [{
-        path: 'README.md',
-        kind: 'modify',
-        beforeHash: hashText(original),
-        afterHash: hashText(changed),
-        mode: originalMode,
-        backupPath: 'backup/README.md',
-        applied: false,
-      }],
-    }
-    await writeFile(resolve(root, 'journal.json'), `${JSON.stringify(journal, null, 2)}\n`)
+  it.each(['interrupted', 'already restored', 'modified by user'] as const)(
+    'recovers safely when the file is %s', async (fileState) => {
+      const fixture = await createProjectFixture()
+      cleanups.push(fixture.cleanup)
+      const id = randomUUID()
+      const originalPath = resolve(fixture.target, 'README.md')
+      const original = await readFile(originalPath, 'utf8')
+      const originalMode = (await stat(originalPath)).mode & 0o777
+      const changed = 'Interrupted output\n'
+      const root = resolve(fixture.target, '.template-transaction', id)
+      const backup = resolve(root, 'backup/README.md')
+      await mkdir(dirname(backup), { recursive: true })
+      await writeFile(backup, original)
+      await writeFile(originalPath, changed)
+      const journal: TransactionJournal = {
+        schemaVersion: 1,
+        id,
+        target: fixture.target,
+        status: 'applying',
+        operations: [{
+          path: 'README.md',
+          kind: 'modify',
+          beforeHash: hashText(original),
+          afterHash: hashText(changed),
+          mode: originalMode,
+          backupPath: 'backup/README.md',
+          applied: false,
+        }],
+      }
+      await writeFile(resolve(root, 'journal.json'), `${JSON.stringify(journal, null, 2)}\n`)
 
-    expect(await hasTransaction(fixture.target, id)).toBe(true)
-    await recoverTransaction(fixture.target, id)
+      if (fileState === 'already restored') await writeFile(originalPath, original)
+      if (fileState === 'modified by user') await writeFile(originalPath, 'User changes\n')
 
-    expect(await readFile(originalPath, 'utf8')).toBe(original)
-    expect(await hasTransaction(fixture.target, id)).toBe(false)
-  })
+      expect(await hasTransaction(fixture.target, id)).toBe(true)
+      if (fileState === 'modified by user') {
+        await expect(recoverTransaction(fixture.target, id)).rejects.toThrow(/cambió después de la transacción/)
+        expect(await readFile(originalPath, 'utf8')).toBe('User changes\n')
+        expect(await readFile(backup, 'utf8')).toBe(original)
+        expect(await hasTransaction(fixture.target, id)).toBe(true)
+        return
+      }
+      await recoverTransaction(fixture.target, id)
+
+      expect(await readFile(originalPath, 'utf8')).toBe(original)
+      expect((await stat(originalPath)).mode & 0o777).toBe(originalMode)
+      expect(await hasTransaction(fixture.target, id)).toBe(false)
+    },
+  )
 })

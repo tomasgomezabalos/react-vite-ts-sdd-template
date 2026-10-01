@@ -237,7 +237,6 @@ export const recoverTransaction = async (
 ): Promise<void> => {
   if (!/^[0-9a-f-]{36}$/i.test(id)) throw new ProjectError('Identificador de transacción inválido.')
   await resolveSafePath(target, `.template-transaction/${id}/journal.json`)
-  const root = transactionDirectory(target, id)
   let journal: TransactionJournal
   try {
     journal = JSON.parse(await readFile(journalPath(target, id), 'utf8')) as TransactionJournal
@@ -247,11 +246,7 @@ export const recoverTransaction = async (
   if (journal.schemaVersion !== 1 || journal.id !== id || journal.target !== target) {
     throw new ProjectError(`El diario de la transacción ${id} no es válido para este destino.`)
   }
-  journal.status = 'rolling-back'
-  await writeJournal(target, journal)
-  for (const operation of [...journal.operations].reverse()) {
-    await restoreOperation(target, root, operation)
-  }
+  await rollback(target, journal)
   await cleanTransaction(target, id)
 }
 
