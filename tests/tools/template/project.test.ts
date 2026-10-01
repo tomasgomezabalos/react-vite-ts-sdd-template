@@ -68,6 +68,7 @@ describe('project safety', () => {
     ['tests/tools/template/cli.test.ts', 'tests/tools/template'],
     ['project.config.json', 'project.config.json'],
     ['.template-state.json', '.template-state.json'],
+    ['.claude/settings.local.json', '.claude/settings.local.json'],
   ])('rejects a target that contains the excluded path %s', async (file, reported) => {
     const fixture = await createProjectFixture()
     cleanups.push(fixture.cleanup)
