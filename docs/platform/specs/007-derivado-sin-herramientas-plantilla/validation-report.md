@@ -1,16 +1,16 @@
 # Informe de validación — PLAT-007 Proyecto derivado sin herramientas de plantilla
 
-**Estado de entrega:** IMPLEMENTED
+**Estado de entrega:** VALIDATED
 
 **Fecha de creación:** 2026-10-01
 
 **Fecha de implementación:** 2026-10-01
 
-**Fecha de validación:** Pendiente
+**Fecha de validación:** 2026-10-01
 
-**Aceptado por:** Pendiente
+**Aceptado por:** Tomás, usuario solicitante
 
-**Evidencia de aceptación:** Pendiente
+**Evidencia de aceptación:** Aceptación expresa «Sí, acepto PLAT-007 y PLAT-008 como validados» registrada en la conversación tras presentar la derivación real, la puerta de calidad en verde y el CI correcto.
 
 ## Alcance aprobado
 
@@ -36,7 +36,7 @@
 
 | Requisito o criterio | Código o documentación | Prueba o validación | Resultado |
 | --- | --- | --- | --- |
-| AC-01 | manifiesto, `project.ts`, `managed-files.ts`, skill | Derivación completa en copia temporal: preview (5 modificaciones), apply, doctor, `npm run test:tools` (5 archivos, 18 pruebas) y `npm run check` en el destino | Correcto; doctor sin `FAIL` y solo `UNKNOWN` en `SOURCE_REMOTE` por no existir remoto |
+| AC-01 | manifiesto, `project.ts`, `managed-files.ts`, skill | Derivación completa en copia temporal: preview (5 modificaciones), apply, doctor, `npm run test:tools` (5 archivos, 18 pruebas) y `npm run check` en el destino | Correcto, también con la skill real (ver la sección de prueba real) |
 | AC-02 | `findExcludedPaths` | `project.test.ts` (4 rutas) y copia ingenua en el destino temporal | Correcto: «El destino contiene rutas que no se derivan… tests/tools/template, tools/template» |
 | AC-03 | `buildPreview` | `initialization.test.ts` y repetición real en el destino temporal | Correcto: segunda ejecución con 5 `unchanged`; otra configuración rechazada |
 | AC-04 | `buildPreview` | `initialization.test.ts` («contenido no reconocido») | Correcto |
@@ -54,6 +54,22 @@
 | Derivación temporal: `template:init` (preview y apply), repetición, otra configuración y `template:doctor` | Ídem | Correcto según la tabla de trazabilidad |
 | `npm run docs:check`, `architecture:check`, `test:tools` y `check` en el destino derivado | Ídem | Correcto: sin `tools/template`, `tests/tools/template`, `project.config.json` ni `.template-state.json` |
 
+## Prueba real con la skill de derivación
+
+Derivación de `Prueba Derivada` (`prueba-derivada`) en `/tmp/prueba-derivada`, siguiendo `react-vite-ts-sdd-template-init` con la baseline `react-vite-ts-sdd-template@2026-10-01-plat-008`:
+
+| Paso | Resultado |
+| --- | --- |
+| Preview ejecutado desde la plantilla con configuración externa | Correcto: 5 modificaciones (`AGENTS.md`, `index.html`, `package-lock.json`, `package.json`, `README.md`) |
+| Apply con el token autorizado expresamente | Correcto: 5 operaciones, sin transacción pendiente |
+| `template:doctor` | 9 `PASS`, 0 `FAIL`, 1 `UNKNOWN` (`SOURCE_REMOTE`, sin remoto) |
+| Contenido del destino | Sin `project.config.json`, `.template-state.json`, `tools/template` ni `tests/tools/template`; `.claude` con `launch.json` y `skills`; 0 coincidencias de `template:` en `package.json`, `README.md` y `AGENTS.md` |
+| `npm ci` (autorizado) | Correcto |
+| `npm run check` en el destino | Correcto: 4 archivos y 6 pruebas, cobertura de `src/` al 100 % y build |
+| `npm run test:tools` en el destino | Correcto: 5 archivos y 18 pruebas |
+
+CI de GitHub Actions: ejecuciones del workflow `Quality` correctas en los commits de implementación, documentación, skill de proyecto, PLAT-008 y actualización de dependencias.
+
 ## Validación manual o de navegador
 
 - Cobertura: no aplica; no cambia la interfaz React.
@@ -62,10 +78,11 @@
 
 ## Desviaciones y riesgos residuales
 
+- Desviación: la prueba real reveló que la skill copiaba por directorio y arrastraba `.idea/`. Se corrigió en la skill externa para copiar solo los archivos versionados por Git (`git ls-files`); el conjunto resultante coincide con el anterior sin `.idea`.
+- Desviación: `npm audit` informó de 2 vulnerabilidades altas (`undici` por `jsdom` y `brace-expansion` por `eslint`), ajenas a este alcance. Se resolvieron aparte actualizando el lockfile dentro de los rangos declarados (`b151004`); `npm audit` informa 0.
 - Desviación: la skill externa se actualizó en la misma entrega, como autorizó expresamente la persona solicitante; su diff no forma parte del repositorio.
 - Riesgo residual: la idempotencia sin estado acepta como «sin cambios» un `package.json` que ya coincide con su salida renderizada aunque tenga contenido añadido posteriormente; nunca lo sobrescribe.
 - Riesgo residual: `MANAGED_OUTPUTS` solo describe la derivación recién aplicada; un proyecto evolucionado puede diferir legítimamente.
-- Riesgo residual: la ejecución real en GitHub Actions no se ha comprobado; el workflow no cambia.
 - Bloqueo: ninguno.
 
 ## Puerta de entrega
