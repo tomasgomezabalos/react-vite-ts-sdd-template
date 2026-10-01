@@ -15,10 +15,8 @@ import {
   createProjectFixture,
   repositoryRoot,
 } from './helpers/project-fixture.ts'
-import { pathExists } from '../../../tools/template/project.ts'
 
 const cleanups: Array<() => Promise<void>> = []
-const isDerivedProject = await pathExists(resolve(repositoryRoot, '.template-state.json'))
 
 afterEach(async () => {
   await Promise.all(cleanups.splice(0).map((cleanup) => cleanup()))
@@ -63,7 +61,7 @@ describe('template command line interfaces', () => {
     expect(formatError(new Error('example'), 'human')).toBe('ERROR: example')
   })
 
-  it.skipIf(isDerivedProject)('previews, applies and diagnoses through real Node processes', async () => {
+  it('previews, applies and diagnoses through real Node processes', async () => {
     const fixture = await createProjectFixture()
     cleanups.push(fixture.cleanup)
     const common = [

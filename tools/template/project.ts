@@ -12,7 +12,6 @@ import { fileURLToPath } from 'node:url'
 import { hashText, QUALITY_COMMAND } from './config.ts'
 import type {
   BaselineManifest,
-  InitializationState,
   ProjectConfig,
 } from './types.ts'
 
@@ -39,16 +38,29 @@ export const loadBaselineManifest = async (): Promise<BaselineManifest> => {
     typeof value !== 'object'
     || value === null
     || !('schemaVersion' in value)
-    || value.schemaVersion !== 1
+    || value.schemaVersion !== 2
     || !('baselineId' in value)
     || typeof value.baselineId !== 'string'
     || !('canonicalRemote' in value)
     || typeof value.canonicalRemote !== 'string'
+    || !('derivation' in value)
+    || typeof value.derivation !== 'object'
+    || value.derivation === null
+    || !('exclude' in value.derivation)
+    || !Array.isArray(value.derivation.exclude)
     || !('managedFiles' in value)
     || typeof value.managedFiles !== 'object'
     || value.managedFiles === null
   ) {
     throw new ProjectError('El manifiesto de baseline no cumple el contrato esperado.')
+  }
+  if (
+    value.derivation.exclude.length === 0
+    || value.derivation.exclude.some((pattern: unknown) =>
+      typeof pattern !== 'string' || pattern.trim() === '' || isAbsolute(pattern)
+      || pattern.split('/').includes('..'))
+  ) {
+    throw new ProjectError('El manifiesto contiene una exclusión de derivación inválida.')
   }
   if (
     Object.entries(value.managedFiles).some(([path, hash]) =>
@@ -152,6 +164,31 @@ export const readOriginRemote = (target: string): string | null => {
   return normalizeRemote(result.stdout)
 }
 
+const lstatExists = async (path: string): Promise<boolean> => {
+  try {
+    await lstat(path)
+    return true
+  } catch (error) {
+    if ((error as NodeJS.ErrnoException).code === 'ENOENT') return false
+    throw error
+  }
+}
+
+export const findExcludedPaths = async (
+  target: string,
+  patterns: string[],
+): Promise<string[]> => {
+  const present: string[] = []
+  for (const pattern of patterns) {
+    const path = pattern.endsWith('/**') ? pattern.slice(0, -3) : pattern
+    if (path.includes('*')) {
+      throw new ProjectError(`Patrón de exclusión no soportado: ${pattern}`)
+    }
+    if (await lstatExists(resolve(target, path))) present.push(path)
+  }
+  return present.sort()
+}
+
 export const assertProjectContext = async (
   target: string,
   config: ProjectConfig,
@@ -171,16 +208,11 @@ export const assertProjectContext = async (
     throw new ProjectError('El destino conserva el remoto canónico de la plantilla fuente.')
   }
 
-  const existingState = await readInitializationState(target)
-  if (!existingState) {
-    for (const [path, expectedHash] of Object.entries(manifest.managedFiles)) {
-      const file = await readProjectFile(target, path)
-      if (!file || file.hash !== expectedHash) {
-        throw new ProjectError(
-          `El destino no coincide con la baseline reconocida: ${path}.`,
-        )
-      }
-    }
+  const present = await findExcludedPaths(target, manifest.derivation.exclude)
+  if (present.length > 0) {
+    throw new ProjectError(
+      `El destino contiene rutas que no se derivan y debe copiarse respetando derivation.exclude: ${present.join(', ')}.`,
+    )
   }
 
   const packageFile = await readProjectFile(target, 'package.json')
@@ -195,28 +227,6 @@ export const assertProjectContext = async (
     throw new ProjectError(
       `La baseline no contiene el comando de calidad heredado: ${QUALITY_COMMAND}`,
     )
-  }
-}
-
-export const readInitializationState = async (
-  target: string,
-): Promise<InitializationState | null> => {
-  const file = await readProjectFile(target, '.template-state.json')
-  if (!file) return null
-  try {
-    const value = JSON.parse(file.content) as InitializationState
-    if (
-      value.schemaVersion !== 2
-      || typeof value.baselineId !== 'string'
-      || typeof value.configDigest !== 'string'
-      || typeof value.managedFiles !== 'object'
-      || value.managedFiles === null
-    ) {
-      throw new Error('estado incompleto')
-    }
-    return value
-  } catch {
-    throw new ProjectError('.template-state.json no contiene un estado válido.')
   }
 }
 

@@ -167,34 +167,36 @@ Esta base se utiliza siempre para crear una copia nueva; el bootstrap no adopta 
 
 ### Inicialización segura
 
-1. Crear una copia nueva de la plantilla en el destino absoluto elegido, sin reutilizar `.git`, `node_modules`, `dist` ni `coverage`.
-2. Elegir el nombre visible. Proponer el nombre npm de forma determinista en minúsculas y con separadores `-`, confirmarlo o corregirlo, y crear `project.config.json` con únicamente `schemaVersion: 2` e `identity.displayName` / `identity.packageName`. El ejemplo y el esquema están en `tools/template/`.
+El bootstrap y el diagnóstico se ejecutan siempre desde esta plantilla contra el destino (`--target`). El proyecto derivado no recibe `tools/template/**`, `tests/tools/template/**`, `project.config.json` ni `.template-state.json` ([ADR-0014](docs/architecture/decisions/0014-derivados-sin-herramientas-de-plantilla.md)).
+
+1. Crear una copia nueva de la plantilla en el destino absoluto elegido, sin `.git`, `node_modules`, `dist`, `coverage` ni las rutas de `derivation.exclude` de `tools/template/baseline-manifest.json`. `template:init` rechaza un destino que las contenga.
+2. Elegir el nombre visible. Proponer el nombre npm de forma determinista en minúsculas y con separadores `-`, confirmarlo o corregirlo, y crear una configuración **fuera del destino** con únicamente `schemaVersion: 2` e `identity.displayName` / `identity.packageName`. El ejemplo y el esquema están en `tools/template/`.
 
 La versión inicial es `0.1.0`, el título HTML coincide con el nombre visible y el idioma, la ruta base y `npm run check` se heredan de la baseline. No son preguntas ni campos configurables del bootstrap.
 
-3. Previsualizar sin escritura:
+3. Previsualizar sin escritura, desde la plantilla:
 
 ```bash
-npm run template:init -- --target . --config project.config.json
+npm run template:init -- --target <destino> --config <configuracion.json>
 ```
 
 4. Revisar todos los archivos y conservar el token SHA-256 mostrado.
 5. Aplicar exactamente ese estado:
 
 ```bash
-npm run template:init -- --target . --config project.config.json --apply --preview-token <sha256>
+npm run template:init -- --target <destino> --config <configuracion.json> --apply --preview-token <sha256>
 ```
 
-El token deja de ser válido si cambia la configuración, el destino o cualquier archivo gestionado. La aplicación rechaza el remoto canónico de la plantilla, archivos desconocidos y una inicialización distinta. Utiliza un diario transaccional y solo escribe `.template-state.json` al completar el conjunto. Si una interrupción deja un diario, la herramienta bloqueará otra aplicación e indicará el identificador que debe revisarse antes de ejecutar `--recover <id>`.
+El token deja de ser válido si cambia la configuración, el destino o cualquier archivo gestionado. La aplicación rechaza el remoto canónico de la plantilla, archivos desconocidos o divergentes y una inicialización con otra configuración. Es idempotente sin estado persistido: repetirla con la misma configuración no cambia nada. Utiliza un diario transaccional; si una interrupción deja un diario, la herramienta bloqueará otra aplicación e indicará el identificador que debe revisarse antes de ejecutar `--recover <id>`.
 
-La configuración y `.template-state.json` no contienen secretos ni decisiones de producto y están pensados para versionarse. La inicialización no genera visión, métricas, despliegue ni `.env.example`; tampoco instala dependencias, modifica Git, usa la red, publica o despliega.
+En el destino modifica `package.json` y `package-lock.json` (identidad y retirada de los scripts `template:*`), `index.html` (título), `README.md` (renderizado sin referencias al bootstrap) y `AGENTS.md` (sin el bloque `template-only`). La inicialización no genera visión, métricas, despliegue ni `.env.example`; tampoco instala dependencias, modifica Git, usa la red, publica o despliega.
 
 ### Diagnóstico
 
 ```bash
-npm run template:doctor -- --target . --config project.config.json
+npm run template:doctor -- --target <destino> --config <configuracion.json>
 ```
 
-`template:doctor` es de solo lectura: clasifica comprobaciones técnicas como `PASS`, `WARN`, `FAIL` o `UNKNOWN` y admite `--format json`. No evalúa preparación funcional ni decisiones de producto o despliegue. La búsqueda de secretos, placeholders y vulnerabilidades está limitada a patrones observables y no sustituye una auditoría.
+`template:doctor` es de solo lectura: clasifica comprobaciones técnicas como `PASS`, `WARN`, `FAIL` o `UNKNOWN` y admite `--format json`. Debe ejecutarse justo después de aplicar; comprueba que las salidas gestionadas coinciden con la configuración y no evalúa preparación funcional ni decisiones de producto o despliegue. La búsqueda de secretos, placeholders y vulnerabilidades está limitada a patrones observables y no sustituye una auditoría.
 
 [PLAT-003](docs/platform/specs/003-inicializacion-segura-proyecto/spec.md) conserva las garantías operativas y [PLAT-005](docs/platform/specs/005-bootstrap-minimo-progresivo/spec.md) define el contrato mínimo vigente.

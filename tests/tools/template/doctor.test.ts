@@ -1,7 +1,7 @@
 // @vitest-environment node
 
 import { spawnSync } from 'node:child_process'
-import { writeFile } from 'node:fs/promises'
+import { readFile, writeFile } from 'node:fs/promises'
 import { resolve } from 'node:path'
 import { afterEach, describe, expect, it } from 'vitest'
 import {
@@ -43,6 +43,11 @@ describe('template doctor', () => {
     const diagnostics = await runDiagnostics(fixture.target, fixture.config, manifest)
 
     expect(diagnostics.some((diagnostic) => diagnostic.status === 'FAIL')).toBe(false)
+    expect(diagnostics).toContainEqual(expect.objectContaining({
+      code: 'MANAGED_OUTPUTS',
+      status: 'PASS',
+    }))
+    expect(diagnostics.some((diagnostic) => diagnostic.code === 'INITIALIZATION_STATE')).toBe(false)
     expect(diagnostics.some((diagnostic) => diagnostic.code === 'PRODUCT_VISION')).toBe(false)
     expect(diagnostics.some((diagnostic) => diagnostic.code === 'DEPLOYMENT_DECISIONS')).toBe(false)
     expect(diagnostics.some((diagnostic) => diagnostic.code === 'PENDING_DECISION')).toBe(false)
@@ -53,6 +58,25 @@ describe('template doctor', () => {
     }))
     expect(await snapshotProject(fixture.target)).toEqual(before)
     expect(spawnSync('git', ['-C', fixture.target, 'status', '--porcelain=v1'], { encoding: 'utf8' }).stdout).toBe(gitBefore)
+  })
+
+  it('fails managed outputs when a derived file diverges from the configuration', async () => {
+    const fixture = await createProjectFixture()
+    cleanups.push(fixture.cleanup)
+    const manifest = fixture.manifest
+    await applyPreview(await buildPreview(fixture.target, fixture.config, manifest))
+    const agents = resolve(fixture.target, 'AGENTS.md')
+    await writeFile(agents, `${await readFile(agents, 'utf8')}<!-- template-only:start -->\nx\n<!-- template-only:end -->\n`)
+    const before = await snapshotProject(fixture.target)
+
+    const diagnostics = await runDiagnostics(fixture.target, fixture.config, manifest)
+
+    expect(diagnostics).toContainEqual(expect.objectContaining({
+      code: 'MANAGED_OUTPUTS',
+      status: 'FAIL',
+      message: expect.stringContaining('AGENTS.md'),
+    }))
+    expect(await snapshotProject(fixture.target)).toEqual(before)
   })
 
   it('reports known secret filenames without reading or printing their values', async () => {

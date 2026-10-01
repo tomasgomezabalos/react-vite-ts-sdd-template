@@ -143,11 +143,7 @@ export const applyPreview = async (
 ): Promise<{ transactionId: string | null; changed: number }> => {
   const changes = preview.operations
     .filter((operation) => operation.kind !== 'unchanged')
-    .sort((left, right) => {
-      if (left.path === '.template-state.json') return 1
-      if (right.path === '.template-state.json') return -1
-      return left.path.localeCompare(right.path)
-    })
+    .sort((left, right) => left.path.localeCompare(right.path))
   for (const operation of preview.operations) await assertCurrentHash(preview.target, operation)
   if (changes.length === 0) return { transactionId: null, changed: 0 }
 

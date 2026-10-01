@@ -44,6 +44,7 @@ export const createProjectFixture = async (): Promise<{
   cleanup: () => Promise<void>
 }> => {
   const target = await mkdtemp(join(tmpdir(), 'template-project-'))
+  const configDirectory = await mkdtemp(join(tmpdir(), 'template-config-'))
   const sourceManifest = await readFixtureManifest()
   const required = new Set([
     ...Object.keys(sourceManifest.managedFiles),
@@ -64,14 +65,17 @@ export const createProjectFixture = async (): Promise<{
   }
   const manifest: BaselineManifest = { ...sourceManifest, managedFiles }
   const config = await readExampleConfig()
-  const configPath = resolve(target, 'project.config.json')
+  const configPath = resolve(configDirectory, 'project.config.json')
   await writeFile(configPath, `${JSON.stringify(config, null, 2)}\n`)
   return {
     target,
     configPath,
     config,
     manifest,
-    cleanup: () => rm(target, { recursive: true, force: true }),
+    cleanup: async () => {
+      await rm(target, { recursive: true, force: true })
+      await rm(configDirectory, { recursive: true, force: true })
+    },
   }
 }
 

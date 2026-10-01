@@ -1,19 +1,17 @@
 import { readdir } from 'node:fs/promises'
 import { resolve } from 'node:path'
 import {
-  configDigest,
   effectiveProjectConfig,
   QUALITY_COMMAND,
 } from './config.ts'
+import { renderManagedOutputs } from './managed-files.ts'
 import {
-  readInitializationState,
   readOriginRemote,
   readProjectFile,
 } from './project.ts'
 import type {
   BaselineManifest,
   Diagnostic,
-  InitializationState,
   ProjectConfig,
 } from './types.ts'
 
@@ -282,46 +280,28 @@ export const runDiagnostics = async (
     'La comprobación se limita a patrones y archivos declarados por la baseline.',
   ))
 
-  let state: InitializationState | null
-  let stateError: string | null = null
+  let outputsError: string | null = null
+  const mismatches: string[] = []
   try {
-    state = await readInitializationState(target)
-  } catch (error) {
-    stateError = error instanceof Error ? error.message : String(error)
-    state = null
-  }
-  if (stateError) {
-    diagnostics.push(result(
-      'INITIALIZATION_STATE',
-      'FAIL',
-      `El estado de inicialización no es legible: ${stateError}`,
-      '.template-state.json',
-    ))
-  } else if (!state) {
-    diagnostics.push(result(
-      'INITIALIZATION_STATE',
-      'FAIL',
-      'Falta .template-state.json.',
-      '.template-state.json',
-    ))
-  } else {
-    const mismatches: string[] = []
-    for (const [path, expectedHash] of Object.entries(state.managedFiles)) {
+    const outputs = await renderManagedOutputs(target, config)
+    for (const [path, expected] of outputs) {
       const file = await readProjectFile(target, path)
-      if ((file?.hash ?? null) !== expectedHash) mismatches.push(path)
+      if (file?.content !== expected) mismatches.push(path)
     }
-    const stateOk = state.baselineId === manifest.baselineId
-      && state.configDigest === configDigest(config)
-      && mismatches.length === 0
-    diagnostics.push(result(
-      'INITIALIZATION_STATE',
-      stateOk ? 'PASS' : 'FAIL',
-      stateOk
-        ? 'El estado de inicialización coincide con configuración y archivos.'
-        : `El estado no coincide${mismatches.length > 0 ? `: ${mismatches.join(', ')}` : '.'}`,
-      '.template-state.json',
-    ))
+  } catch (error) {
+    outputsError = error instanceof Error ? error.message : String(error)
   }
+  diagnostics.push(result(
+    'MANAGED_OUTPUTS',
+    outputsError === null && mismatches.length === 0 ? 'PASS' : 'FAIL',
+    outputsError !== null
+      ? `No se pueden comprobar las salidas gestionadas: ${outputsError}`
+      : mismatches.length === 0
+        ? 'Las salidas gestionadas coinciden con la configuración suministrada.'
+        : `Las salidas gestionadas no coinciden con la configuración: ${mismatches.join(', ')}.`,
+    undefined,
+    'Se comprueba la derivación recién aplicada; un proyecto que ya evolucionó puede diferir legítimamente.',
+  ))
 
   const remote = readOriginRemote(target)
   const sourceRemote = canonicalRemote(manifest.canonicalRemote)
@@ -335,7 +315,7 @@ export const runDiagnostics = async (
         : 'El remoto origin es distinto del origen de la plantilla.',
     undefined,
     remote === null
-      ? 'Sin remoto observable, la procedencia se limita al fingerprint local de baseline y al estado de inicialización.'
+      ? 'Sin remoto observable, la procedencia se limita al fingerprint local de baseline y a las salidas gestionadas.'
       : undefined,
   ))
 

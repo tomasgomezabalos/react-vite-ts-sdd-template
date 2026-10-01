@@ -1,7 +1,7 @@
 // @vitest-environment node
 
 import { spawnSync } from 'node:child_process'
-import { mkdtemp, readFile, rm, symlink, writeFile } from 'node:fs/promises'
+import { mkdir, mkdtemp, readFile, rm, symlink, writeFile } from 'node:fs/promises'
 import { tmpdir } from 'node:os'
 import { join, resolve } from 'node:path'
 import { afterEach, describe, expect, it } from 'vitest'
@@ -61,6 +61,21 @@ describe('project safety', () => {
       fixture.config,
       fixture.manifest,
     )).resolves.toBeUndefined()
+  })
+
+  it.each([
+    ['tools/template/init.ts', 'tools/template'],
+    ['tests/tools/template/cli.test.ts', 'tests/tools/template'],
+    ['project.config.json', 'project.config.json'],
+    ['.template-state.json', '.template-state.json'],
+  ])('rejects a target that contains the excluded path %s', async (file, reported) => {
+    const fixture = await createProjectFixture()
+    cleanups.push(fixture.cleanup)
+    await mkdir(resolve(fixture.target, file, '..'), { recursive: true })
+    await writeFile(resolve(fixture.target, file), 'x')
+
+    await expect(assertProjectContext(fixture.target, fixture.config, fixture.manifest))
+      .rejects.toThrow(new RegExp(`derivation\\.exclude.*${reported.replaceAll('.', '\\.')}`))
   })
 
   it('rejects a baseline without the inherited quality command', async () => {

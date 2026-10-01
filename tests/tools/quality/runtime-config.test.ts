@@ -1,7 +1,6 @@
 // @vitest-environment node
 
 import { spawnSync } from 'node:child_process'
-import { createHash } from 'node:crypto'
 import { readFile } from 'node:fs/promises'
 import { resolve } from 'node:path'
 import { afterEach, describe, expect, it } from 'vitest'
@@ -120,18 +119,16 @@ describe('quality runtime and coverage configuration', () => {
     expect(`${result.stdout}${result.stderr}`).toMatch(/coverage for (branches|lines|statements).*does not meet global threshold/i)
   })
 
-  it('keeps the bootstrap baseline hashes synchronized with managed files', async () => {
-    const manifest = JSON.parse(await readFile(resolve(repositoryRoot, 'tools/template/baseline-manifest.json'), 'utf8')) as {
-      baselineId?: string
-      managedFiles?: Record<string, string>
-    }
+  it('separates the application and tools Vitest projects', async () => {
+    const viteConfig = await readFile(resolve(repositoryRoot, 'vite.config.ts'), 'utf8')
 
-    expect(manifest.baselineId).toBe('react-vite-ts-sdd-template@2026-08-31-plat-006')
-    expect(manifest.managedFiles).toBeDefined()
-
-    for (const [path, expectedHash] of Object.entries(manifest.managedFiles ?? {})) {
-      const content = await readFile(resolve(repositoryRoot, path))
-      expect(createHash('sha256').update(content).digest('hex'), path).toBe(expectedHash)
-    }
+    expect(viteConfig).toContain('projects: [')
+    expect(viteConfig).toContain("name: 'app'")
+    expect(viteConfig).toContain("name: 'tools'")
+    expect(viteConfig).toContain("exclude: ['tests/tools/**']")
+    expect(viteConfig).toContain("include: ['tests/tools/**/*.test.ts']")
+    expect(viteConfig.match(/extends: true/g)).toHaveLength(2)
+    const toolsProject = viteConfig.slice(viteConfig.indexOf("name: 'tools'"))
+    expect(toolsProject.slice(0, toolsProject.indexOf(']'))).not.toContain('setupFiles')
   })
 })

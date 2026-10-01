@@ -51,7 +51,7 @@ export const formatApplyResult = (
     status: changed === 0 ? 'UNCHANGED' : 'APPLIED',
     changed,
     nextSteps: [
-      'Ejecutar template:doctor.',
+      'Ejecutar template:doctor desde la plantilla contra este destino.',
       'Iniciar el descubrimiento SDD cuando exista una necesidad de producto real.',
       'Autorizar separadamente instalación, commit y publicación cuando proceda.',
     ],

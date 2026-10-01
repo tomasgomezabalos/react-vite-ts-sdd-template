@@ -7,17 +7,19 @@ import {
 } from './config.ts'
 import {
   ProjectError,
-  readInitializationState,
   readProjectFile,
 } from './project.ts'
 import type {
   BaselineManifest,
   EffectiveProjectConfig,
   FileOperation,
-  InitializationState,
   Preview,
   ProjectConfig,
 } from './types.ts'
+
+const TEMPLATE_SCRIPTS = ['template:init', 'template:doctor'] as const
+const TEMPLATE_ONLY_START = '<!-- template-only:start -->'
+const TEMPLATE_ONLY_END = '<!-- template-only:end -->'
 
 const prettyJson = (value: unknown): string => `${JSON.stringify(value, null, 2)}\n`
 
@@ -54,10 +56,6 @@ Puerta de calidad:
 El proyecto arranca sin visión ni features de producto artificiales. Cuando exista una necesidad real, el descubrimiento y las decisiones correspondientes se documentan mediante el flujo SDD.
 
 La arquitectura heredada es una SPA renderizada en cliente. Una necesidad confirmada de SSR, SSG, React Server Components, backend o rutas de servidor exige revisar la idoneidad y aprobar otra decisión antes de implementarla.
-
-## Diagnóstico de la derivación
-
-\`npm run template:doctor -- --target . --config project.config.json\` inspecciona la coherencia técnica local sin corregir archivos. Sus comprobaciones de secretos y seguridad son limitadas y no sustituyen una auditoría.
 `
 
 const updatePackageJson = (
@@ -67,7 +65,29 @@ const updatePackageJson = (
   const value = JSON.parse(content) as Record<string, unknown>
   value.name = config.identity.packageName
   value.version = config.identity.packageVersion
+  if (typeof value.scripts === 'object' && value.scripts !== null) {
+    const scripts = { ...(value.scripts as Record<string, unknown>) }
+    for (const name of TEMPLATE_SCRIPTS) delete scripts[name]
+    value.scripts = scripts
+  }
   return prettyJson(value)
+}
+
+export const removeTemplateOnlyBlocks = (content: string): string => {
+  const starts = content.split(TEMPLATE_ONLY_START).length - 1
+  const ends = content.split(TEMPLATE_ONLY_END).length - 1
+  if (starts !== ends) {
+    throw new ProjectError('AGENTS.md contiene marcadores template-only desbalanceados.')
+  }
+  const block = new RegExp(
+    `^${TEMPLATE_ONLY_START}\\n[\\s\\S]*?^${TEMPLATE_ONLY_END}\\n`,
+    'gm',
+  )
+  const result = content.replace(block, '')
+  if (result.includes(TEMPLATE_ONLY_START) || result.includes(TEMPLATE_ONLY_END)) {
+    throw new ProjectError('Los marcadores template-only de AGENTS.md deben ocupar su propia línea y estar emparejados.')
+  }
+  return result
 }
 
 const updatePackageLock = (
@@ -108,15 +128,17 @@ const loadRequiredContent = async (target: string, path: string): Promise<string
   return file.content
 }
 
-const renderDesiredFiles = async (
+export const renderManagedOutputs = async (
   target: string,
   config: ProjectConfig,
-): Promise<Map<string, string | null>> => {
+): Promise<Map<string, string>> => {
   const effective = effectiveProjectConfig(config)
   const packageJson = await loadRequiredContent(target, 'package.json')
   const packageLock = await loadRequiredContent(target, 'package-lock.json')
   const indexHtml = await loadRequiredContent(target, 'index.html')
-  return new Map<string, string | null>([
+  const agents = await loadRequiredContent(target, 'AGENTS.md')
+  return new Map<string, string>([
+    ['AGENTS.md', removeTemplateOnlyBlocks(agents)],
     ['package.json', updatePackageJson(packageJson, effective)],
     ['package-lock.json', updatePackageLock(packageLock, effective)],
     ['index.html', updateIndexHtml(indexHtml, effective)],
@@ -124,76 +146,45 @@ const renderDesiredFiles = async (
   ])
 }
 
-const stateContent = (
-  config: ProjectConfig,
-  manifest: BaselineManifest,
-  desired: Map<string, string | null>,
-): string => {
-  const managedFiles = Object.fromEntries([...desired.entries()]
-    .sort(([left], [right]) => left.localeCompare(right))
-    .map(([path, content]) => [path, content === null ? null : hashText(content)]))
-  const state: InitializationState = {
-    schemaVersion: 2,
-    baselineId: manifest.baselineId,
-    configDigest: configDigest(config),
-    managedFiles,
-  }
-  return prettyJson(state)
-}
-
-const assertExistingState = async (
-  target: string,
-  state: InitializationState,
-  config: ProjectConfig,
-  manifest: BaselineManifest,
-) => {
-  if (state.baselineId !== manifest.baselineId) {
-    throw new ProjectError('El proyecto fue inicializado con otra baseline.')
-  }
-  if (state.configDigest !== configDigest(config)) {
-    throw new ProjectError('El proyecto ya fue inicializado con una configuración diferente.')
-  }
-  for (const [path, expectedHash] of Object.entries(state.managedFiles)) {
-    const current = await readProjectFile(target, path)
-    if ((current?.hash ?? null) !== expectedHash) {
-      throw new ProjectError(`El archivo inicializado fue modificado y no se sobrescribirá: ${path}`)
-    }
-  }
-}
-
 export const buildPreview = async (
   target: string,
   config: ProjectConfig,
   manifest: BaselineManifest,
 ): Promise<Preview> => {
-  const existingState = await readInitializationState(target)
-  if (existingState) await assertExistingState(target, existingState, config, manifest)
+  const desired = await renderManagedOutputs(target, config)
 
-  const desired = await renderDesiredFiles(target, config)
-  desired.set('.template-state.json', stateContent(config, manifest, desired))
+  for (const [path, expectedHash] of Object.entries(manifest.managedFiles)) {
+    if (desired.has(path)) continue
+    const file = await readProjectFile(target, path)
+    if (!file || file.hash !== expectedHash) {
+      throw new ProjectError(`El destino no coincide con la baseline reconocida: ${path}.`)
+    }
+  }
 
   const operations: FileOperation[] = []
   for (const [path, content] of [...desired.entries()].sort(([left], [right]) =>
     left.localeCompare(right))) {
     const current = await readProjectFile(target, path)
-    const afterHash = content === null ? null : hashText(content)
-    if (!existingState && current) {
-      const baselineHash = manifest.managedFiles[path]
-      if (!baselineHash || current.hash !== baselineHash) {
-        throw new ProjectError(`El archivo contiene contenido no reconocido y no se sobrescribirá: ${path}`)
-      }
+    const afterHash = hashText(content)
+    const baselineHash = manifest.managedFiles[path]
+    if (!current && baselineHash) {
+      throw new ProjectError(`El destino no coincide con la baseline reconocida: falta ${path}.`)
+    }
+    if (current && current.hash !== baselineHash && current.hash !== afterHash) {
+      throw new ProjectError(
+        `El archivo contiene contenido no reconocido (no coincide con la baseline ni con la salida de esta configuración) y no se sobrescribirá: ${path}`,
+      )
     }
     let kind: FileOperation['kind']
-    if (!current && content !== null) kind = 'create'
-    else if (current && content === null) kind = 'delete'
-    else if ((current?.hash ?? null) === afterHash) kind = 'unchanged'
+    if (!current) kind = 'create'
+    else if (current.hash === afterHash) kind = 'unchanged'
     else kind = 'modify'
     operations.push({
       kind,
       path,
       beforeHash: current?.hash ?? null,
       afterHash,
-      content: content ?? undefined,
+      content,
       mode: current?.mode ?? 0o644,
     })
   }

@@ -49,17 +49,22 @@ Al finalizar un alcance `FULL` o un `QUICK` que necesite evidencia persistente, 
 ## Alcance y derivación de la plantilla
 
 - Aplicar ADR-0010 y ADR-0012: esta baseline está destinada a SPA React renderizadas en cliente, construidas con Vite y React Router declarativo; solicitarla expresamente selecciona esa arquitectura.
+<!-- template-only:start -->
 - Derivar únicamente una copia nueva y reconocible de la plantilla; no adoptar ni reconfigurar proyectos existentes mediante el bootstrap.
 - Solicitar solo el destino absoluto y el nombre visible, proponer un nombre npm determinista y confirmar o corregir esa identidad antes del preview.
 - No preguntar ni persistir durante el bootstrap visión, métricas, idoneidad detallada, idiomas, soporte, despliegue, entornos, repositorio, licencia, historial o calidad. Esas decisiones se incorporarán después mediante el flujo SDD cuando exista una necesidad real.
+<!-- template-only:end -->
 - Detener la derivación antes de escribir únicamente cuando se declare un requisito confirmado que no encaje con la SPA cliente; una incompatibilidad descubierta después requiere una decisión SDD antes del alcance afectado.
 - Mantener el contrato e histórico de plataforma en `docs/platform/` y reservar `specs/` para visión, features, cambios y validaciones del producto derivado.
 - No renombrar ni eliminar artefactos históricos de plataforma para reutilizar sus identificadores; utilizar los alias definidos en `docs/platform/README.md`.
+<!-- template-only:start -->
 - No asumir remoto, credenciales, licencia, visibilidad ni estrategia Git durante una derivación.
 - Mantener bootstrap y diagnóstico separados conforme a PLAT-003 y PLAT-005: `template:doctor` será de solo lectura, comprobará solo la derivación técnica y no corregirá archivos.
-- Antes de ejecutar el bootstrap, revisar `project.config.json`, ejecutar el modo preview y presentar su lista de operaciones y token; `--apply` requiere autorización expresa para ese token y estado.
+- Antes de ejecutar el bootstrap, revisar la configuración (`project.config.json` ubicado fuera del destino), ejecutar el modo preview y presentar su lista de operaciones y token; `--apply` requiere autorización expresa para ese token y estado.
 - No aplicar el bootstrap sobre el remoto canónico de la plantilla ni forzar archivos, symlinks o contenido divergente. Una recuperación transaccional requiere revisar el identificador y autorizar `--recover` expresamente.
 - No añadir secretos a `project.config.json`; la inicialización no autoriza instalaciones, cambios Git, red, commit, despliegue ni publicación.
+- Aplicar ADR-0014: ejecutar `template:init` y `template:doctor` desde la plantilla contra `--target`; copiar la plantilla respetando `derivation.exclude` de `tools/template/baseline-manifest.json`, de modo que el derivado no reciba `tools/template/**`, `tests/tools/template/**`, `project.config.json` ni `.template-state.json`. Al modificar `tools/template/`, regenerar los hashes del manifiesto.
+<!-- template-only:end -->
 
 ## Organización modular
 

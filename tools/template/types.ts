@@ -14,9 +14,12 @@ export type EffectiveProjectConfig = ProjectConfig & {
 }
 
 export type BaselineManifest = {
-  schemaVersion: 1
+  schemaVersion: 2
   baselineId: string
   canonicalRemote: string
+  derivation: {
+    exclude: string[]
+  }
   managedFiles: Record<string, string>
 }
 
@@ -29,13 +32,6 @@ export type FileOperation = {
   afterHash: string | null
   content?: string
   mode: number
-}
-
-export type InitializationState = {
-  schemaVersion: 2
-  baselineId: string
-  configDigest: string
-  managedFiles: Record<string, string | null>
 }
 
 export type Preview = {

@@ -14,8 +14,26 @@ export default defineConfig(({ mode }) => {
     publicDir: isMockMode ? 'mocks/public' : 'public',
     plugins: [react(), isMockMode && mockEntryPlugin],
     test: {
-      environment: 'jsdom',
-      setupFiles: ['./tests/setup/vitest.setup.ts'],
+      projects: [
+        {
+          extends: true,
+          test: {
+            name: 'app',
+            include: ['tests/**/*.test.{ts,tsx}'],
+            exclude: ['tests/tools/**'],
+            environment: 'jsdom',
+            setupFiles: ['./tests/setup/vitest.setup.ts'],
+          },
+        },
+        {
+          extends: true,
+          test: {
+            name: 'tools',
+            include: ['tests/tools/**/*.test.ts'],
+            environment: 'node',
+          },
+        },
+      ],
       clearMocks: true,
       restoreMocks: true,
       coverage: {

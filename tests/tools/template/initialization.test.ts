@@ -81,14 +81,30 @@ describe('project initialization', () => {
     }
     expect(first.changed).toBeGreaterThan(0)
     expect(packageJson).toMatchObject({ name: 'example-project', version: '0.1.0' })
-    expect(await readProjectFile(fixture.target, '.template-state.json')).not.toBeNull()
+    expect(await readProjectFile(fixture.target, '.template-state.json')).toBeNull()
     expect(preview.operations.map(({ path }) => path).sort()).toEqual([
-      '.template-state.json',
+      'AGENTS.md',
       'README.md',
       'index.html',
       'package-lock.json',
       'package.json',
     ])
+    const outputs = {
+      agents: await readFile(resolve(fixture.target, 'AGENTS.md'), 'utf8'),
+      readme: await readFile(resolve(fixture.target, 'README.md'), 'utf8'),
+      scripts: (JSON.parse(await readFile(resolve(fixture.target, 'package.json'), 'utf8')) as {
+        scripts: Record<string, string>
+      }).scripts,
+    }
+    expect(outputs.agents).not.toContain('template-only')
+    expect(outputs.agents).not.toContain('template:init')
+    expect(outputs.agents).toContain('ADR-0010 y ADR-0012')
+    expect(outputs.agents).toContain('docs/platform/')
+    expect(outputs.readme).not.toContain('template:')
+    expect(outputs.scripts).not.toHaveProperty('template:init')
+    expect(outputs.scripts).not.toHaveProperty('template:doctor')
+    expect(outputs.scripts).toHaveProperty('check')
+    expect(outputs.scripts).toHaveProperty('test:tools')
     expect(await readProjectFile(fixture.target, '.env.example')).toBeNull()
     expect(await readProjectFile(fixture.target, 'specs/product-vision.md')).toBeNull()
 
@@ -102,7 +118,7 @@ describe('project initialization', () => {
     const changedConfig = structuredClone(fixture.config)
     changedConfig.identity.displayName = 'Different Project'
     await expect(buildPreview(fixture.target, changedConfig, manifest))
-      .rejects.toThrow(/configuración diferente/)
+      .rejects.toThrow(/contenido no reconocido/)
   }, integrationTestTimeout)
 
   it('rejects unknown changes before writing', async () => {
@@ -123,7 +139,9 @@ describe('project initialization', () => {
     await writeFile(resolve(fixture.target, 'README.md'), 'Changed after preview\n')
 
     await expect(applyPreview(preview)).rejects.toThrow(/cambió después del preview/)
-    expect(await readProjectFile(fixture.target, '.template-state.json')).toBeNull()
+    expect(await readProjectFile(fixture.target, 'AGENTS.md')).toMatchObject({
+      hash: fixture.manifest.managedFiles['AGENTS.md'],
+    })
   })
 
   it('rolls back a controlled failure without leaving a transaction', async () => {

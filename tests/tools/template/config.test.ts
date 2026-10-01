@@ -7,13 +7,11 @@ import {
   ConfigError,
   configDigest,
   effectiveProjectConfig,
-  hashText,
   suggestPackageName,
   validateProjectConfig,
 } from '../../../tools/template/config.ts'
 import {
   readExampleConfig,
-  readFixtureManifest,
   repositoryRoot,
 } from './helpers/project-fixture.ts'
 import type { ProjectConfig } from '../../../tools/template/types.ts'
@@ -51,31 +49,6 @@ describe('project configuration', () => {
 
     expect(Object.keys(config).filter((key) => key !== '$schema').sort())
       .toEqual([...schema.required].sort())
-  })
-
-  it('keeps source baseline or derived state hashes synchronized', async () => {
-    const manifest = await readFixtureManifest()
-    let expected: Record<string, string | null> = manifest.managedFiles
-    try {
-      const state = JSON.parse(await readFile(
-        resolve(repositoryRoot, '.template-state.json'),
-        'utf8',
-      )) as { managedFiles: Record<string, string | null> }
-      expected = state.managedFiles
-    } catch {
-      // La ausencia de estado identifica la plantilla fuente.
-    }
-
-    for (const [path, expectedHash] of Object.entries(expected)) {
-      if (expectedHash === null) {
-        await expect(readFile(resolve(repositoryRoot, path), 'utf8')).rejects.toMatchObject({
-          code: 'ENOENT',
-        })
-      } else {
-        const content = await readFile(resolve(repositoryRoot, path), 'utf8')
-        expect(hashText(content), path).toBe(expectedHash)
-      }
-    }
   })
 
   it('rejects legacy fields, invalid packages and secret-shaped keys', async () => {
