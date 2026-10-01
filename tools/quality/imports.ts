@@ -86,13 +86,13 @@ export const analyzeImports = async (
   const { options, aliases } = loadCompilerOptions(absoluteRoot, configPath)
   const sourceRoot = resolve(absoluteRoot, 'src')
   const files = await collectFiles(sourceRoot, (path) => ['.ts', '.tsx'].includes(extname(path)))
-  const sources = await Promise.all(files.map(async (source) => {
+  const sources = files.map((source) => {
     const content = ts.sys.readFile(source)
     if (content === undefined) throw new Error(`No se puede leer ${source}.`)
     const kind = extname(source) === '.tsx' ? ts.ScriptKind.TSX : ts.ScriptKind.TS
     const sourceFile = ts.createSourceFile(source, content, options.target ?? ts.ScriptTarget.ESNext, true, kind)
     return { source, references: extractImportReferences(sourceFile) }
-  }))
+  })
   return { compilerOptions: options, configuredAliases: aliases, sources }
 }
 

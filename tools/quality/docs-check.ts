@@ -21,6 +21,7 @@ import {
   staticIndexEntries,
 } from './docs-policy.ts'
 import { parseMarkdown } from './markdown.ts'
+import type { MarkdownDocument } from './markdown.ts'
 import {
   isExecutedModule,
   runQualityMain,
@@ -136,13 +137,13 @@ export const checkDocumentation = async (root: string): Promise<QualityRun> => {
   const markdownFiles = await collectFiles(absoluteRoot, (path) => extname(path).toLowerCase() === '.md')
   const markdownPaths = markdownFiles.map((path) => repositoryPath(absoluteRoot, path))
   const diagnostics: QualityDiagnostic[] = []
-  const documents = new Map<string, { content: string; anchors: Set<string>; links: ReturnType<typeof parseMarkdown>['links'] }>()
+  const documents = new Map<string, MarkdownDocument>()
 
   for (const absolute of markdownFiles) {
     const path = repositoryPath(absoluteRoot, absolute)
     const content = await readFile(absolute, 'utf8')
     const parsed = parseMarkdown(content)
-    documents.set(path, { content, anchors: parsed.anchors, links: parsed.links })
+    documents.set(path, parsed)
     diagnostics.push(...checkMetadata(path, content))
   }
 
@@ -185,8 +186,7 @@ export const checkDocumentation = async (root: string): Promise<QualityRun> => {
         let targetDocument = documents.get(targetPath)
         if (!targetDocument) {
           const content = await readFile(target, 'utf8')
-          const parsed = parseMarkdown(content)
-          targetDocument = { content, anchors: parsed.anchors, links: parsed.links }
+          targetDocument = parseMarkdown(content)
           documents.set(targetPath, targetDocument)
         }
         if (!targetDocument.anchors.has(resolved.fragment)) {
