@@ -87,8 +87,8 @@ La aprobación autoriza implementar únicamente este delta cuando exista autoriz
 
 ## Registro de entrega opcional
 
-- Estado de entrega: `IMPLEMENTED`
+- Estado de entrega: `VALIDATED`
 - Archivos modificados: `tools/template/baseline-manifest.json` (`derivation.exclude` con `docs/superpowers/**`, hash de `AGENTS.md` y `baselineId` `react-vite-ts-sdd-template@2026-10-03-plat-014.1`), `AGENTS.md`, `tests/tools/template/project.test.ts`, `tests/tools/template/baseline.test.ts`, `docs/platform/README.md`.
 - Pruebas y resultados (2026-10-03): `npm run check` y `npm run test:tools` finalizan con código `0` (10 pruebas de aplicación, 59 de herramientas, una nueva para el rechazo de `docs/superpowers`). Derivación real en copias temporales (ya eliminadas): una copia ingenua que conservaba `docs/superpowers` fue rechazada por `template:init` con «El destino contiene rutas que no se derivan y debe copiarse respetando derivation.exclude: docs/superpowers»; otra copia construida con la lista del manifiesto no contenía `docs/superpowers`, `template:init` aplicó 5 operaciones, `template:doctor` no tuvo `FAIL`, `docs:check` del derivado dio OK (68 archivos) y `npm run check` del derivado finalizó con código `0`.
 - Desviaciones: ninguna respecto al delta aprobado. La skill externa de derivación no se ha modificado ni verificado; se asume que lee la lista del manifiesto en vivo, como se indicó en PLAT-008.
-- Aceptación: Pendiente
+- Aceptación: 2026-10-03, Tomás, usuario solicitante. Aceptación expresa «Acepto PLAT-014 como VALIDATED» registrada en la conversación de trabajo tras contrastar los criterios con la evidencia de este registro. La skill externa de derivación sigue sin verificarse; la aceptación se basa en la prueba de contrato y en las derivaciones reales hechas con la lista del manifiesto.
