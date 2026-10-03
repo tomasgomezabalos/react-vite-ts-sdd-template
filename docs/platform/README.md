@@ -24,6 +24,7 @@ Este directorio contiene el contrato y el histórico de capacidades incorporadas
 | `PLAT-016` | [`Cambio QUICK`](specs/016-docs-check-cambios-quick-y-entrega-embebida/quick-change.md) | `APPROVED` / `VALIDATED` | `docs:check` gobierna los cambios QUICK de plataforma y su registro de entrega embebido. |
 | `PLAT-017` | [`Cambio QUICK`](specs/017-architecture-check-reglas-de-agents/quick-change.md) | `APPROVED` / `VALIDATED` | `architecture:check` detecta carpetas técnicas globales y fugas de MSW, `mocks/` y traducciones en `src/`. |
 | `PLAT-018` | [`Cambio QUICK`](specs/018-observaciones-menores-de-la-auditoria/quick-change.md) | `APPROVED` / `VALIDATED` | Comentarios en `.env.example`, mensaje de enlaces absolutos y comprobación de todos los remotos. |
+| `PLAT-019` | [`Cambio QUICK`](specs/019-migracion-a-node-26-lts/quick-change.md) | `APPROVED` / `NOT_STARTED` | Migración a Node 26 LTS, no aplicable antes del 2026-10-28 (ADR-0017). |
 
 Los alias `PLAT-001` y `PLAT-002` permiten distinguir estas capacidades de las futuras features de producto. No reescriben los identificadores, estados ni evidencias de los artefactos originales.
 
