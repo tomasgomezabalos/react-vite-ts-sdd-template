@@ -26,6 +26,7 @@ Este directorio registra decisiones técnicas vinculantes y guías para aplicarl
 | [ADR-0013](decisions/0013-separacion-pruebas-aplicacion-y-plantilla.md) | `APPROVED` | Separa las pruebas y cobertura de aplicación de la suite de mantenimiento de la plantilla. | Modifica parcialmente ADR-0011; su aplicación se especifica mediante PLAT-006. |
 | [ADR-0014](decisions/0014-derivados-sin-herramientas-de-plantilla.md) | `APPROVED` | Los proyectos derivados no reciben el bootstrap, su diagnóstico ni su estado; separa los proyectos de Vitest. | Modifica parcialmente ADR-0010, ADR-0012 y ADR-0013; su aplicación se especifica mediante PLAT-007. |
 | [ADR-0015](decisions/0015-endurecimiento-lint-formato-y-tipado.md) | `APPROVED` | TypeScript más estricto, ESLint con tipos (`recommendedTypeChecked`), Prettier con `format:check` en la puerta e i18n tipado. | Amplía ADR-0001 y ADR-0002; modifica parcialmente ADR-0011 §2 (secuencia de `check`); su aplicación requiere un cambio `QUICK`. |
+| [ADR-0016](decisions/0016-pruebas-de-accesibilidad-con-axe-core.md) | `APPROVED` | Pruebas de accesibilidad con `axe-core` en Vitest; e2e y presupuesto de bundle fuera de la baseline. | Completa ADR-0015; precisa la estrategia de pruebas de ADR-0001 y ADR-0013; su aplicación requiere un cambio `QUICK`. |
 
 ## Guías vigentes
 
