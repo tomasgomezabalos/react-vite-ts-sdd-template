@@ -18,6 +18,7 @@ Este directorio contiene el contrato y el histórico de capacidades incorporadas
 | `PLAT-010` | [`Cambio QUICK`](specs/010-endurecimiento-lint-formato-y-tipado/quick-change.md) | `APPROVED` / `VALIDATED` | Aplica ADR-0015: tipado más estricto, ESLint con tipos, Prettier en la puerta e i18n tipado. |
 | `PLAT-011` | [`Cambio QUICK`](specs/011-pruebas-accesibilidad-axe-core/quick-change.md) | `APPROVED` / `VALIDATED` | Aplica ADR-0016: pruebas automáticas de accesibilidad con `axe-core` en Vitest. |
 | `PLAT-012` | [`Cambio QUICK`](specs/012-plantilla-pull-request-sdd/quick-change.md) | `APPROVED` / `VALIDATED` | Plantilla de pull request con clasificación SDD, trazabilidad, validación y autorizaciones. |
+| `PLAT-013` | [`Cambio QUICK`](specs/013-ignorar-majors-bloqueados-dependabot/quick-change.md) | `APPROVED` / `IMPLEMENTED` | Dependabot ignora los majors bloqueados de TypeScript 7 y MSW 3, con motivo y condición de retirada. |
 
 Los alias `PLAT-001` y `PLAT-002` permiten distinguir estas capacidades de las futuras features de producto. No reescriben los identificadores, estados ni evidencias de los artefactos originales.
 

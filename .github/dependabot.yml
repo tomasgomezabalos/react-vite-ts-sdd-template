@@ -15,6 +15,18 @@ updates:
       - dependency-name: '@types/node'
         update-types:
           - version-update:semver-major
+      # typescript-eslint 8.x declara el peer typescript >=4.8.4 <6.1.0 y las
+      # pruebas de tools/ no pasan con TypeScript 7. Retirar cuando
+      # typescript-eslint admita TypeScript 7 y tools/quality funcione con él.
+      - dependency-name: typescript
+        versions:
+          - ^7.0.0
+      # MSW 3 elimina onUnhandledRequest de los tipos y exige migrar
+      # mocks/main.ts y tests/setup/vitest.setup.ts. Retirar al planificar
+      # esa migración.
+      - dependency-name: msw
+        versions:
+          - ^3.0.0
 
   - package-ecosystem: github-actions
     directory: /

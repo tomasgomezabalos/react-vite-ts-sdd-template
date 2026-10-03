@@ -121,5 +121,11 @@ describe('security automation', () => {
     expect(config).toContain('minor-and-patch')
     expect(config).toContain("dependency-name: '@types/node'")
     expect(config).toContain('version-update:semver-major')
+    expect(config).toMatch(
+      /dependency-name: typescript\n\s+versions:\n\s+- \^7\.0\.0/,
+    )
+    expect(config).toMatch(/dependency-name: msw\n\s+versions:\n\s+- \^3\.0\.0/)
+    expect(config).toContain('Retirar cuando')
+    expect(config).toContain('Retirar al planificar')
   })
 })

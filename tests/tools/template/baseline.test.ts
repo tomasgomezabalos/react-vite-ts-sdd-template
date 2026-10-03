@@ -13,7 +13,7 @@ describe('template baseline manifest', () => {
     const manifest = await loadBaselineManifest()
 
     expect(manifest.baselineId).toBe(
-      'react-vite-ts-sdd-template@2026-10-03-deps-2',
+      'react-vite-ts-sdd-template@2026-10-03-plat-013.1',
     )
     for (const [path, expectedHash] of Object.entries(manifest.managedFiles)) {
       const content = await readFile(resolve(repositoryRoot, path))
