@@ -115,6 +115,7 @@ Al finalizar un alcance `FULL` o un `QUICK` que necesite evidencia persistente, 
 - Mantener las pruebas en `tests/`, reflejando la estructura de `src/` o `tools/` según su propietario; reservar `tests/setup/` para configuración compartida.
 - Usar Vitest y React Testing Library para componentes y hooks React; no usar React Testing Library para código ajeno a React.
 - Probar comportamiento observable y priorizar consultas accesibles.
+- Incluir en la prueba de cada página o componente con interfaz una aserción con `expectNoAccessibilityViolations` (`tests/setup/axe.ts`, axe-core, WCAG 2.1 A y AA sin contraste), en los estados relevantes. Detecta solo un subconjunto de problemas y no sustituye la revisión manual de contraste, teclado, foco ni lector de pantalla (ADR-0016).
 - Usar `user-event` para interacciones normales y `fireEvent` solo para eventos de bajo nivel.
 - Fijar el idioma y restaurar handlers, mocks y estado global entre pruebas.
 - Ejecutar `npm run check` antes de considerar terminado un cambio.

@@ -6,7 +6,7 @@ Plantilla mínima para iniciar SPA React renderizadas en cliente mediante Spec-D
 
 - React funcional, Vite y TypeScript estricto.
 - React Router 8 en modo declarativo para el enrutamiento base.
-- Vitest, React Testing Library, jest-dom, user-event y jsdom.
+- Vitest, React Testing Library, jest-dom, user-event y jsdom, con axe-core para comprobaciones automáticas de accesibilidad.
 - Mock Service Worker para desarrollo local explícito y pruebas HTTP.
 - i18next y react-i18next con un idioma inicial.
 - ESLint para análisis estático, con reglas de TypeScript con información de tipos (`recommendedTypeChecked`), React Hooks y React Refresh.
@@ -58,7 +58,7 @@ Las utilidades de la plantilla conservan una suite separada, sin formar parte de
 npm run test:tools
 ```
 
-`docs:check` valida enlaces Markdown locales, índices y metadatos SDD objetivos sin acceder a la red ni decidir si una aprobación es auténtica. `architecture:check` valida imports resolubles y las fronteras objetivas de ADR-0008; no infiere si dos features o entidades hermanas comparten semántica. `format:check` solo verifica el formato de `ts`, `tsx`, `js`, `scss` y `json`; `npm run format` lo aplica. Las claves de i18next están tipadas en `src/i18n/i18next.d.ts`, de modo que una clave inexistente falla al compilar. No hay análisis estático de accesibilidad en JSX, porque `eslint-plugin-jsx-a11y` no declara soporte para ESLint 10 ([ADR-0015](docs/architecture/decisions/0015-endurecimiento-lint-formato-y-tipado.md)). Superar la puerta no demuestra por sí solo corrección funcional completa, accesibilidad visual, ausencia de vulnerabilidades ni validez jurídica.
+`docs:check` valida enlaces Markdown locales, índices y metadatos SDD objetivos sin acceder a la red ni decidir si una aprobación es auténtica. `architecture:check` valida imports resolubles y las fronteras objetivas de ADR-0008; no infiere si dos features o entidades hermanas comparten semántica. `format:check` solo verifica el formato de `ts`, `tsx`, `js`, `scss` y `json`; `npm run format` lo aplica. Las claves de i18next están tipadas en `src/i18n/i18next.d.ts`, de modo que una clave inexistente falla al compilar. Las pruebas de páginas y componentes con interfaz incluyen `expectNoAccessibilityViolations` (axe-core, WCAG 2.1 A y AA); no comprueba contraste, teclado, foco ni lector de pantalla, que requieren revisión manual ([ADR-0016](docs/architecture/decisions/0016-pruebas-de-accesibilidad-con-axe-core.md)). No hay análisis estático de accesibilidad en JSX, porque `eslint-plugin-jsx-a11y` no declara soporte para ESLint 10 ([ADR-0015](docs/architecture/decisions/0015-endurecimiento-lint-formato-y-tipado.md)). Superar la puerta no demuestra por sí solo corrección funcional completa, accesibilidad visual, ausencia de vulnerabilidades ni validez jurídica.
 
 `.github/workflows/quality.yml` ejecuta `npm ci` y la misma puerta de aplicación en pushes a `main` y pull requests. Solo en el repositorio canónico `tomasgomezabalos/react-vite-ts-sdd-template` ejecuta además `npm run test:tools`; los proyectos derivados no incorporan esa suite a su puerta. Una inspección local del YAML no equivale a una ejecución real en GitHub.
 

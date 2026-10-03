@@ -16,6 +16,7 @@ Este directorio contiene el contrato y el histórico de capacidades incorporadas
 | `PLAT-008` | [`Cambio QUICK`](specs/008-excluir-configuracion-local-claude/quick-change.md) e [informe](specs/008-excluir-configuracion-local-claude/validation-report.md) | `APPROVED` / `VALIDATED` | Excluye `.claude/settings.local.json` de la derivación. |
 | `PLAT-009` | [`Cambio QUICK`](specs/009-automatizar-dependencias-y-seguridad-ci/quick-change.md) | `APPROVED` / `IMPLEMENTED` | Actualización automática de dependencias y comprobación de seguridad programada en CI. |
 | `PLAT-010` | [`Cambio QUICK`](specs/010-endurecimiento-lint-formato-y-tipado/quick-change.md) | `APPROVED` / `IMPLEMENTED` | Aplica ADR-0015: tipado más estricto, ESLint con tipos, Prettier en la puerta e i18n tipado. |
+| `PLAT-011` | [`Cambio QUICK`](specs/011-pruebas-accesibilidad-axe-core/quick-change.md) | `APPROVED` / `IMPLEMENTED` | Aplica ADR-0016: pruebas automáticas de accesibilidad con `axe-core` en Vitest. |
 
 Los alias `PLAT-001` y `PLAT-002` permiten distinguir estas capacidades de las futuras features de producto. No reescriben los identificadores, estados ni evidencias de los artefactos originales.
 

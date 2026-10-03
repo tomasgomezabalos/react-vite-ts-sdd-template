@@ -1,6 +1,6 @@
 {
   "schemaVersion": 2,
-  "baselineId": "react-vite-ts-sdd-template@2026-10-03-plat-010.1",
+  "baselineId": "react-vite-ts-sdd-template@2026-10-03-plat-011.1",
   "canonicalRemote": "https://github.com/tomasgomezabalos/react-vite-ts-sdd-template.git",
   "derivation": {
     "exclude": [
@@ -12,17 +12,17 @@
     ]
   },
   "managedFiles": {
-    "AGENTS.md": "a217416b5d2326428442c3d8f278ccf07791a31864d36a3efb5990613325c4c1",
-    "README.md": "9de6f9325ef3d30b7b3f7ce53b1636badafae093401c4369fb08c00b0d0d7187",
+    "AGENTS.md": "815adf7502f520d24d1a0318f2e4498f151db6f5cab6395fbbde5b54126d582e",
+    "README.md": "f0a16e15b74b3a101d4c042375fdc406fcac6171dd22eeda882e7a33e01783a8",
     "index.html": "a1739bf8471fede0d2e86afaa1f3046d04cfabbfdc075fd1758436f2c70c2e26",
-    "package-lock.json": "cf16442ae4e34bec4b4fda6eca497f71b32cda5c065dcd9cbbc598c8134a481e",
-    "package.json": "b445c0e522d8348080fda1959b3f585fe5db49b080b386e492a341e1ec72a9b1",
+    "package-lock.json": "ad77709ccd202f72b796703d76b6164ebe84095450c6f76a806f37bafd99d5b0",
+    "package.json": "ac9eb173e36d00c32f761416e36ca2479cdaa82325267b44cbbb78d78896d56c",
     "specs/README.md": "7279bca37447e5fa86c6cb064c0a161e270bdfabdc9d2d0dc42edab9a72b42bd",
     "src/i18n/config.ts": "f26e573c447e2ef81431f379864477d607fca4e43ad8cc8f12ba63a85e92e7bb",
     "src/i18n/resources.ts": "01b26d657d819c9f06fbd21d2772ca2b61db7f9beb4d1e5a5a49d4b0bf2aa84d",
     "src/locales/en/common.json": "dbbdb59c2d52e698b52371366cb214cce05279558648d4a8f7499b5cfa7b9dca",
     "tests/app/App/index.test.tsx": "a7308bfb6ac405e31a80d13ea7645b243cad8a3bad9710dd468348860627f794",
-    "tests/app/RouteLoading/index.test.tsx": "ea96fa1023b4052feb19a9bfc9c407fec0f8d75538fcc0e56385a52ce3ab5354",
+    "tests/app/RouteLoading/index.test.tsx": "266c81b1953d181f2ffaf54ecfb95b01c7e2950308568a4e800e2a5b8d18f703",
     "vite.config.ts": "b831b7881462033eafabe0201622739c17da85325133bb70f7f5de4bea3e2104"
   }
 }
