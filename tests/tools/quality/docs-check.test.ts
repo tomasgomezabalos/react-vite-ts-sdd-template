@@ -1,12 +1,16 @@
 // @vitest-environment node
 
+import { readFile } from 'node:fs/promises'
+import { resolve } from 'node:path'
 import { afterEach, describe, expect, it } from 'vitest'
 import { checkDocumentation, main } from '../../../tools/quality/docs-check.ts'
+import { requiredQuickChangeSections } from '../../../tools/quality/docs-policy.ts'
 import {
   approvedFixtureDocument,
   createQualityFixture,
   populateDocumentationFixture,
   quickChangeDocument,
+  quickChangeSections,
   snapshotFiles,
   type QuickChangeOptions,
   type QualityFixture,
@@ -307,5 +311,116 @@ describe('unverifiable local links', () => {
         message: expect.stringMatching(message) as string,
       }),
     ])
+  })
+})
+
+describe('QUICK change required sections', () => {
+  const path = 'docs/platform/specs/009-test/quick-change.md'
+
+  const check = async (
+    options: QuickChangeOptions,
+    { product = false }: { product?: boolean } = {},
+  ) => {
+    const fixture = await createQualityFixture()
+    cleanups.push(fixture.cleanup)
+    await populateDocumentationFixture(fixture)
+    if (product) {
+      await fixture.write(
+        'specs/001-test/quick-change.md',
+        quickChangeDocument(options),
+      )
+      await fixture.write(
+        'specs/README.md',
+        '# Producto\n\n[Cambio](001-test/quick-change.md)\n',
+      )
+    } else {
+      await writeQuickChange(fixture, options)
+    }
+    return (await checkDocumentation(fixture.root)).diagnostics
+  }
+
+  it.each(quickChangeSections)(
+    'reports the missing section %s of an approved record',
+    async (section) => {
+      const diagnostics = await check({ omitSections: [section] })
+
+      expect(diagnostics).toEqual([
+        expect.objectContaining({
+          code: 'DOC_REQUIRED_SECTION',
+          path,
+          message: expect.stringContaining(section) as string,
+        }),
+      ])
+    },
+  )
+
+  it('reports every missing section of a truncated approved record', async () => {
+    const diagnostics = await check({
+      omitSections: [...quickChangeSections.slice(2)],
+      registry: false,
+    })
+
+    expect(diagnostics.map((entry) => entry.code)).toEqual(
+      Array(quickChangeSections.length - 2).fill('DOC_REQUIRED_SECTION'),
+    )
+  })
+
+  it('also governs product records under specs/', async () => {
+    const diagnostics = await check(
+      { omitSections: ['Puerta documental'] },
+      { product: true },
+    )
+
+    expect(diagnostics).toEqual([
+      expect.objectContaining({
+        code: 'DOC_REQUIRED_SECTION',
+        path: 'specs/001-test/quick-change.md',
+      }),
+    ])
+  })
+
+  it('does not count headings inside code blocks or at another level', async () => {
+    const diagnostics = await check({
+      omitSections: ['Criterios afectados', 'Puerta documental'],
+      extra:
+        '\n```markdown\n## Criterios afectados\n```\n\n### Puerta documental\n',
+    })
+
+    expect(diagnostics.map((entry) => entry.code)).toEqual([
+      'DOC_REQUIRED_SECTION',
+      'DOC_REQUIRED_SECTION',
+    ])
+  })
+
+  it('does not require the optional delivery registry', async () => {
+    expect(await check({ registry: false })).toEqual([])
+  })
+
+  it('exempts drafts while they are being written', async () => {
+    expect(
+      await check({
+        state: 'DRAFT',
+        approvedBy: 'Pendiente',
+        omitSections: [...quickChangeSections],
+        registry: false,
+      }),
+    ).toEqual([])
+  })
+
+  it('keeps the required sections aligned with the QUICK change template', async () => {
+    const template = await readFile(
+      resolve(
+        import.meta.dirname,
+        '../../../docs/sdd/templates/quick-change.md',
+      ),
+      'utf8',
+    )
+    const headings = [...template.matchAll(/^## (.+?)\s*$/gm)].map(
+      (match) => match[1],
+    )
+
+    expect([...requiredQuickChangeSections]).toEqual(
+      headings.filter((heading) => heading !== 'Registro de entrega opcional'),
+    )
   })
 })

@@ -54,6 +54,16 @@ const productArtifact = (path: string): boolean =>
   path !== 'specs/README.md' &&
   path.endsWith('.md')
 
+export const requiredQuickChangeSections = [
+  'Contrato afectado',
+  'Delta funcional',
+  'Criterios afectados',
+  'Alcance técnico mínimo',
+  'Pruebas y validación previstas',
+  'Riesgos y reclasificación',
+  'Puerta documental',
+] as const
+
 export const isQuickChange = (path: string): boolean =>
   basename(path) === 'quick-change.md'
 

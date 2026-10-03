@@ -27,6 +27,7 @@ Este directorio contiene el contrato y el histórico de capacidades incorporadas
 | `PLAT-019` | [`Cambio QUICK`](specs/019-migracion-a-node-26-lts/quick-change.md) | `APPROVED` / `NOT_STARTED` | Migración a Node 26 LTS, no aplicable antes del 2026-10-28 (ADR-0017). |
 | `PLAT-020` | [`Cambio QUICK`](specs/020-adopcion-de-msw-3/quick-change.md) | `DRAFT` / `NOT_STARTED` | Adopción de MSW 3, no aplicable hasta que PLAT-019 esté aplicado. |
 | `PLAT-021` | [`Cambio QUICK`](specs/021-alinear-la-skill-con-el-contrato-del-proyecto/quick-change.md) | `APPROVED` / `VALIDATED` | Alinea la skill `react-ts-feature-pattern` con `AGENTS.md`, ADR-0003, ADR-0008 y PLAT-017; Sonar solo bajo demanda. |
+| `PLAT-022` | [`Cambio QUICK`](specs/022-docs-check-secciones-obligatorias-de-cambios-quick/quick-change.md) | `APPROVED` / `IMPLEMENTED` | `docs:check` exige las secciones obligatorias de los cambios QUICK aprobados. |
 
 Los alias `PLAT-001` y `PLAT-002` permiten distinguir estas capacidades de las futuras features de producto. No reescriben los identificadores, estados ni evidencias de los artefactos originales.
 

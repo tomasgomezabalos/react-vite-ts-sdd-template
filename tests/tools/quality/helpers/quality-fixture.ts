@@ -146,6 +146,16 @@ export const populateDocumentationFixture = async (
 
 export const approvedFixtureDocument = approvedDocument
 
+export const quickChangeSections = [
+  'Contrato afectado',
+  'Delta funcional',
+  'Criterios afectados',
+  'Alcance técnico mínimo',
+  'Pruebas y validación previstas',
+  'Riesgos y reclasificación',
+  'Puerta documental',
+] as const
+
 export type QuickChangeOptions = {
   state?: string
   approvedBy?: string
@@ -154,6 +164,9 @@ export type QuickChangeOptions = {
   tests?: string
   acceptance?: string
   testsLabel?: string
+  omitSections?: string[]
+  registry?: boolean
+  extra?: string
 }
 
 export const quickChangeDocument = ({
@@ -164,7 +177,25 @@ export const quickChangeDocument = ({
   tests = 'Pendiente',
   acceptance = 'Pendiente',
   testsLabel = 'Pruebas y resultados',
-}: QuickChangeOptions = {}): string => `# Cambio QUICK
+  omitSections = [],
+  registry = true,
+  extra = '',
+}: QuickChangeOptions = {}): string => {
+  const sections = quickChangeSections
+    .filter((section) => !omitSections.includes(section))
+    .map((section) => `## ${section}\n\nTexto de prueba.\n`)
+    .join('\n')
+  const registrySection = registry
+    ? `\n## Registro de entrega opcional
+
+- Estado de entrega: ${delivery}
+- Archivos modificados: ${files}
+- ${testsLabel}: ${tests}
+- Desviaciones: Ninguna
+- Aceptación: ${acceptance}
+`
+    : ''
+  return `# Cambio QUICK
 
 **Estado documental:** ${state}
 
@@ -178,11 +209,5 @@ export const quickChangeDocument = ({
 
 **Evidencia de aprobación:** Prueba fixture.
 
-## Registro de entrega opcional
-
-- Estado de entrega: ${delivery}
-- Archivos modificados: ${files}
-- ${testsLabel}: ${tests}
-- Desviaciones: Ninguna
-- Aceptación: ${acceptance}
-`
+${sections}${extra}${registrySection}`
+}

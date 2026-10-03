@@ -14,6 +14,7 @@ import {
   isGovernedArtifact,
   isQuickChange,
   isValidationReport,
+  requiredQuickChangeSections,
   requiredDocumentationFiles,
   staticIndexEntries,
 } from './docs-policy.ts'
@@ -128,6 +129,30 @@ const checkEmbeddedDelivery = (
   return diagnostics
 }
 
+const fencedCode = /^ {0,3}(`{3,}|~{3,})[^\n]*\n[\s\S]*?^ {0,3}\1[^\n]*$/gm
+
+const checkQuickChangeSections = (
+  path: string,
+  content: string,
+  documentState: string,
+): QualityDiagnostic[] => {
+  if (!isQuickChange(path) || documentState !== 'APPROVED') return []
+  const headings = new Set(
+    [...content.replace(fencedCode, '').matchAll(/^## (.+?)\s*$/gm)].map(
+      (match) => match[1],
+    ),
+  )
+  return requiredQuickChangeSections
+    .filter((section) => !headings.has(section))
+    .map((section) =>
+      diagnostic(
+        'DOC_REQUIRED_SECTION',
+        path,
+        `Falta la sección «## ${section}» exigida por la plantilla de cambios QUICK.`,
+      ),
+    )
+}
+
 const checkMetadata = (path: string, content: string): QualityDiagnostic[] => {
   if (!isGovernedArtifact(path)) return []
   const diagnostics: QualityDiagnostic[] = []
@@ -213,6 +238,7 @@ const checkMetadata = (path: string, content: string): QualityDiagnostic[] => {
     }
   }
   diagnostics.push(...checkEmbeddedDelivery(path, content, state))
+  diagnostics.push(...checkQuickChangeSections(path, content, state))
   return diagnostics
 }
 
