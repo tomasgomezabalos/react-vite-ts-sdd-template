@@ -120,7 +120,7 @@ describe('template doctor', () => {
       expect.objectContaining({
         code: 'MANAGED_OUTPUTS',
         status: 'FAIL',
-        message: expect.stringContaining('AGENTS.md'),
+        message: expect.stringContaining('AGENTS.md') as string,
       }),
     )
     expect(await snapshotProject(fixture.target)).toEqual(before)

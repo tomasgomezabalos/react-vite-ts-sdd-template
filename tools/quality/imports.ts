@@ -75,7 +75,9 @@ const loadCompilerOptions = (
   aliases: string[]
 } => {
   const absoluteConfig = resolve(root, configPath)
-  const read = ts.readConfigFile(absoluteConfig, ts.sys.readFile)
+  const read = ts.readConfigFile(absoluteConfig, (path) =>
+    ts.sys.readFile(path),
+  )
   if (read.error) {
     throw new Error(
       ts.flattenDiagnosticMessageText(read.error.messageText, '\n'),

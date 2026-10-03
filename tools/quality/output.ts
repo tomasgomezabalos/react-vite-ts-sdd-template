@@ -61,7 +61,8 @@ export const runQualityMain = async (
 export const isExecutedModule = (moduleUrl: string): boolean => {
   const entrypoint = process.argv[1]
   return (
-    Boolean(entrypoint) &&
+    entrypoint !== undefined &&
+    entrypoint !== '' &&
     resolve(fileURLToPath(moduleUrl)) === resolve(entrypoint)
   )
 }

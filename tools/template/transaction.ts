@@ -211,7 +211,9 @@ export const applyPreview = async (
           resolve(root, 'staged', operation.path),
         )
       }
-      journal.operations[index].applied = true
+      const entry = journal.operations[index]
+      if (!entry) throw new Error(`Diario sin la operación ${index}.`)
+      entry.applied = true
       await writeJournal(preview.target, journal)
     }
     await cleanTransaction(preview.target, id)

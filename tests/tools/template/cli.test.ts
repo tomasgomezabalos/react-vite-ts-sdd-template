@@ -95,7 +95,7 @@ describe('template command line interfaces', () => {
     expect(doctor.status, doctor.stderr).toBe(0)
     expect(JSON.parse(doctor.stdout)).toMatchObject({
       scope: 'technical-derivation',
-      summary: expect.objectContaining({ FAIL: 0 }),
+      summary: expect.objectContaining({ FAIL: 0 }) as unknown,
     })
 
     await writeFile(resolve(fixture.target, '.env.production'), 'not-printed')

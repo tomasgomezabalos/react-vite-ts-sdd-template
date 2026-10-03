@@ -1,8 +1,9 @@
 import { beforeEach, describe, expect, it, vi } from 'vitest'
 
-const reactDom = vi.hoisted(() => ({
-  createRoot: vi.fn(() => ({ render: vi.fn() })),
-}))
+const reactDom = vi.hoisted(() => {
+  const render = vi.fn()
+  return { render, createRoot: vi.fn(() => ({ render })) }
+})
 
 vi.mock('react-dom/client', () => ({
   createRoot: reactDom.createRoot,
@@ -24,9 +25,7 @@ describe('application entrypoint', () => {
 
     expect(reactDom.createRoot).toHaveBeenCalledOnce()
     expect(reactDom.createRoot).toHaveBeenCalledWith(rootElement)
-    expect(
-      reactDom.createRoot.mock.results[0]?.value.render,
-    ).toHaveBeenCalledOnce()
+    expect(reactDom.render).toHaveBeenCalledOnce()
   })
 
   it('fails explicitly when the root element is absent', async () => {

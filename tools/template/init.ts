@@ -36,6 +36,7 @@ const parseArguments = (values: string[]): InitArguments => {
   const result: InitArguments = { apply: false, format: 'human', help: false }
   for (let index = 0; index < values.length; index += 1) {
     const value = values[index]
+    if (value === undefined) break
     if (value === '--apply') result.apply = true
     else if (value === '--help' || value === '-h') result.help = true
     else if (
