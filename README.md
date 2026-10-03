@@ -75,7 +75,7 @@ specs/                visión, features y cambios del producto derivado
 docs/platform/        contrato e histórico de la plataforma heredada
 docs/sdd/             reglas, flujo y plantillas SDD
 docs/architecture/    decisiones y guías técnicas sustituibles
-.github/workflows/     automatización de la puerta de calidad
+.github/                workflows de calidad y seguridad, Dependabot y plantilla de pull request
 ```
 
 Los índices de [plataforma](docs/platform/README.md), [SDD](docs/sdd/README.md) y [arquitectura](docs/architecture/README.md) identifican los documentos vigentes y sus relaciones. `specs/` queda reservado para el producto derivado.

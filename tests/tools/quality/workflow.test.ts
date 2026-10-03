@@ -38,6 +38,34 @@ describe('quality workflow', () => {
   })
 })
 
+describe('pull request template', () => {
+  it('asks for classification, traceability, validation, delivery state and authorizations', async () => {
+    const template = await readFile(
+      resolve(repositoryRoot, '.github/pull_request_template.md'),
+      'utf8',
+    )
+
+    for (const heading of [
+      '## Clasificación',
+      '## Resumen',
+      '## Trazabilidad',
+      '## Validación',
+      '## Estado de entrega',
+      '## Autorizaciones',
+    ]) {
+      expect(template).toContain(heading)
+    }
+    for (const kind of ['FULL', 'QUICK', 'DIRECT', 'ADR']) {
+      expect(template).toContain(`- [ ] \`${kind}\``)
+    }
+    expect(template).toContain('npm run check')
+    expect(template).toContain('npm run test:tools')
+    expect(template).toContain('`IMPLEMENTED`')
+    expect(template).toContain('`VALIDATED`')
+    expect(template).not.toMatch(/secrets\.|@[a-z0-9-]+\/|license/i)
+  })
+})
+
 describe('security automation', () => {
   it('runs a separate scheduled audit without touching the quality gate', async () => {
     const workflow = await readFile(
