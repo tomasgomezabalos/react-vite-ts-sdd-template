@@ -6,7 +6,10 @@ import {
   approvedFixtureDocument,
   createQualityFixture,
   populateDocumentationFixture,
+  quickChangeDocument,
   snapshotFiles,
+  type QuickChangeOptions,
+  type QualityFixture,
 } from './helpers/quality-fixture.ts'
 
 const cleanups: Array<() => Promise<void>> = []
@@ -147,5 +150,141 @@ describe('documentation quality check', () => {
       .filter((line) => line.includes('DOC_LINK_TARGET'))
     expect(linkFailures[0]).toContain('z.md')
     expect(linkFailures[1]).toContain('a.md')
+  })
+})
+
+const writeQuickChange = async (
+  fixture: QualityFixture,
+  options: QuickChangeOptions,
+  { linked = true }: { linked?: boolean } = {},
+) => {
+  await fixture.write(
+    'docs/platform/specs/009-test/quick-change.md',
+    quickChangeDocument(options),
+  )
+  if (linked) {
+    await fixture.write(
+      'docs/platform/README.md',
+      `${await fixture.read('docs/platform/README.md')}
+[Quick](specs/009-test/quick-change.md)
+`,
+    )
+  }
+}
+
+describe('QUICK change records', () => {
+  const validated: QuickChangeOptions = {
+    delivery: '`VALIDATED`',
+    files: '`a.ts`',
+    tests: 'check pasa',
+    acceptance: '2026-10-03, Tomás',
+  }
+
+  it('accepts a validated record, quoted or not and with a dated label', async () => {
+    const fixture = await createQualityFixture()
+    cleanups.push(fixture.cleanup)
+    await populateDocumentationFixture(fixture)
+    await writeQuickChange(fixture, {
+      ...validated,
+      testsLabel: 'Pruebas y resultados (2026-10-03)',
+    })
+
+    expect((await checkDocumentation(fixture.root)).diagnostics).toEqual([])
+
+    await writeQuickChange(
+      fixture,
+      { ...validated, delivery: 'IMPLEMENTED', acceptance: 'Pendiente' },
+      { linked: false },
+    )
+    expect((await checkDocumentation(fixture.root)).diagnostics).toEqual([])
+  })
+
+  it('accepts a not started record with pending delivery fields', async () => {
+    const fixture = await createQualityFixture()
+    cleanups.push(fixture.cleanup)
+    await populateDocumentationFixture(fixture)
+    await writeQuickChange(fixture, { state: 'DRAFT', approvedBy: 'Pendiente' })
+
+    expect((await checkDocumentation(fixture.root)).diagnostics).toEqual([])
+  })
+
+  it.each([
+    ['an unknown document state', { state: 'BOGUS' }, 'DOC_DOCUMENT_STATUS'],
+    [
+      'approval without an approver',
+      { approvedBy: 'Pendiente' },
+      'DOC_APPROVAL_METADATA',
+    ],
+    [
+      'a delivery state outside the vocabulary',
+      { delivery: 'DONE' },
+      'DOC_DELIVERY_STATUS',
+    ],
+    [
+      'a validated delivery without acceptance',
+      { ...validated, acceptance: 'Pendiente' },
+      'DOC_APPROVAL_METADATA',
+    ],
+    [
+      'an implemented delivery without test results',
+      { ...validated, delivery: 'IMPLEMENTED', tests: 'Pendiente' },
+      'DOC_APPROVAL_METADATA',
+    ],
+    [
+      'an implemented delivery without modified files',
+      { ...validated, delivery: 'IMPLEMENTED', files: '<archivos>' },
+      'DOC_APPROVAL_METADATA',
+    ],
+    [
+      'a delivery that is implemented while the document is a draft',
+      { ...validated, state: 'DRAFT', approvedBy: 'Pendiente' },
+      'DOC_DELIVERY_STATUS',
+    ],
+  ] satisfies Array<[string, QuickChangeOptions, string]>)(
+    'reports %s',
+    async (_name, options, code) => {
+      const fixture = await createQualityFixture()
+      cleanups.push(fixture.cleanup)
+      await populateDocumentationFixture(fixture)
+      await writeQuickChange(fixture, options)
+
+      const result = await checkDocumentation(fixture.root)
+
+      expect(result.diagnostics.map((entry) => entry.code)).toContain(code)
+      expect(
+        result.diagnostics.every(
+          (entry) =>
+            entry.path === 'docs/platform/specs/009-test/quick-change.md',
+        ),
+      ).toBe(true)
+    },
+  )
+
+  it('requires platform QUICK records to be linked from the platform index', async () => {
+    const fixture = await createQualityFixture()
+    cleanups.push(fixture.cleanup)
+    await populateDocumentationFixture(fixture)
+    await writeQuickChange(fixture, {}, { linked: false })
+
+    const result = await checkDocumentation(fixture.root)
+
+    expect(result.diagnostics).toContainEqual(
+      expect.objectContaining({
+        code: 'DOC_INDEX_ENTRY',
+        path: 'docs/platform/README.md',
+      }),
+    )
+  })
+
+  it('does not govern historical platform records before 003', async () => {
+    const fixture = await createQualityFixture()
+    cleanups.push(fixture.cleanup)
+    await populateDocumentationFixture(fixture)
+    await fixture.write(
+      'docs/platform/specs/002-carga-diferida-rutas/quick-change.md',
+      quickChangeDocument({ state: 'BOGUS' }),
+    )
+
+    expect((await checkDocumentation(fixture.root)).diagnostics).toEqual([])
   })
 })

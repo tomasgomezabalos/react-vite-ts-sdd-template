@@ -12,6 +12,7 @@ import {
   documentStates,
   expectedDynamicIndexEntries,
   isGovernedArtifact,
+  isQuickChange,
   isValidationReport,
   requiredDocumentationFiles,
   staticIndexEntries,
@@ -29,6 +30,15 @@ const metadata = (content: string, name: string): string | undefined => {
   return content.match(
     new RegExp(`^\\*\\*${escaped}:\\*\\*\\s*(.+?)\\s*$`, 'm'),
   )?.[1]
+}
+
+const bulletField = (content: string, name: string): string | undefined => {
+  const escaped = name.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')
+  const pattern = new RegExp(
+    `^-\\s+${escaped}(?:\\s*\\([^)]*\\))?:\\s*(.+?)\\s*$`,
+    'm',
+  )
+  return content.match(pattern)?.[1]?.replace(/^`|`$/g, '')
 }
 
 const pendingMetadata = (value: string | undefined): boolean =>
@@ -71,6 +81,51 @@ const resolveDestination = (
   } catch {
     return null
   }
+}
+
+const checkEmbeddedDelivery = (
+  path: string,
+  content: string,
+  documentState: string,
+): QualityDiagnostic[] => {
+  const state = bulletField(content, 'Estado de entrega')
+  if (!isQuickChange(path) || state === undefined) return []
+  if (!deliveryStates.has(state)) {
+    return [
+      diagnostic(
+        'DOC_DELIVERY_STATUS',
+        path,
+        `Estado de entrega embebido no permitido: ${state}.`,
+      ),
+    ]
+  }
+  if (state !== 'IMPLEMENTED' && state !== 'VALIDATED') return []
+  const diagnostics: QualityDiagnostic[] = []
+  if (documentState !== 'APPROVED') {
+    diagnostics.push(
+      diagnostic(
+        'DOC_DELIVERY_STATUS',
+        path,
+        `Una entrega ${state} exige un documento APPROVED.`,
+      ),
+    )
+  }
+  const required =
+    state === 'VALIDATED'
+      ? ['Archivos modificados', 'Pruebas y resultados', 'Aceptación']
+      : ['Archivos modificados', 'Pruebas y resultados']
+  for (const field of required) {
+    if (pendingMetadata(bulletField(content, field))) {
+      diagnostics.push(
+        diagnostic(
+          'DOC_APPROVAL_METADATA',
+          path,
+          `Una entrega ${state} debe completar ${field}.`,
+        ),
+      )
+    }
+  }
+  return diagnostics
 }
 
 const checkMetadata = (path: string, content: string): QualityDiagnostic[] => {
@@ -157,6 +212,7 @@ const checkMetadata = (path: string, content: string): QualityDiagnostic[] => {
       }
     }
   }
+  diagnostics.push(...checkEmbeddedDelivery(path, content, state))
   return diagnostics
 }
 

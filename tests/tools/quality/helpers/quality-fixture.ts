@@ -145,3 +145,44 @@ export const populateDocumentationFixture = async (
 }
 
 export const approvedFixtureDocument = approvedDocument
+
+export type QuickChangeOptions = {
+  state?: string
+  approvedBy?: string
+  delivery?: string
+  files?: string
+  tests?: string
+  acceptance?: string
+  testsLabel?: string
+}
+
+export const quickChangeDocument = ({
+  state = 'APPROVED',
+  approvedBy = 'Tomás',
+  delivery = 'NOT_STARTED',
+  files = 'Pendiente',
+  tests = 'Pendiente',
+  acceptance = 'Pendiente',
+  testsLabel = 'Pruebas y resultados',
+}: QuickChangeOptions = {}): string => `# Cambio QUICK
+
+**Estado documental:** ${state}
+
+**Versión:** 1.0.0
+
+**Fecha:** 2026-10-03
+
+**Aprobado por:** ${approvedBy}
+
+**Fecha de aprobación:** 2026-10-03
+
+**Evidencia de aprobación:** Prueba fixture.
+
+## Registro de entrega opcional
+
+- Estado de entrega: ${delivery}
+- Archivos modificados: ${files}
+- ${testsLabel}: ${tests}
+- Desviaciones: Ninguna
+- Aceptación: ${acceptance}
+`

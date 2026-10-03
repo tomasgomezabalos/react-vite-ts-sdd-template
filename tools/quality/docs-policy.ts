@@ -44,7 +44,7 @@ const currentArchitectureDecision = (path: string): boolean => {
 
 const currentPlatformArtifact = (path: string): boolean => {
   const match = path.match(
-    /^docs\/platform\/specs\/(\d{3})-[^/]+\/(spec|plan|validation-report)\.md$/,
+    /^docs\/platform\/specs\/(\d{3})-[^/]+\/(spec|plan|validation-report|quick-change)\.md$/,
   )
   return Boolean(match && Number(match[1]) >= 3)
 }
@@ -53,6 +53,9 @@ const productArtifact = (path: string): boolean =>
   path.startsWith('specs/') &&
   path !== 'specs/README.md' &&
   path.endsWith('.md')
+
+export const isQuickChange = (path: string): boolean =>
+  basename(path) === 'quick-change.md'
 
 export const isValidationReport = (path: string): boolean =>
   basename(path) === 'validation-report.md'
