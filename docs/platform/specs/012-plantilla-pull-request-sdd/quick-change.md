@@ -90,8 +90,8 @@ La aprobación autoriza implementar únicamente este delta cuando exista autoriz
 
 ## Registro de entrega opcional
 
-- Estado de entrega: `IMPLEMENTED`
+- Estado de entrega: `VALIDATED`
 - Archivos modificados: `.github/pull_request_template.md`, `tests/tools/quality/workflow.test.ts`, `README.md`, `tools/template/baseline-manifest.json` (hash de `README.md` y `baselineId` `react-vite-ts-sdd-template@2026-10-03-plat-012.1`), `tests/tools/template/baseline.test.ts`, `docs/platform/README.md`.
 - Pruebas y resultados (2026-10-03): `npm run check` y `npm run test:tools` finalizan con código `0` (10 pruebas de aplicación, 58 de herramientas; cobertura 100 %). Derivación real en copia temporal (ya eliminada): `template:init` aplicado, `template:doctor` sin `FAIL`, la plantilla presente en el derivado y `npm run check` del derivado con código `0`. La apariencia en GitHub no se ha comprobado: requiere publicación autorizada y abrir un pull request.
 - Desviaciones: `docs:check` interpretó `[ ] ... (texto)` como un enlace Markdown sin destino y falló; se reformularon dos líneas de la plantilla para usar comas en lugar de paréntesis. `docs:check` analiza también los Markdown de `.github/`. El resto, sin desviaciones.
-- Aceptación: Pendiente
+- Aceptación: 2026-10-03, Tomás, usuario solicitante. Aceptación expresa «Acepto PLAT-009, 010, 011 y 012 como VALIDATED» registrada en la conversación de trabajo tras contrastar los criterios con la evidencia de este registro. La apariencia de la plantilla en GitHub no se ha observado; la aceptación se basa en la prueba de contrato y la derivación local.

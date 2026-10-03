@@ -88,8 +88,8 @@ La aprobación autoriza implementar únicamente este delta cuando exista autoriz
 
 ## Registro de entrega opcional
 
-- Estado de entrega: `IMPLEMENTED`
+- Estado de entrega: `VALIDATED`
 - Archivos modificados: `.github/dependabot.yml`, `.github/workflows/security.yml`, `tests/tools/quality/workflow.test.ts`, `README.md`, `tools/template/baseline-manifest.json` (hash de `README.md` y `baselineId` `react-vite-ts-sdd-template@2026-10-03-plat-009.1`), `tests/tools/template/baseline.test.ts`, `docs/platform/README.md`.
 - Pruebas y resultados: ver informe de ejecución en la conversación; `npm run check` y `npm run test:tools` pasan localmente. Los workflows no se han ejecutado en GitHub.
 - Desviaciones: ninguna respecto al delta aprobado.
-- Aceptación: Pendiente
+- Aceptación: 2026-10-03, Tomás, usuario solicitante. Aceptación expresa «Acepto PLAT-009, 010, 011 y 012 como VALIDATED» registrada en la conversación de trabajo tras contrastar los criterios con la evidencia de este registro. La ejecución real de Dependabot y del workflow `Security` en GitHub no se ha observado; la aceptación se basa en las pruebas de contrato y la comprobación local.

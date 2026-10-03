@@ -108,8 +108,8 @@ La aprobación autoriza implementar únicamente este delta cuando exista autoriz
 
 ## Registro de entrega opcional
 
-- Estado de entrega: `IMPLEMENTED`
+- Estado de entrega: `VALIDATED`
 - Archivos modificados: `package.json`, `package-lock.json` (`axe-core` ^4.13.0), `tests/setup/axe.ts`, `tests/setup/axe.test.tsx`, `tests/app/RouteLoading/index.test.tsx`, `tests/pages/Home/index.test.tsx`, `README.md`, `AGENTS.md`, `tools/template/baseline-manifest.json` (hashes y `baselineId` `react-vite-ts-sdd-template@2026-10-03-plat-011.1`), `tests/tools/template/baseline.test.ts`, `docs/platform/README.md`.
 - Pruebas y resultados (2026-10-03): `npm run check` y `npm run test:tools` finalizan con código `0` (10 pruebas de aplicación, 57 de herramientas; cobertura 100 %). El helper rechaza `<img src="x.png" />` con un mensaje que incluye `image-alt (critical)` y el selector `img`, y acepta `RouteLoading`; `Home` (`<main />`) no produjo violaciones. Derivación real en copia temporal (ya eliminada): `template:init` aplicado, `template:doctor` sin `FAIL` y `npm run check` del derivado con código `0`.
 - Desviaciones: ninguna respecto al delta aprobado.
-- Aceptación: Pendiente
+- Aceptación: 2026-10-03, Tomás, usuario solicitante. Aceptación expresa «Acepto PLAT-009, 010, 011 y 012 como VALIDATED» registrada en la conversación de trabajo tras contrastar los criterios con la evidencia de este registro.

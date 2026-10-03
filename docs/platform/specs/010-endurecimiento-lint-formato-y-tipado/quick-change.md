@@ -126,8 +126,8 @@ La aprobación autoriza implementar únicamente este delta cuando exista autoriz
 
 ## Registro de entrega opcional
 
-- Estado de entrega: `IMPLEMENTED`
+- Estado de entrega: `VALIDATED`
 - Archivos modificados: `tsconfig.app.json`, `tsconfig.node.json`, `eslint.config.js`, `package.json`, `package-lock.json`, `.prettierrc.json`, `.prettierignore`, `src/i18n/i18next.d.ts`, `tools/quality/output.ts`, `tools/quality/imports.ts`, `tools/template/init.ts`, `tools/template/transaction.ts`, `tests/main.test.tsx`, `tests/tools/template/cli.test.ts`, `tests/tools/template/doctor.test.ts`, `tests/tools/quality/runtime-config.test.ts`, `README.md`, `AGENTS.md`, `tools/template/baseline-manifest.json` (hashes y `baselineId` `react-vite-ts-sdd-template@2026-10-03-plat-010.1`), `tests/tools/template/baseline.test.ts`, `docs/platform/README.md`, más el reformateo de los `ts`, `tsx`, `js`, `scss` y `json` no ignorados.
 - Pruebas y resultados (2026-10-03): `npm run check` y `npm run test:tools` finalizan con código `0` (6 pruebas de aplicación, 57 de herramientas; cobertura 100 %). QC-AC-03/04: un `src/bad.ts` sin formatear detuvo `npm run check` en `format:check` sin ejecutar las etapas posteriores; se eliminó. QC-AC-05: `t('routes.inexistente')` produjo error de tipo y `t('routes.loading')` compiló, con un archivo temporal ya eliminado. Tiempo de `eslint .`: ~0,85 s con la configuración anterior y ~2,2 s con tipos (dos mediciones cada una, mismo equipo).
 - Desviaciones: los scripts usan el patrón `"**/*.{ts,tsx,js,scss,json}"` en lugar de `.` para respetar el ámbito aprobado sin formatear otros tipos de archivo; `src/i18n/i18next.d.ts` no se añadió a `managedFiles` (no es un archivo que el bootstrap modifique y el diagnóstico no lo exige; se mantiene como archivo de la baseline copiado). Los 3 commits previstos no se han creado todavía.
-- Aceptación: Pendiente
+- Aceptación: 2026-10-03, Tomás, usuario solicitante. Aceptación expresa «Acepto PLAT-009, 010, 011 y 012 como VALIDATED» registrada en la conversación de trabajo tras contrastar los criterios con la evidencia de este registro.
