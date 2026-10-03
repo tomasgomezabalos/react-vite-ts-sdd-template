@@ -60,6 +60,8 @@ npm run test:tools
 
 `.github/workflows/quality.yml` ejecuta `npm ci` y la misma puerta de aplicación en pushes a `main` y pull requests. Solo en el repositorio canónico `tomasgomezabalos/react-vite-ts-sdd-template` ejecuta además `npm run test:tools`; los proyectos derivados no incorporan esa suite a su puerta. Una inspección local del YAML no equivale a una ejecución real en GitHub.
 
+`.github/workflows/security.yml` es independiente de la puerta: ejecuta `npm audit --omit=dev --audit-level=high` en pushes a `main`, pull requests y semanalmente. Depende de la red y de la base de avisos de npm, por lo que no forma parte de `npm run check`; solo informa de avisos conocidos de dependencias de producción y no demuestra ausencia de vulnerabilidades. `.github/dependabot.yml` propone semanalmente actualizaciones de npm y de las acciones de GitHub, agrupando menores y parches y excluyendo los mayores de `@types/node`, que debe seguir la versión de Node de `.nvmrc`.
+
 ## Estructura
 
 ```text

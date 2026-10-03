@@ -12,7 +12,7 @@ describe('template baseline manifest', () => {
   it('keeps the baseline hashes synchronized with managed files', async () => {
     const manifest = await loadBaselineManifest()
 
-    expect(manifest.baselineId).toBe('react-vite-ts-sdd-template@2026-10-03-hardening-1.1')
+    expect(manifest.baselineId).toBe('react-vite-ts-sdd-template@2026-10-03-plat-009.1')
     for (const [path, expectedHash] of Object.entries(manifest.managedFiles)) {
       const content = await readFile(resolve(repositoryRoot, path))
       expect(createHash('sha256').update(content).digest('hex'), path).toBe(expectedHash)
