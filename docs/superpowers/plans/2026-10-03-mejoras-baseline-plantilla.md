@@ -73,6 +73,8 @@ Prioridad: **P1** = riesgo real o regresión silenciosa; **P2** = buena práctic
 
 ### Fase 6 — Runtime a futuro (decisión tuya, requiere `ADR`)
 
+> **Actualización 2026-10-03:** fechas confirmadas con el calendario oficial de Node: Node 22 entra en fin de vida el 2027-04-30; Node 26 será LTS el 2026-10-28. Se propone en ADR-0017 migrar a Node 26 entonces. Dependencias: actualizadas las menores y parches; Vitest 5 y jsdom 30 adoptados; MSW 3 (error de tipos en `onUnhandledRequest` y fallo de instalación con npm 10.9.8 sin `--legacy-peer-deps`) y TypeScript 7 (peer de typescript-eslint `<6.1.0` y 6 pruebas de `tools/quality` fallan) quedan aplazados.
+
 Node 22 es la versión fijada. Según el calendario público de Node (nodejs.org/en/about/previous-releases) 22 entra en fin de vida en 2027; **no he podido confirmarlo desde aquí, verifícalo antes de decidir**. Evaluar migrar a Node 24 LTS cambiando de forma coordinada `.nvmrc`, `engines`, `devEngines`, `packageManager`, lockfile, CI y `@types/node` (ADR-0011 §1).
 
 Majors pendientes (evaluar uno a uno, no en bloque): TypeScript 7, Vitest/coverage 5, MSW 3, jsdom 30.

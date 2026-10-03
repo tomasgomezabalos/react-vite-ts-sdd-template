@@ -27,6 +27,7 @@ Este directorio registra decisiones técnicas vinculantes y guías para aplicarl
 | [ADR-0014](decisions/0014-derivados-sin-herramientas-de-plantilla.md) | `APPROVED` | Los proyectos derivados no reciben el bootstrap, su diagnóstico ni su estado; separa los proyectos de Vitest. | Modifica parcialmente ADR-0010, ADR-0012 y ADR-0013; su aplicación se especifica mediante PLAT-007. |
 | [ADR-0015](decisions/0015-endurecimiento-lint-formato-y-tipado.md) | `APPROVED` | TypeScript más estricto, ESLint con tipos (`recommendedTypeChecked`), Prettier con `format:check` en la puerta e i18n tipado. | Amplía ADR-0001 y ADR-0002; modifica parcialmente ADR-0011 §2 (secuencia de `check`); su aplicación requiere un cambio `QUICK`. |
 | [ADR-0016](decisions/0016-pruebas-de-accesibilidad-con-axe-core.md) | `APPROVED` | Pruebas de accesibilidad con `axe-core` en Vitest; e2e y presupuesto de bundle fuera de la baseline. | Completa ADR-0015; precisa la estrategia de pruebas de ADR-0001 y ADR-0013; su aplicación requiere un cambio `QUICK`. |
+| [ADR-0017](decisions/0017-runtime-node-lts-vigente.md) | `APPROVED` | Permanecer en Node 22.23.2 y migrar a Node 26 cuando entre en LTS (2026-10-28). | Modifica parcialmente ADR-0011 §1 y PLAT-004 REQ-01/AC-01 cuando se aplique; su aplicación requiere un cambio `QUICK`. |
 
 ## Guías vigentes
 
