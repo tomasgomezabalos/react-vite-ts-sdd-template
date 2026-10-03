@@ -25,6 +25,7 @@ Este directorio registra decisiones técnicas vinculantes y guías para aplicarl
 | [ADR-0012](decisions/0012-bootstrap-minimo-y-descubrimiento-progresivo.md) | `APPROVED` | Reduce el bootstrap a destino e identidad y pospone el producto al flujo SDD. | Modifica parcialmente ADR-0010; su aplicación se especifica mediante PLAT-005. |
 | [ADR-0013](decisions/0013-separacion-pruebas-aplicacion-y-plantilla.md) | `APPROVED` | Separa las pruebas y cobertura de aplicación de la suite de mantenimiento de la plantilla. | Modifica parcialmente ADR-0011; su aplicación se especifica mediante PLAT-006. |
 | [ADR-0014](decisions/0014-derivados-sin-herramientas-de-plantilla.md) | `APPROVED` | Los proyectos derivados no reciben el bootstrap, su diagnóstico ni su estado; separa los proyectos de Vitest. | Modifica parcialmente ADR-0010, ADR-0012 y ADR-0013; su aplicación se especifica mediante PLAT-007. |
+| [ADR-0015](decisions/0015-endurecimiento-lint-formato-y-tipado.md) | `APPROVED` | TypeScript más estricto, ESLint con tipos (`recommendedTypeChecked`), Prettier con `format:check` en la puerta e i18n tipado. | Amplía ADR-0001 y ADR-0002; modifica parcialmente ADR-0011 §2 (secuencia de `check`); su aplicación requiere un cambio `QUICK`. |
 
 ## Guías vigentes
 
