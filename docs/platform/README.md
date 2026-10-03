@@ -20,9 +20,9 @@ Este directorio contiene el contrato y el histórico de capacidades incorporadas
 | `PLAT-012` | [`Cambio QUICK`](specs/012-plantilla-pull-request-sdd/quick-change.md) | `APPROVED` / `VALIDATED` | Plantilla de pull request con clasificación SDD, trazabilidad, validación y autorizaciones. |
 | `PLAT-013` | [`Cambio QUICK`](specs/013-ignorar-majors-bloqueados-dependabot/quick-change.md) | `APPROVED` / `VALIDATED` | Dependabot ignora los majors bloqueados de TypeScript 7 y MSW 3, con motivo y condición de retirada. |
 | `PLAT-014` | [`Cambio QUICK`](specs/014-excluir-material-de-mantenimiento-de-la-derivacion/quick-change.md) | `APPROVED` / `VALIDATED` | Excluye `docs/superpowers/**` de la derivación. |
-| `PLAT-015` | [`Cambio QUICK`](specs/015-titulo-html-con-caracteres-especiales/quick-change.md) | `APPROVED` / `IMPLEMENTED` | Corrige el título de `index.html` cuando el nombre visible contiene patrones especiales de reemplazo (`$&`, `$$`). |
-| `PLAT-016` | [`Cambio QUICK`](specs/016-docs-check-cambios-quick-y-entrega-embebida/quick-change.md) | `APPROVED` / `IMPLEMENTED` | `docs:check` gobierna los cambios QUICK de plataforma y su registro de entrega embebido. |
-| `PLAT-017` | [`Cambio QUICK`](specs/017-architecture-check-reglas-de-agents/quick-change.md) | `APPROVED` / `IMPLEMENTED` | `architecture:check` detecta carpetas técnicas globales y fugas de MSW, `mocks/` y traducciones en `src/`. |
+| `PLAT-015` | [`Cambio QUICK`](specs/015-titulo-html-con-caracteres-especiales/quick-change.md) | `APPROVED` / `VALIDATED` | Corrige el título de `index.html` cuando el nombre visible contiene patrones especiales de reemplazo (`$&`, `$$`). |
+| `PLAT-016` | [`Cambio QUICK`](specs/016-docs-check-cambios-quick-y-entrega-embebida/quick-change.md) | `APPROVED` / `VALIDATED` | `docs:check` gobierna los cambios QUICK de plataforma y su registro de entrega embebido. |
+| `PLAT-017` | [`Cambio QUICK`](specs/017-architecture-check-reglas-de-agents/quick-change.md) | `APPROVED` / `VALIDATED` | `architecture:check` detecta carpetas técnicas globales y fugas de MSW, `mocks/` y traducciones en `src/`. |
 
 Los alias `PLAT-001` y `PLAT-002` permiten distinguir estas capacidades de las futuras features de producto. No reescriben los identificadores, estados ni evidencias de los artefactos originales.
 

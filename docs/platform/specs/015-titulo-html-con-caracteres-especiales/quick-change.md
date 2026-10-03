@@ -91,8 +91,8 @@ La aprobación autoriza implementar únicamente este delta cuando exista autoriz
 
 ## Registro de entrega opcional
 
-- Estado de entrega: `IMPLEMENTED`
+- Estado de entrega: `VALIDATED`
 - Archivos modificados: `tools/template/managed-files.ts` (`updateIndexHtml` usa una función de reemplazo), `tests/tools/template/initialization.test.ts` (seis casos de título: `$&`, `$$`, `` $` ``, `$'`, `$1 $<name>` y un control con `&` y `<>`), `tests/tools/template/doctor.test.ts` (diagnóstico con `Cash $& Co`), `docs/platform/README.md`.
 - Pruebas y resultados (2026-10-03): antes del cambio, los cinco casos con patrones especiales y la prueba del doctor fallaban y el control pasaba; después, las 21 pruebas de esos dos archivos pasan. `npm run check` y `npm run test:tools` finalizan con código `0` (10 pruebas de aplicación, 66 de herramientas). Derivación real en copia temporal (ya eliminada) con el nombre `Cash $& Co`: `index.html` contiene `<title>Cash $&amp; Co</title>`, `template:doctor` da `PASS` en `HTML_IDENTITY`, `MANAGED_OUTPUTS` y `TEMPLATE_RESIDUALS` (resumen `PASS=9 FAIL=0 UNKNOWN=1`) y `npm run check` del derivado finaliza con código `0`.
 - Desviaciones: no se cambió el manifiesto ni el `baselineId`: `tools/template/` no contiene archivos gestionados del manifiesto y `rehash` no produjo diferencias. Sin otras desviaciones.
-- Aceptación: Pendiente
+- Aceptación: 2026-10-03, Tomás, usuario solicitante. Aceptación expresa «Acepto PLAT-015, 016 y 017 como VALIDATED» registrada en la conversación de trabajo tras contrastar los criterios con la evidencia de este registro. En GitHub, tras el push de `fe53696`, `Quality` (run `37153963551`) y `Security` (run `37153963548`) finalizaron con `success`.
