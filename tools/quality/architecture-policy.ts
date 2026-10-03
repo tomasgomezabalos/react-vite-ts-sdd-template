@@ -24,6 +24,53 @@ const layerOrder: Record<ArchitectureLayer, number> = {
   shared: 4,
 }
 
+const forbiddenGlobalFolders = new Set([
+  'components',
+  'hooks',
+  'services',
+  'slices',
+])
+
+export const forbiddenFolderViolation = (
+  rootRelativePath: string,
+): ArchitectureViolation | null => {
+  const folder = toPortablePath(rootRelativePath).match(/^src\/([^/]+)\//)?.[1]
+  if (!folder || !forbiddenGlobalFolders.has(folder)) return null
+  return {
+    code: 'ARCH_GLOBAL_TECHNICAL_FOLDER',
+    message: `No se crean carpetas técnicas globales (src/${folder}/); el módulo pertenece a su página, feature, entidad o shared.`,
+  }
+}
+
+export const restrictedImportViolation = (
+  sourcePath: string,
+  specifier: string,
+  resolvedPath: string | undefined,
+): ArchitectureViolation | null => {
+  if (specifier === 'msw' || specifier.startsWith('msw/')) {
+    return {
+      code: 'ARCH_MSW_IN_SOURCE',
+      message: 'El código de src/ no depende de MSW; MSW vive en mocks/.',
+    }
+  }
+  if (resolvedPath && /^mocks(\/|$)/.test(resolvedPath)) {
+    return {
+      code: 'ARCH_MOCKS_IN_SOURCE',
+      message: 'El código de src/ no importa desde mocks/.',
+    }
+  }
+  if (
+    resolvedPath?.startsWith('src/locales/') &&
+    !sourcePath.startsWith('src/i18n/')
+  ) {
+    return {
+      code: 'ARCH_LOCALES_IMPORT',
+      message: 'Solo src/i18n/ importa las traducciones; usa react-i18next.',
+    }
+  }
+  return null
+}
+
 export const classifyModule = (rootRelativePath: string): ModuleOwner => {
   const path = toPortablePath(rootRelativePath)
   if (path === 'src/main.tsx' || path === 'src/main.ts')

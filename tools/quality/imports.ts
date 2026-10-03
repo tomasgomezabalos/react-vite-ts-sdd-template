@@ -161,6 +161,7 @@ export type ResolvedImport = {
   internal: boolean
   unresolvedInternal: boolean
   path?: string
+  externalPath?: string
 }
 
 export const resolveImport = (
@@ -181,7 +182,7 @@ export const resolveImport = (
     const path = resolve(resolvedModule.resolvedFileName)
     if (isWithinRoot(sourceRoot, path))
       return { internal: true, unresolvedInternal: false, path }
-    return { internal: false, unresolvedInternal: false }
+    return { internal: false, unresolvedInternal: false, externalPath: path }
   }
 
   if (specifier.startsWith('.')) {

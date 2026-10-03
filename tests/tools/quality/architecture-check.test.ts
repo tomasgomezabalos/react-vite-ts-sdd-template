@@ -167,3 +167,119 @@ void import('./lazy')
     expect(stderr.join('')).toContain('QUALITY_INTERNAL_ERROR')
   })
 })
+
+describe('architecture rules inherited from the project conventions', () => {
+  const run = async (files: Record<string, string>) => {
+    const fixture = await createQualityFixture()
+    cleanups.push(fixture.cleanup)
+    await configure(fixture)
+    for (const [path, content] of Object.entries(files)) {
+      await fixture.write(path, content)
+    }
+    return (await checkArchitecture(fixture.root)).diagnostics
+  }
+
+  it.each(['components', 'hooks', 'services', 'slices'])(
+    'reports a global technical folder src/%s once',
+    async (folder) => {
+      const diagnostics = await run({
+        [`src/${folder}/B/index.ts`]: 'export const b = 1\n',
+        [`src/${folder}/A/index.ts`]: 'export const a = 1\n',
+        [`src/${folder}/A/styles.scss`]: '',
+      })
+
+      expect(diagnostics).toEqual([
+        expect.objectContaining({
+          code: 'ARCH_GLOBAL_TECHNICAL_FOLDER',
+          path: `src/${folder}/A/index.ts`,
+        }),
+      ])
+    },
+  )
+
+  it('reports a global folder that only contains non-source files', async () => {
+    const diagnostics = await run({
+      'src/hooks/readme.txt': 'x',
+      'src/shared/value.ts': 'export const value = 1\n',
+    })
+
+    expect(diagnostics.map((entry) => entry.code)).toEqual([
+      'ARCH_GLOBAL_TECHNICAL_FOLDER',
+    ])
+  })
+
+  it('allows technical folder names inside an owner', async () => {
+    const diagnostics = await run({
+      'src/pages/Home/components/Card/index.ts': 'export const card = 1\n',
+      'src/pages/Home/index.ts': "export * from './components/Card'\n",
+      'src/shared/hooks/useThing.ts': 'export const useThing = () => 1\n',
+    })
+
+    expect(diagnostics).toEqual([])
+  })
+
+  it('reports MSW in every static, type, re-export and dynamic form', async () => {
+    const diagnostics = await run({
+      'src/shared/leak.ts': [
+        "import { http } from 'msw'",
+        "import type { SetupWorker } from 'msw/browser'",
+        "export { setupServer } from 'msw/node'",
+        "export const lazy = () => import('msw/browser')",
+        'export const use = [http] as unknown as SetupWorker[]',
+        '',
+      ].join('\n'),
+    })
+
+    expect(diagnostics.map((entry) => [entry.code, entry.line])).toEqual([
+      ['ARCH_MSW_IN_SOURCE', 1],
+      ['ARCH_MSW_IN_SOURCE', 2],
+      ['ARCH_MSW_IN_SOURCE', 3],
+      ['ARCH_MSW_IN_SOURCE', 4],
+    ])
+  })
+
+  it('does not confuse other packages with MSW', async () => {
+    const diagnostics = await run({
+      'src/shared/ok.ts': "import 'msw-like'\nexport const ok = 1\n",
+    })
+
+    expect(diagnostics.map((entry) => entry.code)).not.toContain(
+      'ARCH_MSW_IN_SOURCE',
+    )
+  })
+
+  it('reports imports that resolve into mocks/, static and dynamic', async () => {
+    const diagnostics = await run({
+      'mocks/browser.ts': 'export const worker = 1\n',
+      'src/shared/leak.ts': [
+        "import { worker } from '../../mocks/browser'",
+        "export const lazy = () => import('../../mocks/browser')",
+        'export const use = worker',
+        '',
+      ].join('\n'),
+    })
+
+    expect(diagnostics.map((entry) => [entry.code, entry.line])).toEqual([
+      ['ARCH_MOCKS_IN_SOURCE', 1],
+      ['ARCH_MOCKS_IN_SOURCE', 2],
+    ])
+  })
+
+  it('reports locale imports outside src/i18n and allows them inside it', async () => {
+    const diagnostics = await run({
+      'src/locales/en/common.json': '{}\n',
+      'src/pages/Home/index.ts':
+        "import common from '../../locales/en/common.json'\nexport const page = common\n",
+      'src/i18n/resources.ts':
+        "import common from '../locales/en/common.json'\nexport const resources = common\n",
+    })
+
+    expect(diagnostics).toEqual([
+      expect.objectContaining({
+        code: 'ARCH_LOCALES_IMPORT',
+        path: 'src/pages/Home/index.ts',
+        line: 1,
+      }),
+    ])
+  })
+})

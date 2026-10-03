@@ -1,14 +1,38 @@
 import { resolve } from 'node:path'
 import { analyzeImports, resolveImport } from './imports.ts'
-import { classifyModule, evaluateDependency } from './architecture-policy.ts'
-import { repositoryPath } from './filesystem.ts'
+import {
+  classifyModule,
+  evaluateDependency,
+  forbiddenFolderViolation,
+  restrictedImportViolation,
+} from './architecture-policy.ts'
+import { collectFiles, repositoryPath } from './filesystem.ts'
 import { isExecutedModule, runQualityMain } from './output.ts'
 import type { QualityDiagnostic, QualityIo, QualityRun } from './types.ts'
+
+const resolvedRepositoryPath = (
+  root: string,
+  absolute: string | undefined,
+): string | undefined =>
+  absolute === undefined ? undefined : repositoryPath(root, absolute)
 
 export const checkArchitecture = async (root: string): Promise<QualityRun> => {
   const absoluteRoot = resolve(root)
   const analysis = await analyzeImports(absoluteRoot)
   const diagnostics: QualityDiagnostic[] = []
+  const reportedFolders = new Set<string>()
+  const sourceFiles = await collectFiles(
+    resolve(absoluteRoot, 'src'),
+    () => true,
+  )
+  for (const file of sourceFiles) {
+    const path = repositoryPath(absoluteRoot, file)
+    const violation = forbiddenFolderViolation(path)
+    const folder = path.split('/')[1] ?? ''
+    if (!violation || reportedFolders.has(folder)) continue
+    reportedFolders.add(folder)
+    diagnostics.push({ code: violation.code, path, message: violation.message })
+  }
   for (const source of analysis.sources) {
     const sourcePath = repositoryPath(absoluteRoot, source.source)
     const sourceOwner = classifyModule(sourcePath)
@@ -31,6 +55,23 @@ export const checkArchitecture = async (root: string): Promise<QualityRun> => {
         analysis.compilerOptions,
         analysis.configuredAliases,
       )
+      const restricted = restrictedImportViolation(
+        sourcePath,
+        reference.specifier,
+        resolvedRepositoryPath(
+          absoluteRoot,
+          resolvedImport.path ?? resolvedImport.externalPath,
+        ),
+      )
+      if (restricted) {
+        diagnostics.push({
+          code: restricted.code,
+          path: sourcePath,
+          line: reference.line,
+          column: reference.column,
+          message: `${restricted.message} Import: ${reference.specifier}.`,
+        })
+      }
       if (!resolvedImport.internal) continue
       if (resolvedImport.unresolvedInternal || !resolvedImport.path) {
         diagnostics.push({
