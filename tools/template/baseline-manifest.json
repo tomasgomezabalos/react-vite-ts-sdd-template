@@ -1,6 +1,6 @@
 {
   "schemaVersion": 2,
-  "baselineId": "react-vite-ts-sdd-template@2026-10-03-deps-1",
+  "baselineId": "react-vite-ts-sdd-template@2026-10-03-deps-2",
   "canonicalRemote": "https://github.com/tomasgomezabalos/react-vite-ts-sdd-template.git",
   "derivation": {
     "exclude": [
@@ -15,8 +15,8 @@
     "AGENTS.md": "815adf7502f520d24d1a0318f2e4498f151db6f5cab6395fbbde5b54126d582e",
     "README.md": "8d4391af2026c81b66f5b51ecc5f268b6b9ff25de97091d2f912c7178af047c5",
     "index.html": "a1739bf8471fede0d2e86afaa1f3046d04cfabbfdc075fd1758436f2c70c2e26",
-    "package-lock.json": "84792dfda7c57881587d517583b8fec95fe8c977e8d316a1052be6d418f2c40f",
-    "package.json": "c1f1917417879314eaad6a3408abecd74e92df2d2f7b12159900f933f912992a",
+    "package-lock.json": "4274fef0b820519f2cfa18f0960824a235755fee99834415dee02acaab23cc74",
+    "package.json": "30f3ee2473177052753830f53751ab1e479a177a081dec2497967d5de6d6409e",
     "specs/README.md": "7279bca37447e5fa86c6cb064c0a161e270bdfabdc9d2d0dc42edab9a72b42bd",
     "src/i18n/config.ts": "f26e573c447e2ef81431f379864477d607fca4e43ad8cc8f12ba63a85e92e7bb",
     "src/i18n/resources.ts": "01b26d657d819c9f06fbd21d2772ca2b61db7f9beb4d1e5a5a49d4b0bf2aa84d",
