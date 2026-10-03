@@ -3,7 +3,8 @@ import { readFile } from 'node:fs/promises'
 import type { EffectiveProjectConfig, ProjectConfig } from './types.ts'
 
 const PACKAGE_NAME = /^(?:@[a-z0-9][a-z0-9._-]*\/)?[a-z0-9][a-z0-9._-]*$/
-const SECRET_KEY = /(?:password|passwd|secret|token|credential|private.?key|api.?key)/i
+const SECRET_KEY =
+  /(?:password|passwd|secret|token|credential|private.?key|api.?key)/i
 
 export const INITIAL_PACKAGE_VERSION = '0.1.0' as const
 export const QUALITY_COMMAND = 'npm run check' as const
@@ -51,11 +52,7 @@ const assertExactKeys = (
   }
 }
 
-const readString = (
-  value: unknown,
-  path: string,
-  issues: string[],
-): string => {
+const readString = (value: unknown, path: string, issues: string[]): string => {
   if (typeof value !== 'string' || value.trim() === '') {
     issues.push(`${path} debe ser una cadena no vacía.`)
     return ''
@@ -68,13 +65,17 @@ const readString = (
 
 const findSecretKeys = (value: unknown, path: string, issues: string[]) => {
   if (Array.isArray(value)) {
-    value.forEach((item, index) => findSecretKeys(item, `${path}[${index}]`, issues))
+    value.forEach((item, index) =>
+      findSecretKeys(item, `${path}[${index}]`, issues),
+    )
     return
   }
   if (!isObject(value)) return
   for (const [key, child] of Object.entries(value)) {
     if (SECRET_KEY.test(key)) {
-      issues.push(`${path}.${key} parece un campo de secreto y no está permitido.`)
+      issues.push(
+        `${path}.${key} parece un campo de secreto y no está permitido.`,
+      )
     }
     findSecretKeys(child, `${path}.${key}`, issues)
   }
@@ -91,8 +92,10 @@ export const suggestPackageName = (displayName: string): string =>
 export const canonicalJson = (value: unknown): string => {
   if (Array.isArray(value)) return `[${value.map(canonicalJson).join(',')}]`
   if (isObject(value)) {
-    return `{${Object.keys(value).sort().map((key) =>
-      `${JSON.stringify(key)}:${canonicalJson(value[key])}`).join(',')}}`
+    return `{${Object.keys(value)
+      .sort()
+      .map((key) => `${JSON.stringify(key)}:${canonicalJson(value[key])}`)
+      .join(',')}}`
   }
   return JSON.stringify(value)
 }
@@ -123,15 +126,32 @@ export const validateProjectConfig = (value: unknown): ProjectConfig => {
   if ('$schema' in root) readString(root.$schema, '$.$schema', issues)
 
   if (root.schemaVersion !== 2) {
-    issues.push('$.schemaVersion debe ser 2; el contrato v1 ya no es compatible.')
+    issues.push(
+      '$.schemaVersion debe ser 2; el contrato v1 ya no es compatible.',
+    )
   }
 
   const identity = assertObject(root.identity, '$.identity', issues)
-  assertExactKeys(identity, ['displayName', 'packageName'], '$.identity', issues)
-  const displayName = readString(identity.displayName, '$.identity.displayName', issues)
-  const packageName = readString(identity.packageName, '$.identity.packageName', issues)
+  assertExactKeys(
+    identity,
+    ['displayName', 'packageName'],
+    '$.identity',
+    issues,
+  )
+  const displayName = readString(
+    identity.displayName,
+    '$.identity.displayName',
+    issues,
+  )
+  const packageName = readString(
+    identity.packageName,
+    '$.identity.packageName',
+    issues,
+  )
   if (packageName.length > 214 || !PACKAGE_NAME.test(packageName)) {
-    issues.push('$.identity.packageName debe ser un nombre npm válido en minúsculas.')
+    issues.push(
+      '$.identity.packageName debe ser un nombre npm válido en minúsculas.',
+    )
   }
 
   if (issues.length > 0) throw new ConfigError(issues)
@@ -145,7 +165,9 @@ export const validateProjectConfig = (value: unknown): ProjectConfig => {
   }
 }
 
-export const loadProjectConfig = async (path: string): Promise<ProjectConfig> => {
+export const loadProjectConfig = async (
+  path: string,
+): Promise<ProjectConfig> => {
   let parsed: unknown
   try {
     parsed = JSON.parse(await readFile(path, 'utf8'))

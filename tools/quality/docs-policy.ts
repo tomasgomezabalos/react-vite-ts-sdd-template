@@ -43,12 +43,16 @@ const currentArchitectureDecision = (path: string): boolean => {
 }
 
 const currentPlatformArtifact = (path: string): boolean => {
-  const match = path.match(/^docs\/platform\/specs\/(\d{3})-[^/]+\/(spec|plan|validation-report)\.md$/)
+  const match = path.match(
+    /^docs\/platform\/specs\/(\d{3})-[^/]+\/(spec|plan|validation-report)\.md$/,
+  )
   return Boolean(match && Number(match[1]) >= 3)
 }
 
 const productArtifact = (path: string): boolean =>
-  path.startsWith('specs/') && path !== 'specs/README.md' && path.endsWith('.md')
+  path.startsWith('specs/') &&
+  path !== 'specs/README.md' &&
+  path.endsWith('.md')
 
 export const isValidationReport = (path: string): boolean =>
   basename(path) === 'validation-report.md'
@@ -58,14 +62,17 @@ export const isGovernedArtifact = (path: string): boolean =>
     'docs/sdd/change-policy.md',
     'docs/sdd/constitution.md',
     'docs/sdd/workflow.md',
-  ].includes(path)
-  || currentArchitectureDecision(path)
-  || currentPlatformArtifact(path)
-  || productArtifact(path)
+  ].includes(path) ||
+  currentArchitectureDecision(path) ||
+  currentPlatformArtifact(path) ||
+  productArtifact(path)
 
-export const expectedDynamicIndexEntries = (markdownPaths: string[]): Record<string, string[]> => {
+export const expectedDynamicIndexEntries = (
+  markdownPaths: string[],
+): Record<string, string[]> => {
   const architecture = markdownPaths.filter((path) =>
-    /^docs\/architecture\/decisions\/\d{4}-.+\.md$/.test(path))
+    /^docs\/architecture\/decisions\/\d{4}-.+\.md$/.test(path),
+  )
   const currentPlatform = markdownPaths.filter(currentPlatformArtifact)
   const product = markdownPaths.filter(productArtifact)
   return {

@@ -5,10 +5,7 @@ import {
   hashText,
   QUALITY_COMMAND,
 } from './config.ts'
-import {
-  ProjectError,
-  readProjectFile,
-} from './project.ts'
+import { ProjectError, readProjectFile } from './project.ts'
 import type {
   BaselineManifest,
   EffectiveProjectConfig,
@@ -21,14 +18,15 @@ const TEMPLATE_SCRIPTS = ['template:init', 'template:doctor'] as const
 const TEMPLATE_ONLY_START = '<!-- template-only:start -->'
 const TEMPLATE_ONLY_END = '<!-- template-only:end -->'
 
-const prettyJson = (value: unknown): string => `${JSON.stringify(value, null, 2)}\n`
+const prettyJson = (value: unknown): string =>
+  `${JSON.stringify(value, null, 2)}\n`
 
-const htmlText = (value: string): string => value
-  .replaceAll('&', '&amp;')
-  .replaceAll('<', '&lt;')
-  .replaceAll('>', '&gt;')
+const htmlText = (value: string): string =>
+  value.replaceAll('&', '&amp;').replaceAll('<', '&lt;').replaceAll('>', '&gt;')
 
-const renderReadme = (config: EffectiveProjectConfig): string => `# ${config.identity.displayName}
+const renderReadme = (
+  config: EffectiveProjectConfig,
+): string => `# ${config.identity.displayName}
 
 SPA cliente creada a partir de una baseline React, Vite y TypeScript gobernada por SDD.
 
@@ -77,15 +75,22 @@ export const removeTemplateOnlyBlocks = (content: string): string => {
   const starts = content.split(TEMPLATE_ONLY_START).length - 1
   const ends = content.split(TEMPLATE_ONLY_END).length - 1
   if (starts !== ends) {
-    throw new ProjectError('AGENTS.md contiene marcadores template-only desbalanceados.')
+    throw new ProjectError(
+      'AGENTS.md contiene marcadores template-only desbalanceados.',
+    )
   }
   const block = new RegExp(
     `^${TEMPLATE_ONLY_START}\\n[\\s\\S]*?^${TEMPLATE_ONLY_END}\\n`,
     'gm',
   )
   const result = content.replace(block, '')
-  if (result.includes(TEMPLATE_ONLY_START) || result.includes(TEMPLATE_ONLY_END)) {
-    throw new ProjectError('Los marcadores template-only de AGENTS.md deben ocupar su propia línea y estar emparejados.')
+  if (
+    result.includes(TEMPLATE_ONLY_START) ||
+    result.includes(TEMPLATE_ONLY_END)
+  ) {
+    throw new ProjectError(
+      'Los marcadores template-only de AGENTS.md deben ocupar su propia línea y estar emparejados.',
+    )
   }
   return result
 }
@@ -114,7 +119,9 @@ const updateIndexHtml = (
   config: EffectiveProjectConfig,
 ): string => {
   if (!/<title>[^<]*<\/title>/.test(content)) {
-    throw new ProjectError('index.html no contiene el marcador gestionado de título.')
+    throw new ProjectError(
+      'index.html no contiene el marcador gestionado de título.',
+    )
   }
   return content.replace(
     /<title>[^<]*<\/title>/,
@@ -122,7 +129,10 @@ const updateIndexHtml = (
   )
 }
 
-const loadRequiredContent = async (target: string, path: string): Promise<string> => {
+const loadRequiredContent = async (
+  target: string,
+  path: string,
+): Promise<string> => {
   const file = await readProjectFile(target, path)
   if (!file) throw new ProjectError(`Falta el archivo gestionado ${path}.`)
   return file.content
@@ -157,20 +167,29 @@ export const buildPreview = async (
     if (desired.has(path)) continue
     const file = await readProjectFile(target, path)
     if (!file || file.hash !== expectedHash) {
-      throw new ProjectError(`El destino no coincide con la baseline reconocida: ${path}.`)
+      throw new ProjectError(
+        `El destino no coincide con la baseline reconocida: ${path}.`,
+      )
     }
   }
 
   const operations: FileOperation[] = []
   for (const [path, content] of [...desired.entries()].sort(([left], [right]) =>
-    left.localeCompare(right))) {
+    left.localeCompare(right),
+  )) {
     const current = await readProjectFile(target, path)
     const afterHash = hashText(content)
     const baselineHash = manifest.managedFiles[path]
     if (!current && baselineHash) {
-      throw new ProjectError(`El destino no coincide con la baseline reconocida: falta ${path}.`)
+      throw new ProjectError(
+        `El destino no coincide con la baseline reconocida: falta ${path}.`,
+      )
     }
-    if (current && current.hash !== baselineHash && current.hash !== afterHash) {
+    if (
+      current &&
+      current.hash !== baselineHash &&
+      current.hash !== afterHash
+    ) {
       throw new ProjectError(
         `El archivo contiene contenido no reconocido (no coincide con la baseline ni con la salida de esta configuración) y no se sobrescribirá: ${path}`,
       )
@@ -190,19 +209,23 @@ export const buildPreview = async (
   }
 
   const digest = configDigest(config)
-  const token = hashText(canonicalJson({
-    schemaVersion: 2,
-    baselineId: manifest.baselineId,
-    target,
-    configDigest: digest,
-    operations: operations.map(({ kind, path, beforeHash, afterHash, mode }) => ({
-      kind,
-      path,
-      beforeHash,
-      afterHash,
-      mode,
-    })),
-  }))
+  const token = hashText(
+    canonicalJson({
+      schemaVersion: 2,
+      baselineId: manifest.baselineId,
+      target,
+      configDigest: digest,
+      operations: operations.map(
+        ({ kind, path, beforeHash, afterHash, mode }) => ({
+          kind,
+          path,
+          beforeHash,
+          afterHash,
+          mode,
+        }),
+      ),
+    }),
+  )
   return {
     target,
     configDigest: digest,

@@ -4,10 +4,7 @@
   "title": "Configuración mínima de derivación",
   "type": "object",
   "additionalProperties": false,
-  "required": [
-    "schemaVersion",
-    "identity"
-  ],
+  "required": ["schemaVersion", "identity"],
   "properties": {
     "$schema": {
       "type": "string",
@@ -19,10 +16,7 @@
     "identity": {
       "type": "object",
       "additionalProperties": false,
-      "required": [
-        "displayName",
-        "packageName"
-      ],
+      "required": ["displayName", "packageName"],
       "properties": {
         "displayName": {
           "$ref": "#/$defs/nonEmptyString"

@@ -1,10 +1,6 @@
 import { fileURLToPath } from 'node:url'
 import { resolve } from 'node:path'
-import type {
-  QualityDiagnostic,
-  QualityIo,
-  QualityRun,
-} from './types.ts'
+import type { QualityDiagnostic, QualityIo, QualityRun } from './types.ts'
 
 export const defaultQualityIo: QualityIo = {
   stdout: (value) => process.stdout.write(value),
@@ -13,16 +9,20 @@ export const defaultQualityIo: QualityIo = {
 
 export const sortDiagnostics = (
   diagnostics: QualityDiagnostic[],
-): QualityDiagnostic[] => [...diagnostics].sort((left, right) =>
-  left.path.localeCompare(right.path)
-  || (left.line ?? 0) - (right.line ?? 0)
-  || (left.column ?? 0) - (right.column ?? 0)
-  || left.code.localeCompare(right.code)
-  || left.message.localeCompare(right.message))
+): QualityDiagnostic[] =>
+  [...diagnostics].sort(
+    (left, right) =>
+      left.path.localeCompare(right.path) ||
+      (left.line ?? 0) - (right.line ?? 0) ||
+      (left.column ?? 0) - (right.column ?? 0) ||
+      left.code.localeCompare(right.code) ||
+      left.message.localeCompare(right.message),
+  )
 
 const formatLocation = (diagnostic: QualityDiagnostic): string => {
   if (diagnostic.line === undefined) return diagnostic.path
-  if (diagnostic.column === undefined) return `${diagnostic.path}:${diagnostic.line}`
+  if (diagnostic.column === undefined)
+    return `${diagnostic.path}:${diagnostic.line}`
   return `${diagnostic.path}:${diagnostic.line}:${diagnostic.column}`
 }
 
@@ -60,5 +60,8 @@ export const runQualityMain = async (
 
 export const isExecutedModule = (moduleUrl: string): boolean => {
   const entrypoint = process.argv[1]
-  return Boolean(entrypoint) && resolve(fileURLToPath(moduleUrl)) === resolve(entrypoint)
+  return (
+    Boolean(entrypoint) &&
+    resolve(fileURLToPath(moduleUrl)) === resolve(entrypoint)
+  )
 }

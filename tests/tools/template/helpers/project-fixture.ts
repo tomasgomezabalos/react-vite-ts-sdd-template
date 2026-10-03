@@ -26,10 +26,14 @@ const readJson = async <T>(path: string): Promise<T> =>
   JSON.parse(await readFile(path, 'utf8')) as T
 
 export const readExampleConfig = async (): Promise<ProjectConfig> =>
-  readJson<ProjectConfig>(resolve(repositoryRoot, 'tools/template/project.config.example.json'))
+  readJson<ProjectConfig>(
+    resolve(repositoryRoot, 'tools/template/project.config.example.json'),
+  )
 
 export const readFixtureManifest = async (): Promise<BaselineManifest> =>
-  readJson<BaselineManifest>(resolve(repositoryRoot, 'tools/template/baseline-manifest.json'))
+  readJson<BaselineManifest>(
+    resolve(repositoryRoot, 'tools/template/baseline-manifest.json'),
+  )
 
 const copy = async (source: string, destination: string) => {
   await mkdir(dirname(destination), { recursive: true })
@@ -110,6 +114,9 @@ export const snapshotProject = async (
     }
   }
   await walk(target)
-  return Object.fromEntries(Object.entries(snapshot).sort(([left], [right]) =>
-    left.localeCompare(right)))
+  return Object.fromEntries(
+    Object.entries(snapshot).sort(([left], [right]) =>
+      left.localeCompare(right),
+    ),
+  )
 }

@@ -1,7 +1,8 @@
 import { basename, extname } from 'node:path'
 import { toPortablePath } from './filesystem.ts'
 
-export type ArchitectureLayer = 'root' | 'app' | 'pages' | 'features' | 'entities' | 'shared'
+export type ArchitectureLayer =
+  'root' | 'app' | 'pages' | 'features' | 'entities' | 'shared'
 
 export type ModuleOwner = {
   layer: ArchitectureLayer
@@ -25,13 +26,20 @@ const layerOrder: Record<ArchitectureLayer, number> = {
 
 export const classifyModule = (rootRelativePath: string): ModuleOwner => {
   const path = toPortablePath(rootRelativePath)
-  if (path === 'src/main.tsx' || path === 'src/main.ts') return { layer: 'root', path }
-  if (path === 'src/index.scss' || path === 'src/index.css') return { layer: 'shared', path }
-  if (path.startsWith('src/i18n/') || path.startsWith('src/locales/')) return { layer: 'shared', path }
-  const match = path.match(/^src\/(app|pages|features|entities|shared)(?:\/([^/]+))?/)
+  if (path === 'src/main.tsx' || path === 'src/main.ts')
+    return { layer: 'root', path }
+  if (path === 'src/index.scss' || path === 'src/index.css')
+    return { layer: 'shared', path }
+  if (path.startsWith('src/i18n/') || path.startsWith('src/locales/'))
+    return { layer: 'shared', path }
+  const match = path.match(
+    /^src\/(app|pages|features|entities|shared)(?:\/([^/]+))?/,
+  )
   if (!match) return { layer: 'shared', path }
   const layer = match[1] as Exclude<ArchitectureLayer, 'root'>
-  const owner = ['pages', 'features', 'entities'].includes(layer) ? match[2] : undefined
+  const owner = ['pages', 'features', 'entities'].includes(layer)
+    ? match[2]
+    : undefined
   return { layer, ...(owner ? { owner } : {}), path }
 }
 
@@ -62,14 +70,22 @@ export const evaluateDependency = (
     }
   }
 
-  if (source.layer === 'pages' && target.layer === 'pages' && source.owner !== target.owner) {
+  if (
+    source.layer === 'pages' &&
+    target.layer === 'pages' &&
+    source.owner !== target.owner
+  ) {
     return {
       code: 'ARCH_PAGE_TO_PAGE',
       message: `La página ${source.owner ?? source.path} no puede importar la página ${target.owner ?? target.path}.`,
     }
   }
 
-  if (target.layer === 'pages' && source.owner !== target.owner && !isPublicPageEntrypoint(target)) {
+  if (
+    target.layer === 'pages' &&
+    source.owner !== target.owner &&
+    !isPublicPageEntrypoint(target)
+  ) {
     return {
       code: 'ARCH_PRIVATE_PAGE_IMPORT',
       message: `El módulo interno de la página ${target.owner ?? target.path} es privado.`,

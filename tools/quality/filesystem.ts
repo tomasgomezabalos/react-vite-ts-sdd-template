@@ -1,14 +1,5 @@
-import {
-  lstat,
-  readdir,
-  realpath,
-  stat,
-} from 'node:fs/promises'
-import {
-  relative,
-  resolve,
-  sep,
-} from 'node:path'
+import { lstat, readdir, realpath, stat } from 'node:fs/promises'
+import { relative, resolve, sep } from 'node:path'
 
 const ignoredDirectories = new Set([
   '.agents',
@@ -25,7 +16,10 @@ export const toPortablePath = (value: string): string =>
 
 export const isWithinRoot = (root: string, candidate: string): boolean => {
   const child = relative(resolve(root), resolve(candidate))
-  return child === '' || (!child.startsWith(`..${sep}`) && child !== '..' && !child.startsWith(sep))
+  return (
+    child === '' ||
+    (!child.startsWith(`..${sep}`) && child !== '..' && !child.startsWith(sep))
+  )
 }
 
 export const repositoryPath = (root: string, absolutePath: string): string =>

@@ -8,12 +8,7 @@ import {
   writeFile,
 } from 'node:fs/promises'
 import { tmpdir } from 'node:os'
-import {
-  dirname,
-  join,
-  relative,
-  resolve,
-} from 'node:path'
+import { dirname, join, relative, resolve } from 'node:path'
 import { createHash } from 'node:crypto'
 
 export type QualityFixture = {
@@ -38,11 +33,14 @@ export const createQualityFixture = async (): Promise<QualityFixture> => {
   }
 }
 
-export type FileSnapshot = Record<string, {
-  hash: string
-  mode: number
-  mtimeMs: number
-}>
+export type FileSnapshot = Record<
+  string,
+  {
+    hash: string
+    mode: number
+    mtimeMs: number
+  }
+>
 
 export const snapshotFiles = async (root: string): Promise<FileSnapshot> => {
   const entries: FileSnapshot = {}
@@ -62,8 +60,11 @@ export const snapshotFiles = async (root: string): Promise<FileSnapshot> => {
     }
   }
   await walk(root)
-  return Object.fromEntries(Object.entries(entries).sort(([left], [right]) =>
-    left.localeCompare(right)))
+  return Object.fromEntries(
+    Object.entries(entries).sort(([left], [right]) =>
+      left.localeCompare(right),
+    ),
+  )
 }
 
 const approvedDocument = (title: string): string => `# ${title}
@@ -88,16 +89,30 @@ export const populateDocumentationFixture = async (
   await fixture.write('README.md', '# Readme\n')
   await fixture.write('specs/README.md', '# Producto\n')
   await fixture.write('docs/architecture/README.md', '# Arquitectura\n')
-  await fixture.write('docs/platform/README.md', `# Plataforma
+  await fixture.write(
+    'docs/platform/README.md',
+    `# Plataforma
 
 [PLAT-001](specs/001-enrutamiento-base-spa/spec.md)
 [PLAT-002](specs/002-carga-diferida-rutas/spec.md)
 [Enmienda](specs/002-carga-diferida-rutas/amendment-001-obligatoriedad-paginas.md)
-`)
-  await fixture.write('docs/platform/specs/001-enrutamiento-base-spa/spec.md', '# Histórico 1\n')
-  await fixture.write('docs/platform/specs/002-carga-diferida-rutas/spec.md', '# Histórico 2\n')
-  await fixture.write('docs/platform/specs/002-carga-diferida-rutas/amendment-001-obligatoriedad-paginas.md', '# Enmienda\n')
-  await fixture.write('docs/sdd/README.md', `# SDD
+`,
+  )
+  await fixture.write(
+    'docs/platform/specs/001-enrutamiento-base-spa/spec.md',
+    '# Histórico 1\n',
+  )
+  await fixture.write(
+    'docs/platform/specs/002-carga-diferida-rutas/spec.md',
+    '# Histórico 2\n',
+  )
+  await fixture.write(
+    'docs/platform/specs/002-carga-diferida-rutas/amendment-001-obligatoriedad-paginas.md',
+    '# Enmienda\n',
+  )
+  await fixture.write(
+    'docs/sdd/README.md',
+    `# SDD
 
 [Constitución](constitution.md)
 [Workflow](workflow.md)
@@ -108,7 +123,8 @@ export const populateDocumentationFixture = async (
 [Quick](templates/quick-change.md)
 [Plan](templates/technical-plan.md)
 [Informe](templates/validation-report.md)
-`)
+`,
+  )
   for (const path of [
     'docs/sdd/change-policy.md',
     'docs/sdd/constitution.md',

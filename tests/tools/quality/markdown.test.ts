@@ -40,13 +40,17 @@ describe('markdown quality parser', () => {
 `)
 
     expect([...parsed.anchors]).toEqual(['repetido', 'repetido-1', 'manual'])
-    expect(githubHeadingSlug('Código `npm run check` y acción')).toBe('código-npm-run-check-y-acción')
+    expect(githubHeadingSlug('Código `npm run check` y acción')).toBe(
+      'código-npm-run-check-y-acción',
+    )
   })
 
   it('marks malformed inline and reference destinations as uncheckable', () => {
     const parsed = parseMarkdown('[broken](<missing\n[reference][unknown]\n')
 
     expect(parsed.links).toHaveLength(2)
-    expect(parsed.links.every((link) => link.destination === undefined)).toBe(true)
+    expect(parsed.links.every((link) => link.destination === undefined)).toBe(
+      true,
+    )
   })
 })

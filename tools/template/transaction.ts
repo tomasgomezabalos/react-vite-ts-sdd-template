@@ -18,11 +18,7 @@ import {
   readProjectFile,
   resolveSafePath,
 } from './project.ts'
-import type {
-  FileOperation,
-  Preview,
-  TransactionJournal,
-} from './types.ts'
+import type { FileOperation, Preview, TransactionJournal } from './types.ts'
 
 type ApplyOptions = {
   failAfter?: number
@@ -34,20 +30,16 @@ const transactionDirectory = (target: string, id: string) =>
 const journalPath = (target: string, id: string) =>
   resolve(transactionDirectory(target, id), 'journal.json')
 
-const writeJournal = async (
-  target: string,
-  journal: TransactionJournal,
-) => {
+const writeJournal = async (target: string, journal: TransactionJournal) => {
   const path = journalPath(target, journal.id)
   const temporary = `${path}.tmp`
-  await writeFile(temporary, `${JSON.stringify(journal, null, 2)}\n`, { mode: 0o600 })
+  await writeFile(temporary, `${JSON.stringify(journal, null, 2)}\n`, {
+    mode: 0o600,
+  })
   await rename(temporary, path)
 }
 
-const assertCurrentHash = async (
-  target: string,
-  operation: FileOperation,
-) => {
+const assertCurrentHash = async (target: string, operation: FileOperation) => {
   const current = await readProjectFile(target, operation.path)
   if ((current?.hash ?? null) !== operation.beforeHash) {
     throw new ProjectError(
@@ -102,12 +94,17 @@ const restoreOperation = async (
     throw new ProjectError(`Falta la copia de seguridad de ${operation.path}.`)
   }
   const backup = resolve(transactionRoot, operation.backupPath)
-  if (!relative(transactionRoot, backup) || relative(transactionRoot, backup).startsWith('..')) {
+  if (
+    !relative(transactionRoot, backup) ||
+    relative(transactionRoot, backup).startsWith('..')
+  ) {
     throw new ProjectError(`Ruta de backup inválida para ${operation.path}.`)
   }
   const backupContent = await readFile(backup)
   if (hashText(backupContent.toString('utf8')) !== operation.beforeHash) {
-    throw new ProjectError(`La copia de seguridad de ${operation.path} no coincide con el diario.`)
+    throw new ProjectError(
+      `La copia de seguridad de ${operation.path} no coincide con el diario.`,
+    )
   }
   await mkdir(dirname(destination), { recursive: true })
   const temporary = `${destination}.template-recover-${operation.path.replaceAll('/', '-')}`
@@ -116,10 +113,7 @@ const restoreOperation = async (
   await chmod(destination, operation.mode)
 }
 
-const rollback = async (
-  target: string,
-  journal: TransactionJournal,
-) => {
+const rollback = async (target: string, journal: TransactionJournal) => {
   journal.status = 'rolling-back'
   await writeJournal(target, journal)
   const root = transactionDirectory(target, journal.id)
@@ -144,7 +138,8 @@ export const applyPreview = async (
   const changes = preview.operations
     .filter((operation) => operation.kind !== 'unchanged')
     .sort((left, right) => left.path.localeCompare(right.path))
-  for (const operation of preview.operations) await assertCurrentHash(preview.target, operation)
+  for (const operation of preview.operations)
+    await assertCurrentHash(preview.target, operation)
   if (changes.length === 0) return { transactionId: null, changed: 0 }
 
   const id = randomUUID()
@@ -164,7 +159,8 @@ export const applyPreview = async (
       beforeHash: operation.beforeHash,
       afterHash: operation.afterHash,
       mode: operation.mode,
-      backupPath: operation.beforeHash === null ? null : `backup/${operation.path}`,
+      backupPath:
+        operation.beforeHash === null ? null : `backup/${operation.path}`,
       applied: false,
     })),
   }
@@ -172,16 +168,23 @@ export const applyPreview = async (
   try {
     for (const operation of journal.operations) {
       if (operation.backupPath) {
-        const currentPath = await resolveSafePath(preview.target, operation.path)
+        const currentPath = await resolveSafePath(
+          preview.target,
+          operation.path,
+        )
         const backup = resolve(root, operation.backupPath)
         await mkdir(dirname(backup), { recursive: true })
         await writeFile(backup, await readFile(currentPath), { mode: 0o600 })
       }
-      const previewOperation = changes.find((candidate) => candidate.path === operation.path)
+      const previewOperation = changes.find(
+        (candidate) => candidate.path === operation.path,
+      )
       if (previewOperation?.content !== undefined) {
         const staged = resolve(root, 'staged', operation.path)
         await mkdir(dirname(staged), { recursive: true })
-        await writeFile(staged, previewOperation.content, { mode: operation.mode })
+        await writeFile(staged, previewOperation.content, {
+          mode: operation.mode,
+        })
       }
     }
   } catch (error) {
@@ -195,7 +198,8 @@ export const applyPreview = async (
 
   try {
     for (const [index, operation] of changes.entries()) {
-      if (options.failAfter === index) throw new Error(`Fallo inyectado tras ${index} operaciones.`)
+      if (options.failAfter === index)
+        throw new Error(`Fallo inyectado tras ${index} operaciones.`)
       const destination = await resolveSafePath(preview.target, operation.path)
       if (operation.kind === 'delete') {
         await unlink(destination)
@@ -231,25 +235,39 @@ export const recoverTransaction = async (
   target: string,
   id: string,
 ): Promise<void> => {
-  if (!/^[0-9a-f-]{36}$/i.test(id)) throw new ProjectError('Identificador de transacción inválido.')
+  if (!/^[0-9a-f-]{36}$/i.test(id))
+    throw new ProjectError('Identificador de transacción inválido.')
   await resolveSafePath(target, `.template-transaction/${id}/journal.json`)
   let journal: TransactionJournal
   try {
-    journal = JSON.parse(await readFile(journalPath(target, id), 'utf8')) as TransactionJournal
+    journal = JSON.parse(
+      await readFile(journalPath(target, id), 'utf8'),
+    ) as TransactionJournal
   } catch {
     throw new ProjectError(`No se puede leer la transacción ${id}.`)
   }
-  if (journal.schemaVersion !== 1 || journal.id !== id || journal.target !== target) {
-    throw new ProjectError(`El diario de la transacción ${id} no es válido para este destino.`)
+  if (
+    journal.schemaVersion !== 1 ||
+    journal.id !== id ||
+    journal.target !== target
+  ) {
+    throw new ProjectError(
+      `El diario de la transacción ${id} no es válido para este destino.`,
+    )
   }
   await rollback(target, journal)
   await cleanTransaction(target, id)
 }
 
-export const readTransactionMode = async (target: string, id: string): Promise<number> => {
+export const readTransactionMode = async (
+  target: string,
+  id: string,
+): Promise<number> => {
   const details = await stat(transactionDirectory(target, id))
   return details.mode & 0o777
 }
 
-export const hasTransaction = async (target: string, id: string): Promise<boolean> =>
-  pathExists(transactionDirectory(target, id))
+export const hasTransaction = async (
+  target: string,
+  id: string,
+): Promise<boolean> => pathExists(transactionDirectory(target, id))

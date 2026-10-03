@@ -12,23 +12,29 @@ describe('template baseline manifest', () => {
   it('keeps the baseline hashes synchronized with managed files', async () => {
     const manifest = await loadBaselineManifest()
 
-    expect(manifest.baselineId).toBe('react-vite-ts-sdd-template@2026-10-03-plat-009.1')
+    expect(manifest.baselineId).toBe(
+      'react-vite-ts-sdd-template@2026-10-03-plat-010.1',
+    )
     for (const [path, expectedHash] of Object.entries(manifest.managedFiles)) {
       const content = await readFile(resolve(repositoryRoot, path))
-      expect(createHash('sha256').update(content).digest('hex'), path).toBe(expectedHash)
+      expect(createHash('sha256').update(content).digest('hex'), path).toBe(
+        expectedHash,
+      )
     }
   })
 
   it('declares the template-only paths that a derivation must not receive', async () => {
     const manifest = await loadBaselineManifest()
 
-    expect(manifest.derivation.exclude).toEqual(expect.arrayContaining([
-      'tools/template/**',
-      'tests/tools/template/**',
-      'project.config.json',
-      '.template-state.json',
-      '.claude/settings.local.json',
-    ]))
+    expect(manifest.derivation.exclude).toEqual(
+      expect.arrayContaining([
+        'tools/template/**',
+        'tests/tools/template/**',
+        'project.config.json',
+        '.template-state.json',
+        '.claude/settings.local.json',
+      ]),
+    )
   })
 
   it('removes only the template-only blocks from AGENTS.md', async () => {
@@ -43,7 +49,8 @@ describe('template baseline manifest', () => {
   })
 
   it('rejects unbalanced template-only markers', () => {
-    expect(() => removeTemplateOnlyBlocks('a\n<!-- template-only:start -->\nb\n'))
-      .toThrow(/desbalanceados/)
+    expect(() =>
+      removeTemplateOnlyBlocks('a\n<!-- template-only:start -->\nb\n'),
+    ).toThrow(/desbalanceados/)
   })
 })

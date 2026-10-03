@@ -1,22 +1,9 @@
 import { resolve } from 'node:path'
-import {
-  analyzeImports,
-  resolveImport,
-} from './imports.ts'
-import {
-  classifyModule,
-  evaluateDependency,
-} from './architecture-policy.ts'
+import { analyzeImports, resolveImport } from './imports.ts'
+import { classifyModule, evaluateDependency } from './architecture-policy.ts'
 import { repositoryPath } from './filesystem.ts'
-import {
-  isExecutedModule,
-  runQualityMain,
-} from './output.ts'
-import type {
-  QualityDiagnostic,
-  QualityIo,
-  QualityRun,
-} from './types.ts'
+import { isExecutedModule, runQualityMain } from './output.ts'
+import type { QualityDiagnostic, QualityIo, QualityRun } from './types.ts'
 
 export const checkArchitecture = async (root: string): Promise<QualityRun> => {
   const absoluteRoot = resolve(root)
@@ -32,7 +19,8 @@ export const checkArchitecture = async (root: string): Promise<QualityRun> => {
           path: sourcePath,
           line: reference.line,
           column: reference.column,
-          message: 'El destino de import() debe ser un literal estático para comprobar su arquitectura.',
+          message:
+            'El destino de import() debe ser un literal estático para comprobar su arquitectura.',
         })
         continue
       }
@@ -55,7 +43,10 @@ export const checkArchitecture = async (root: string): Promise<QualityRun> => {
         continue
       }
       const targetPath = repositoryPath(absoluteRoot, resolvedImport.path)
-      const violation = evaluateDependency(sourceOwner, classifyModule(targetPath))
+      const violation = evaluateDependency(
+        sourceOwner,
+        classifyModule(targetPath),
+      )
       if (violation) {
         diagnostics.push({
           code: violation.code,

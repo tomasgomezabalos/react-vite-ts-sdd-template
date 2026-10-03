@@ -22,15 +22,17 @@ afterEach(async () => {
   await Promise.all(cleanups.splice(0).map((cleanup) => cleanup()))
 })
 
-const run = (entry: string, args: string[]) => spawnSync(
-  process.execPath,
-  [resolve(repositoryRoot, entry), ...args],
-  { cwd: repositoryRoot, encoding: 'utf8' },
-)
+const run = (entry: string, args: string[]) =>
+  spawnSync(process.execPath, [resolve(repositoryRoot, entry), ...args], {
+    cwd: repositoryRoot,
+    encoding: 'utf8',
+  })
 
 describe('template command line interfaces', () => {
   it('exposes help without executing a project operation', async () => {
-    const output = vi.spyOn(process.stdout, 'write').mockImplementation(() => true)
+    const output = vi
+      .spyOn(process.stdout, 'write')
+      .mockImplementation(() => true)
 
     await expect(runInit(['--help'])).resolves.toBe(0)
     await expect(runDoctor(['--help'])).resolves.toBe(0)
@@ -42,14 +44,16 @@ describe('template command line interfaces', () => {
       target: '/tmp/example',
       configDigest: 'digest',
       token: 'a'.repeat(64),
-      operations: [{
-        kind: 'modify' as const,
-        path: 'README.md',
-        beforeHash: 'before',
-        afterHash: 'after',
-        content: 'private file content',
-        mode: 0o644,
-      }],
+      operations: [
+        {
+          kind: 'modify' as const,
+          path: 'README.md',
+          beforeHash: 'before',
+          afterHash: 'after',
+          content: 'private file content',
+          mode: 0o644,
+        },
+      ],
       warnings: [],
     }
 

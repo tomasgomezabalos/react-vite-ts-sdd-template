@@ -1,8 +1,4 @@
-import type {
-  Diagnostic,
-  OutputFormat,
-  Preview,
-} from './types.ts'
+import type { Diagnostic, OutputFormat, Preview } from './types.ts'
 
 const operationLabel = {
   create: 'CREAR',
@@ -11,20 +7,28 @@ const operationLabel = {
   unchanged: 'SIN CAMBIOS',
 } as const
 
-export const formatPreview = (preview: Preview, format: OutputFormat): string => {
+export const formatPreview = (
+  preview: Preview,
+  format: OutputFormat,
+): string => {
   const safe = {
     target: preview.target,
     token: preview.token,
-    summary: Object.fromEntries(['create', 'modify', 'delete', 'unchanged'].map((kind) => [
-      kind,
-      preview.operations.filter((operation) => operation.kind === kind).length,
-    ])),
-    operations: preview.operations.map(({ kind, path, beforeHash, afterHash }) => ({
-      kind,
-      path,
-      beforeHash,
-      afterHash,
-    })),
+    summary: Object.fromEntries(
+      ['create', 'modify', 'delete', 'unchanged'].map((kind) => [
+        kind,
+        preview.operations.filter((operation) => operation.kind === kind)
+          .length,
+      ]),
+    ),
+    operations: preview.operations.map(
+      ({ kind, path, beforeHash, afterHash }) => ({
+        kind,
+        path,
+        beforeHash,
+        afterHash,
+      }),
+    ),
     warnings: preview.warnings,
   }
   if (format === 'json') return JSON.stringify(safe, null, 2)
@@ -32,11 +36,17 @@ export const formatPreview = (preview: Preview, format: OutputFormat): string =>
     `Destino: ${preview.target}`,
     `Token de preview: ${preview.token}`,
     '',
-    ...preview.operations.map((operation) =>
-      `${operationLabel[operation.kind].padEnd(12)} ${operation.path}`),
+    ...preview.operations.map(
+      (operation) =>
+        `${operationLabel[operation.kind].padEnd(12)} ${operation.path}`,
+    ),
   ]
   if (preview.warnings.length > 0) {
-    lines.push('', 'Advertencias:', ...preview.warnings.map((warning) => `- ${warning}`))
+    lines.push(
+      '',
+      'Advertencias:',
+      ...preview.warnings.map((warning) => `- ${warning}`),
+    )
   }
   return lines.join('\n')
 }
@@ -58,7 +68,9 @@ export const formatApplyResult = (
   }
   if (format === 'json') return JSON.stringify(value, null, 2)
   return [
-    changed === 0 ? 'Inicialización ya aplicada; no hay cambios.' : `Inicialización aplicada: ${changed} operaciones.`,
+    changed === 0
+      ? 'Inicialización ya aplicada; no hay cambios.'
+      : `Inicialización aplicada: ${changed} operaciones.`,
     `Destino: ${target}`,
     '',
     'Siguientes pasos:',
@@ -66,7 +78,11 @@ export const formatApplyResult = (
   ].join('\n')
 }
 
-export const formatRecovery = (target: string, id: string, format: OutputFormat): string => {
+export const formatRecovery = (
+  target: string,
+  id: string,
+  format: OutputFormat,
+): string => {
   const value = { target, transactionId: id, status: 'RECOVERED' }
   return format === 'json'
     ? JSON.stringify(value, null, 2)
@@ -78,10 +94,12 @@ export const formatDiagnostics = (
   diagnostics: Diagnostic[],
   format: OutputFormat,
 ): string => {
-  const summary = Object.fromEntries(['PASS', 'WARN', 'FAIL', 'UNKNOWN'].map((status) => [
-    status,
-    diagnostics.filter((diagnostic) => diagnostic.status === status).length,
-  ]))
+  const summary = Object.fromEntries(
+    ['PASS', 'WARN', 'FAIL', 'UNKNOWN'].map((status) => [
+      status,
+      diagnostics.filter((diagnostic) => diagnostic.status === status).length,
+    ]),
+  )
   const value = {
     target,
     scope: 'technical-derivation',
@@ -92,11 +110,15 @@ export const formatDiagnostics = (
   const lines = [
     `Destino: ${target}`,
     'Alcance: derivación técnica; no valida decisiones de producto.',
-    `Resumen: ${Object.entries(summary).map(([status, count]) => `${status}=${count}`).join(' ')}`,
+    `Resumen: ${Object.entries(summary)
+      .map(([status, count]) => `${status}=${count}`)
+      .join(' ')}`,
     '',
   ]
   for (const diagnostic of diagnostics) {
-    lines.push(`[${diagnostic.status}] ${diagnostic.code}: ${diagnostic.message}${diagnostic.path ? ` (${diagnostic.path})` : ''}`)
+    lines.push(
+      `[${diagnostic.status}] ${diagnostic.code}: ${diagnostic.message}${diagnostic.path ? ` (${diagnostic.path})` : ''}`,
+    )
     if (diagnostic.limitation) lines.push(`  Límite: ${diagnostic.limitation}`)
   }
   return lines.join('\n')

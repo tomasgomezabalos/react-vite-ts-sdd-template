@@ -21,14 +21,20 @@ const parseArguments = (values: string[]): DoctorArguments => {
   for (let index = 0; index < values.length; index += 1) {
     const value = values[index]
     if (value === '--help' || value === '-h') result.help = true
-    else if (value === '--target' || value === '--config' || value === '--format') {
+    else if (
+      value === '--target' ||
+      value === '--config' ||
+      value === '--format'
+    ) {
       const next = values[index + 1]
-      if (!next || next.startsWith('--')) throw new Error(`Falta el valor de ${value}.`)
+      if (!next || next.startsWith('--'))
+        throw new Error(`Falta el valor de ${value}.`)
       index += 1
       if (value === '--target') result.target = next
       else if (value === '--config') result.config = next
       else {
-        if (next !== 'human' && next !== 'json') throw new Error('--format debe ser human o json.')
+        if (next !== 'human' && next !== 'json')
+          throw new Error('--format debe ser human o json.')
         result.format = next
       }
     } else throw new Error(`Argumento desconocido: ${value}`)
@@ -52,7 +58,9 @@ export const runDoctor = async (values: string[]): Promise<number> => {
     const manifest = await loadBaselineManifest()
     const diagnostics = await runDiagnostics(target, config, manifest)
     process.stdout.write(`${formatDiagnostics(target, diagnostics, format)}\n`)
-    return diagnostics.some((diagnostic) => diagnostic.status === 'FAIL') ? 1 : 0
+    return diagnostics.some((diagnostic) => diagnostic.status === 'FAIL')
+      ? 1
+      : 0
   } catch (error) {
     process.stderr.write(`${formatError(error, format)}\n`)
     return 2

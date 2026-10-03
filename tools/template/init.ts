@@ -38,16 +38,26 @@ const parseArguments = (values: string[]): InitArguments => {
     const value = values[index]
     if (value === '--apply') result.apply = true
     else if (value === '--help' || value === '-h') result.help = true
-    else if (['--target', '--config', '--preview-token', '--recover', '--format'].includes(value)) {
+    else if (
+      [
+        '--target',
+        '--config',
+        '--preview-token',
+        '--recover',
+        '--format',
+      ].includes(value)
+    ) {
       const next = values[index + 1]
-      if (!next || next.startsWith('--')) throw new Error(`Falta el valor de ${value}.`)
+      if (!next || next.startsWith('--'))
+        throw new Error(`Falta el valor de ${value}.`)
       index += 1
       if (value === '--target') result.target = next
       else if (value === '--config') result.config = next
       else if (value === '--preview-token') result.previewToken = next
       else if (value === '--recover') result.recover = next
       else if (value === '--format') {
-        if (next !== 'human' && next !== 'json') throw new Error('--format debe ser human o json.')
+        if (next !== 'human' && next !== 'json')
+          throw new Error('--format debe ser human o json.')
         result.format = next
       }
     } else throw new Error(`Argumento desconocido: ${value}`)
@@ -68,7 +78,9 @@ export const runInit = async (values: string[]): Promise<number> => {
     const target = await resolveTarget(args.target)
     if (args.recover) {
       if (args.config || args.apply || args.previewToken) {
-        throw new Error('--recover no puede combinarse con configuración, aplicación o token.')
+        throw new Error(
+          '--recover no puede combinarse con configuración, aplicación o token.',
+        )
       }
       await recoverTransaction(target, args.recover)
       process.stdout.write(`${formatRecovery(target, args.recover, format)}\n`)
@@ -92,10 +104,14 @@ export const runInit = async (values: string[]): Promise<number> => {
       return 0
     }
     if (args.previewToken !== preview.token) {
-      throw new Error('El token no coincide: repita la previsualización sobre el estado actual.')
+      throw new Error(
+        'El token no coincide: repita la previsualización sobre el estado actual.',
+      )
     }
     const applied = await applyPreview(preview)
-    process.stdout.write(`${formatApplyResult(target, applied.changed, format)}\n`)
+    process.stdout.write(
+      `${formatApplyResult(target, applied.changed, format)}\n`,
+    )
     return 0
   } catch (error) {
     process.stderr.write(`${formatError(error, format)}\n`)

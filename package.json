@@ -17,7 +17,9 @@
     "check": "npm run lint && npm run docs:check && npm run architecture:check && npm run test:coverage && npm run build",
     "preview": "vite preview",
     "template:init": "node tools/template/init.ts",
-    "template:doctor": "node tools/template/doctor.ts"
+    "template:doctor": "node tools/template/doctor.ts",
+    "format": "prettier --write \"**/*.{ts,tsx,js,scss,json}\"",
+    "format:check": "prettier --check \"**/*.{ts,tsx,js,scss,json}\""
   },
   "packageManager": "npm@10.9.8",
   "engines": {
@@ -59,6 +61,7 @@
     "eslint-plugin-react-refresh": "^0.5.4",
     "jsdom": "^29.1.1",
     "msw": "^2.15.0",
+    "prettier": "^3.9.9",
     "sass": "^1.103.1",
     "typescript": "~6.0.2",
     "typescript-eslint": "^8.67.0",

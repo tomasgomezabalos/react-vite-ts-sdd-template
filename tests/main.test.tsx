@@ -24,11 +24,15 @@ describe('application entrypoint', () => {
 
     expect(reactDom.createRoot).toHaveBeenCalledOnce()
     expect(reactDom.createRoot).toHaveBeenCalledWith(rootElement)
-    expect(reactDom.createRoot.mock.results[0]?.value.render).toHaveBeenCalledOnce()
+    expect(
+      reactDom.createRoot.mock.results[0]?.value.render,
+    ).toHaveBeenCalledOnce()
   })
 
   it('fails explicitly when the root element is absent', async () => {
-    await expect(import('../src/main')).rejects.toThrow('Root element not found')
+    await expect(import('../src/main')).rejects.toThrow(
+      'Root element not found',
+    )
     expect(reactDom.createRoot).not.toHaveBeenCalled()
   })
 })

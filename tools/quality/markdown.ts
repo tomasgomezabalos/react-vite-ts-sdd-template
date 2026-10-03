@@ -47,7 +47,8 @@ const sourceLines = (content: string): SourceLine[] => {
       const token = match[1] ?? ''
       const marker = token[0] ?? ''
       if (!fence) fence = { marker, width: token.length }
-      else if (marker === fence.marker && token.length >= fence.width) fence = null
+      else if (marker === fence.marker && token.length >= fence.width)
+        fence = null
       continue
     }
     if (!fence) {
@@ -64,17 +65,19 @@ const sourceLines = (content: string): SourceLine[] => {
 const normalizeReference = (value: string): string =>
   value.trim().replace(/\s+/g, ' ').toLocaleLowerCase('en')
 
-const stripHeadingMarkup = (value: string): string => value
-  .replace(/<[^>]*>/g, '')
-  .replace(/!?(?:\[([^\]]*)\]\([^)]*\)|\[([^\]]*)\]\[[^\]]*\])/g, '$1$2')
-  .replace(/[`*_~]/g, '')
-  .trim()
+const stripHeadingMarkup = (value: string): string =>
+  value
+    .replace(/<[^>]*>/g, '')
+    .replace(/!?(?:\[([^\]]*)\]\([^)]*\)|\[([^\]]*)\]\[[^\]]*\])/g, '$1$2')
+    .replace(/[`*_~]/g, '')
+    .trim()
 
-export const githubHeadingSlug = (value: string): string => stripHeadingMarkup(value)
-  .toLocaleLowerCase('en')
-  .replace(/[^\p{L}\p{N}\s_-]/gu, '')
-  .trim()
-  .replace(/\s+/g, '-')
+export const githubHeadingSlug = (value: string): string =>
+  stripHeadingMarkup(value)
+    .toLocaleLowerCase('en')
+    .replace(/[^\p{L}\p{N}\s_-]/gu, '')
+    .trim()
+    .replace(/\s+/g, '-')
 
 const findClosingBracket = (line: string, start: number): number => {
   let depth = 1
@@ -141,8 +144,8 @@ const parseInlineDestination = (
 }
 
 const looksLikeAutolink = (value: string): boolean =>
-  /^(?:[a-z][a-z0-9+.-]*:|\/\/|#|\.{0,2}\/)/i.test(value)
-  || /\.[a-z0-9]{1,8}(?:#.*)?$/i.test(value)
+  /^(?:[a-z][a-z0-9+.-]*:|\/\/|#|\.{0,2}\/)/i.test(value) ||
+  /\.[a-z0-9]{1,8}(?:#.*)?$/i.test(value)
 
 const extractLinks = (
   lines: SourceLine[],
@@ -183,7 +186,9 @@ const extractLinks = (
           continue
         }
         const explicit = line.searchable.slice(next + 1, referenceClose)
-        const destination = definitions.get(normalizeReference(explicit || label))
+        const destination = definitions.get(
+          normalizeReference(explicit || label),
+        )
         links.push({
           ...(destination ? { destination } : {}),
           line: line.number,
@@ -195,7 +200,11 @@ const extractLinks = (
       }
       const shortcut = definitions.get(normalizeReference(label))
       if (shortcut) {
-        links.push({ destination: shortcut, line: line.number, column: open + 1 })
+        links.push({
+          destination: shortcut,
+          line: line.number,
+          column: open + 1,
+        })
         consumed.push([open, close + 1])
       }
       index = close + 1
@@ -217,9 +226,14 @@ export const parseMarkdown = (content: string): MarkdownDocument => {
   const lines = sourceLines(content)
   const definitions = new Map<string, string>()
   for (const line of lines) {
-    const match = line.searchable.match(/^\s{0,3}\[([^\]]+)\]:\s*(?:<([^>]+)>|(\S+))/)
+    const match = line.searchable.match(
+      /^\s{0,3}\[([^\]]+)\]:\s*(?:<([^>]+)>|(\S+))/,
+    )
     if (!match) continue
-    definitions.set(normalizeReference(match[1] ?? ''), match[2] ?? match[3] ?? '')
+    definitions.set(
+      normalizeReference(match[1] ?? ''),
+      match[2] ?? match[3] ?? '',
+    )
   }
 
   const anchors = new Set<string>()

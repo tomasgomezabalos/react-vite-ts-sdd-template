@@ -35,47 +35,94 @@ describe('template doctor', () => {
     const fixture = await createProjectFixture()
     cleanups.push(fixture.cleanup)
     const manifest = fixture.manifest
-    await applyPreview(await buildPreview(fixture.target, fixture.config, manifest))
+    await applyPreview(
+      await buildPreview(fixture.target, fixture.config, manifest),
+    )
     expect(spawnSync('git', ['-C', fixture.target, 'init']).status).toBe(0)
     const before = await snapshotProject(fixture.target)
-    const gitBefore = spawnSync('git', ['-C', fixture.target, 'status', '--porcelain=v1'], { encoding: 'utf8' }).stdout
+    const gitBefore = spawnSync(
+      'git',
+      ['-C', fixture.target, 'status', '--porcelain=v1'],
+      { encoding: 'utf8' },
+    ).stdout
 
-    const diagnostics = await runDiagnostics(fixture.target, fixture.config, manifest)
+    const diagnostics = await runDiagnostics(
+      fixture.target,
+      fixture.config,
+      manifest,
+    )
 
-    expect(diagnostics.some((diagnostic) => diagnostic.status === 'FAIL')).toBe(false)
-    expect(diagnostics).toContainEqual(expect.objectContaining({
-      code: 'MANAGED_OUTPUTS',
-      status: 'PASS',
-    }))
-    expect(diagnostics.some((diagnostic) => diagnostic.code === 'INITIALIZATION_STATE')).toBe(false)
-    expect(diagnostics.some((diagnostic) => diagnostic.code === 'PRODUCT_VISION')).toBe(false)
-    expect(diagnostics.some((diagnostic) => diagnostic.code === 'DEPLOYMENT_DECISIONS')).toBe(false)
-    expect(diagnostics.some((diagnostic) => diagnostic.code === 'PENDING_DECISION')).toBe(false)
-    expect(diagnostics.some((diagnostic) => diagnostic.code === 'PUBLIC_ENVIRONMENT')).toBe(false)
-    expect(diagnostics).toContainEqual(expect.objectContaining({
-      code: 'SOURCE_REMOTE',
-      status: 'UNKNOWN',
-    }))
+    expect(diagnostics.some((diagnostic) => diagnostic.status === 'FAIL')).toBe(
+      false,
+    )
+    expect(diagnostics).toContainEqual(
+      expect.objectContaining({
+        code: 'MANAGED_OUTPUTS',
+        status: 'PASS',
+      }),
+    )
+    expect(
+      diagnostics.some(
+        (diagnostic) => diagnostic.code === 'INITIALIZATION_STATE',
+      ),
+    ).toBe(false)
+    expect(
+      diagnostics.some((diagnostic) => diagnostic.code === 'PRODUCT_VISION'),
+    ).toBe(false)
+    expect(
+      diagnostics.some(
+        (diagnostic) => diagnostic.code === 'DEPLOYMENT_DECISIONS',
+      ),
+    ).toBe(false)
+    expect(
+      diagnostics.some((diagnostic) => diagnostic.code === 'PENDING_DECISION'),
+    ).toBe(false)
+    expect(
+      diagnostics.some(
+        (diagnostic) => diagnostic.code === 'PUBLIC_ENVIRONMENT',
+      ),
+    ).toBe(false)
+    expect(diagnostics).toContainEqual(
+      expect.objectContaining({
+        code: 'SOURCE_REMOTE',
+        status: 'UNKNOWN',
+      }),
+    )
     expect(await snapshotProject(fixture.target)).toEqual(before)
-    expect(spawnSync('git', ['-C', fixture.target, 'status', '--porcelain=v1'], { encoding: 'utf8' }).stdout).toBe(gitBefore)
+    expect(
+      spawnSync('git', ['-C', fixture.target, 'status', '--porcelain=v1'], {
+        encoding: 'utf8',
+      }).stdout,
+    ).toBe(gitBefore)
   })
 
   it('fails managed outputs when a derived file diverges from the configuration', async () => {
     const fixture = await createProjectFixture()
     cleanups.push(fixture.cleanup)
     const manifest = fixture.manifest
-    await applyPreview(await buildPreview(fixture.target, fixture.config, manifest))
+    await applyPreview(
+      await buildPreview(fixture.target, fixture.config, manifest),
+    )
     const agents = resolve(fixture.target, 'AGENTS.md')
-    await writeFile(agents, `${await readFile(agents, 'utf8')}<!-- template-only:start -->\nx\n<!-- template-only:end -->\n`)
+    await writeFile(
+      agents,
+      `${await readFile(agents, 'utf8')}<!-- template-only:start -->\nx\n<!-- template-only:end -->\n`,
+    )
     const before = await snapshotProject(fixture.target)
 
-    const diagnostics = await runDiagnostics(fixture.target, fixture.config, manifest)
+    const diagnostics = await runDiagnostics(
+      fixture.target,
+      fixture.config,
+      manifest,
+    )
 
-    expect(diagnostics).toContainEqual(expect.objectContaining({
-      code: 'MANAGED_OUTPUTS',
-      status: 'FAIL',
-      message: expect.stringContaining('AGENTS.md'),
-    }))
+    expect(diagnostics).toContainEqual(
+      expect.objectContaining({
+        code: 'MANAGED_OUTPUTS',
+        status: 'FAIL',
+        message: expect.stringContaining('AGENTS.md'),
+      }),
+    )
     expect(await snapshotProject(fixture.target)).toEqual(before)
   })
 
@@ -83,12 +130,20 @@ describe('template doctor', () => {
     const fixture = await createProjectFixture()
     cleanups.push(fixture.cleanup)
     const manifest = fixture.manifest
-    await applyPreview(await buildPreview(fixture.target, fixture.config, manifest))
+    await applyPreview(
+      await buildPreview(fixture.target, fixture.config, manifest),
+    )
     const secretValue = 'value-that-must-not-be-reported'
     await writeFile(resolve(fixture.target, '.env.production'), secretValue)
 
-    const diagnostics = await runDiagnostics(fixture.target, fixture.config, manifest)
-    const finding = diagnostics.find((diagnostic) => diagnostic.code === 'KNOWN_SECRET_FILES')
+    const diagnostics = await runDiagnostics(
+      fixture.target,
+      fixture.config,
+      manifest,
+    )
+    const finding = diagnostics.find(
+      (diagnostic) => diagnostic.code === 'KNOWN_SECRET_FILES',
+    )
 
     expect(finding).toMatchObject({ status: 'FAIL' })
     expect(finding?.message).toContain('.env.production')
@@ -100,14 +155,25 @@ describe('template doctor', () => {
     const fixture = await createProjectFixture()
     cleanups.push(fixture.cleanup)
     const manifest = fixture.manifest
-    await applyPreview(await buildPreview(fixture.target, fixture.config, manifest))
-    await writeFile(resolve(fixture.target, '.env.example'), 'VITE_PUBLIC_URL=\nAPI_TOKEN=\n')
+    await applyPreview(
+      await buildPreview(fixture.target, fixture.config, manifest),
+    )
+    await writeFile(
+      resolve(fixture.target, '.env.example'),
+      'VITE_PUBLIC_URL=\nAPI_TOKEN=\n',
+    )
 
-    const diagnostics = await runDiagnostics(fixture.target, fixture.config, manifest)
+    const diagnostics = await runDiagnostics(
+      fixture.target,
+      fixture.config,
+      manifest,
+    )
 
-    expect(diagnostics).toContainEqual(expect.objectContaining({
-      code: 'PUBLIC_ENVIRONMENT',
-      status: 'FAIL',
-    }))
+    expect(diagnostics).toContainEqual(
+      expect.objectContaining({
+        code: 'PUBLIC_ENVIRONMENT',
+        status: 'FAIL',
+      }),
+    )
   })
 })

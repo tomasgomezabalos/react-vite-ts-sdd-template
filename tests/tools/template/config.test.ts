@@ -10,10 +10,7 @@ import {
   suggestPackageName,
   validateProjectConfig,
 } from '../../../tools/template/config.ts'
-import {
-  readExampleConfig,
-  repositoryRoot,
-} from './helpers/project-fixture.ts'
+import { readExampleConfig, repositoryRoot } from './helpers/project-fixture.ts'
 import type { ProjectConfig } from '../../../tools/template/types.ts'
 
 describe('project configuration', () => {
@@ -41,19 +38,26 @@ describe('project configuration', () => {
   })
 
   it('keeps schema and example top-level fields aligned', async () => {
-    const schema = JSON.parse(await readFile(
-      resolve(repositoryRoot, 'tools/template/project.schema.json'),
-      'utf8',
-    )) as { required: string[] }
-    const config = await readExampleConfig() as ProjectConfig & { $schema?: string }
+    const schema = JSON.parse(
+      await readFile(
+        resolve(repositoryRoot, 'tools/template/project.schema.json'),
+        'utf8',
+      ),
+    ) as { required: string[] }
+    const config = (await readExampleConfig()) as ProjectConfig & {
+      $schema?: string
+    }
 
-    expect(Object.keys(config).filter((key) => key !== '$schema').sort())
-      .toEqual([...schema.required].sort())
+    expect(
+      Object.keys(config)
+        .filter((key) => key !== '$schema')
+        .sort(),
+    ).toEqual([...schema.required].sort())
   })
 
   it('rejects legacy fields, invalid packages and secret-shaped keys', async () => {
     const invalid = {
-      ...await readExampleConfig(),
+      ...(await readExampleConfig()),
       identity: {
         displayName: 'Example',
         packageName: 'Invalid Package',
@@ -70,10 +74,12 @@ describe('project configuration', () => {
 
   it('rejects the former schema version instead of migrating it', async () => {
     const legacy = {
-      ...await readExampleConfig(),
+      ...(await readExampleConfig()),
       schemaVersion: 1,
     }
 
-    expect(() => validateProjectConfig(legacy)).toThrow(/contrato v1 ya no es compatible/)
+    expect(() => validateProjectConfig(legacy)).toThrow(
+      /contrato v1 ya no es compatible/,
+    )
   })
 })
