@@ -83,7 +83,7 @@ Al finalizar un alcance `FULL` o un `QUICK` que necesite evidencia persistente, 
 ## React y diseño
 
 - Utilizar React funcional y TypeScript estricto.
-- Antes de crear o modificar componentes React propios, cargar `@react-ts-feature-pattern` y declarar el modo utilizado.
+- Antes de crear o modificar componentes React propios, cargar `@react-ts-feature-pattern` y declarar el modo utilizado. Para componentes nuevos o con cambios de comportamiento observable usar el modo `strict`; reservar `standard` para refactores estructurales sin impacto observable.
 - Crear componentes propios en `ComponentName/index.tsx` y sus pruebas espejo en `tests/.../ComponentName/index.test.tsx`.
 - Si la skill contradice documentación aprobada, detenerse y solicitar una decisión.
 - Cargar obligatoriamente todas las páginas reales de ruta mediante `React.lazy` e importaciones dinámicas, incluida la página inicial, dentro de una frontera `Suspense` que no retire el layout ni la navegación persistentes.

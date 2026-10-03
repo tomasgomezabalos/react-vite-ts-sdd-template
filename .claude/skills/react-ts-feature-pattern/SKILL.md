@@ -23,6 +23,10 @@ Resolve the mode from the user's request. If no mode is stated, use `standard`.
 
 Accept natural-language equivalents such as `modo estricto`, `auditoria de pruebas`, `solo auditar tests`, or `standard mode`. An explicit user instruction always overrides the default.
 
+### Project overrides
+
+This repository's `AGENTS.md` takes precedence over the default above: use `strict` when creating a component or changing its observable behavior, and use `standard` only for structural refactors with no observable impact or when the user asks for it. In `strict`, every new or changed component ships with its mirrored test under `tests/` and the accessibility assertion described in Test Assurance. If this skill and an approved project document disagree, stop and ask for a decision.
+
 Example invocations:
 
 - `Use /react-ts-feature-pattern on ComponentName.` -> `standard`
@@ -37,7 +41,7 @@ For each component `ComponentName`, use:
 - `ComponentName/index.tsx` -> presentational rendering, prop wiring, `export const ComponentName = ...`, and type imports from `types.ts`
 - `ComponentName/types.ts` -> `ComponentNameProps` when the component receives props and every other type owned by the component module
 - `ComponentName/useComponentName.ts|tsx` -> typed state, effects, handlers, and orchestration (use `.tsx` whenever the hook returns JSX nodes; use `.ts` otherwise)
-- `ComponentName/styles.scss` -> local styles (only when needed)
+- `ComponentName/styles.module.scss` -> local styles (only when needed). ADR-0003 and the README define SCSS modules; use a plain `styles.scss` only when the project approves a non-modular strategy
 - `ComponentName/constants.ts` -> reusable constants for the module (only when needed)
 - `ComponentName/utils.ts` -> pure helpers/mappers/formatters for the module (only when needed)
 
@@ -48,7 +52,7 @@ Keep every component-owned type in `ComponentName/types.ts`, including props use
 - A source file can contain only one React component.
 - `index.tsx` must export only `ComponentName` and must not declare extra local components.
 - Prefer named exports in `index.tsx` (`export const ComponentName = ...`). Do not default-export the main component from `index.tsx`.
-- If you need another visual piece, create it as its own component folder with the same pattern (`index.tsx`, optional `use<Component>.ts|tsx`, optional `styles.scss/constants.ts/utils.ts`).
+- If you need another visual piece, create it as its own component folder with the same pattern (`index.tsx`, optional `use<Component>.ts|tsx`, optional `styles.module.scss/constants.ts/utils.ts`).
 - Hooks and utility files (`use*.ts|tsx`, `utils.ts`, `constants.ts`) must not declare React components (unless the hook intentionally returns JSX).
 
 ## Hook Extraction Gate
@@ -96,6 +100,18 @@ Before finishing a creation or refactor, inspect the touched component module an
 - In `strict`, add or adjust focused tests when existing tests do not safely characterize the behavior being consolidated.
 - If safe extraction exceeds the authorized scope or its behavior cannot be verified, keep the implementation stable and report the pending duplication instead of forcing the refactor.
 
+## Placement
+
+Place every new component with its closest owner (ADR-0008) and keep `app -> pages -> features -> entities -> shared` as the only dependency direction:
+
+- page-private component: `src/pages/<Page>/components/<Component>/`
+- feature-private component: `src/features/<capability>/components/<Component>/`
+- entity-private component: `src/entities/<entity>/components/<Component>/`
+- component shared by several owners with a shared contract: `src/shared/ui/<Component>/`
+- global composition (routes, providers, layout): `src/app/<Component>/`
+
+Never create the global technical folders `src/components/`, `src/hooks/`, `src/services/` or `src/slices/`: `npm run architecture:check` rejects them (PLAT-017). Promote a component only to the smallest common owner and only when its consumers share contract and reason to change. Mirror the path under `tests/`, for example `tests/pages/<Page>/components/<Component>/index.test.tsx`.
+
 ## Creation Workflow
 
 1. Create the component folder using the feature naming convention already used in the target area.
@@ -123,7 +139,7 @@ Before finishing a creation or refactor, inspect the touched component module an
 6. Apply the Constant Placement Gate: create `constants.ts` for reusable or meaningful static module configuration, including a meaningful contract value with one current runtime consumer.
 7. Keep obvious single-use literals and one-off labels inline near their only usage; do not create a named module-level midpoint.
 8. Create `utils.ts` only for pure helpers used by hook/component.
-9. Create `styles.scss` only for component-specific styling.
+9. Create `styles.module.scss` only for component-specific styling.
 10. Apply test assurance only in `strict`; perform no unit-test work in `standard`.
 11. Apply the Safe Deduplication Gate.
 12. Finish with the Sonar-like quality review pass before validation.
@@ -160,7 +176,7 @@ Use this mode when the user asks to apply the pattern to a whole folder.
    - `index.tsx` (presentational only)
    - `types.ts` (required when the component owns any types)
    - `use<Component>.ts|tsx` (logic)
-   - optional `styles.scss/constants.ts/utils.ts`
+   - optional `styles.module.scss/constants.ts/utils.ts`
 5. Enforce one component per file in every touched module.
 6. Keep each component's public API stable unless the user asks for API changes.
 7. Refactor in small safe batches if the folder is large.
@@ -214,7 +230,7 @@ Never apply this section in `standard`.
 - Base handlers on approved API contracts and specification scenarios. Do not invent response fields, fallback schemas, or undocumented endpoints to make a test pass.
 - In `strict`, add or change shared MSW assets only when the covered behavior needs network-level simulation and the repository already has approved MSW infrastructure. Do not install, initialize, or reconfigure MSW without explicit authorization.
 - In `standard`, perform no test or MSW test-infrastructure work. In `test-audit`, report placement or contract gaps without editing them.
-- `public/mockServiceWorker.js` is the only expected file outside `mocks/`: it is generated by MSW solely for browser delivery and must not contain project handlers or mock logic.
+- The generated MSW worker script lives only in the directory configured in `msw.workerDirectory` of `package.json` (`mocks/public/` in this repository): it is generated by MSW solely for browser delivery and must not contain project handlers or mock logic.
 
 ### Functional Inventory
 
@@ -226,6 +242,7 @@ Inventory only observable responsibilities that belong to the unit:
 - validation and permission behavior when applicable
 - effects, timers, subscriptions, and cleanup when applicable
 - pure transformations with meaningful branches
+- accessibility: an `expectNoAccessibilityViolations` assertion (`tests/setup/axe.ts`, axe-core, WCAG 2.1 A and AA without colour contrast) for each page or component with UI, in its relevant states; it does not replace manual review of contrast, keyboard, focus or screen reader
 
 Do not test framework internals, implementation details, static styling declarations, or child behavior already owned by the child component.
 
@@ -263,7 +280,7 @@ Use coverage tooling only as supporting evidence when it already exists. Never u
 ## Sonar-Like Quality Review Pass
 
 Use this pass after creating or refactoring a component. Treat actual Sonar/SonarLint findings provided by the user as authoritative; otherwise apply this checklist as a conservative approximation of common Sonar code-quality rules.
-Before applying the checklist, read `references/sonar-local-rules.md` when it exists. Treat that file as the project-specific SonarQube for IDE standalone-mode rule overlay. Precedence is: explicit user findings, then `references/sonar-local-rules.md`, then this generic checklist.
+Read `references/sonar-local-rules.md` only when the user provides Sonar or SonarLint findings; it is the project-specific SonarQube for IDE standalone-mode rule overlay. Precedence is: explicit user findings, then `references/sonar-local-rules.md` when it was read, then this generic checklist. Without findings, apply only the generic checklist below.
 
 1. Simplify control flow:
    - reduce nested `if`/`else`, loops, and switch branches when extraction or early named decisions improve readability
@@ -301,11 +318,11 @@ Before applying the checklist, read `references/sonar-local-rules.md` when it ex
    - do not mechanically replace existing elements with native interactive elements such as `button` or `a` during refactors unless the user explicitly asks for semantic tag changes or local context proves the visual/DOM contract will remain stable
    - do not add `tabIndex` as a standalone warning silencer; only add it with the matching role and keyboard behavior required for the interaction
    - do not define React components inside another component body or inline component props; extract them to module scope or use a stable component reference and pass data as props
-   - remove invalid or unknown JSX DOM props; move SCSS-like selectors such as `&:hover` out of inline `style` objects and into `styles.scss`
+   - remove invalid or unknown JSX DOM props; move SCSS-like selectors such as `&:hover` out of inline `style` objects and into `styles.module.scss`
    - keep user text-spacing adjustments possible: avoid `!important` on `letter-spacing`, `word-spacing`, or `line-height` below WCAG thresholds; prefer removing `!important`, or use at least `0.12em`, `0.16em`, and `1.5` respectively when the override is genuinely required
 7. Preserve intent over mechanical compliance:
    - preserving the rendered element, classes, layout, and visual output is part of the contract; do not change markup semantics, wrappers, styles, spacing, or component library controls just to quiet a warning
-   - do not change external behavior, data contracts, navigation, map interactions, or layout algorithms just to quiet a warning
+   - do not change external behavior, data contracts, navigation, or layout algorithms just to quiet a warning
    - when a warning cannot be fixed safely within scope, leave the code stable and report the pending warning
 
 ## Rules
@@ -378,7 +395,7 @@ Before applying the checklist, read `references/sonar-local-rules.md` when it ex
 - `use<Component>.ts|tsx` is not created merely to return prop bags, static child props, simple className strings, or direct callback forwarding.
 - A component whose only logic is consuming an existing custom hook does not gain a redundant `use<Component>` wrapper.
 - When a local `use<Component>` exists and the component also translates text, the translation hook lives in `use<Component>` while translation calls remain visible in `index.tsx` through the returned `t` function.
-- `styles.scss` exists only if styles are needed.
+- `styles.module.scss` exists only if styles are needed.
 - `constants.ts` exists only if reusable constants or meaningful module configuration exist, and those values are not left as named static declarations in implementation files.
 - Every module-level `const` in the touched scope was classified: static configuration is in `constants.ts` or a justified semantic owner, obvious one-off literals are inline, and runtime declarations remain with their implementation.
 - `constants.ts` contains no JSX, hooks, components, executable helpers, service construction, side effects, or mutable runtime state.
@@ -392,6 +409,7 @@ Before applying the checklist, read `references/sonar-local-rules.md` when it ex
 - In `strict`, related existing tests were discovered and run when available.
 - In `strict`, new or changed behavior has functional tests.
 - `strict` mode includes a functional inventory for each new or materially refactored unit.
+- In `strict`, each page or component with UI has an `expectNoAccessibilityViolations` assertion (`tests/setup/axe.ts`) in its relevant states.
 - `test-audit` produces findings only and leaves the worktree unchanged.
 - Unit and component test files remain under `tests/`; shared MSW setup, handlers, and fixtures remain under the root `mocks/` folder when MSW is used.
 - Components and component hooks do not import MSW or depend on whether the active backend is mocked or real.
@@ -402,10 +420,10 @@ Before applying the checklist, read `references/sonar-local-rules.md` when it ex
 You can invoke this skill for a file or a folder.
 
 - File target example:
-  - `usa /react-ts-feature-pattern en src/features/WeatherCard/index.tsx`
+  - `usa /react-ts-feature-pattern en src/pages/<Page>/components/<Component>/index.tsx`
 - Folder target example:
-  - `usa /react-ts-feature-pattern en la carpeta src/features/weather`
-  - `apply /react-ts-feature-pattern to folder src/features/forecast`
+  - `usa /react-ts-feature-pattern en la carpeta src/features/<capability>`
+  - `apply /react-ts-feature-pattern to folder src/pages/<Page>`
 - Mode examples:
   - `usa /react-ts-feature-pattern en modo standard sobre ComponentName`
   - `usa /react-ts-feature-pattern en modo strict sobre esta carpeta`

@@ -8,7 +8,7 @@ Precedence:
 2. Rules and guidance in this file.
 3. The generic Sonar-like checklist in `SKILL.md`.
 
-The goal is to reduce Sonar warnings without changing runtime behavior, data contracts, rendering output, navigation, map interactions, or validation semantics. If a warning cannot be fixed safely in the current scope, leave behavior stable and report the remaining warning.
+The goal is to reduce Sonar warnings without changing runtime behavior, data contracts, rendering output, navigation, interactions, or validation semantics. If a warning cannot be fixed safely in the current scope, leave behavior stable and report the remaining warning.
 
 ## Validation Policy
 
@@ -340,7 +340,7 @@ Safety guidance:
 
 - Preserve closures deliberately: pass mutable refs, current state, and external dependencies explicitly when extracting a nested function.
 - In React effects, keep setup and cleanup ownership together so extracted handlers do not leak subscriptions or capture stale values.
-- In map interactions, preserve event order, hit-test scope, highlight cleanup, and async timing.
+- In pointer-driven interactions, preserve event order, hit-test scope, highlight cleanup, and async timing.
 - Do not replace callbacks with module-level mutable state merely to lower nesting.
 
 ### `typescript:S4624` - Nested template literals
@@ -453,4 +453,4 @@ Safety guidance:
 - Remove dead branches, stale comments, debug logs, and commented-out code.
 - Avoid mutating props, Redux state, function parameters, or imported constants.
 - Name repeated strings or numbers when the name clarifies domain meaning.
-- Preserve rendered markup, classes, layout, data contracts, navigation, map behavior, and validation behavior over mechanical warning removal.
+- Preserve rendered markup, classes, layout, data contracts, navigation, interaction behavior, and validation behavior over mechanical warning removal.
