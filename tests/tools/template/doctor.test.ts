@@ -31,6 +31,31 @@ describe('template doctor', () => {
     expect(satisfiesNodeRange('22.23.2', 'unsupported')).toBe(false)
   })
 
+  it('passes the HTML and managed output checks for a name with replacement patterns', async () => {
+    const fixture = await createProjectFixture()
+    cleanups.push(fixture.cleanup)
+    const config = {
+      ...fixture.config,
+      identity: { ...fixture.config.identity, displayName: 'Cash $& Co' },
+    }
+    await applyPreview(
+      await buildPreview(fixture.target, config, fixture.manifest),
+    )
+
+    const diagnostics = await runDiagnostics(
+      fixture.target,
+      config,
+      fixture.manifest,
+    )
+
+    expect(diagnostics).toContainEqual(
+      expect.objectContaining({ code: 'HTML_IDENTITY', status: 'PASS' }),
+    )
+    expect(diagnostics).toContainEqual(
+      expect.objectContaining({ code: 'MANAGED_OUTPUTS', status: 'PASS' }),
+    )
+  })
+
   it('diagnoses an initialized fixture without modifying it', async () => {
     const fixture = await createProjectFixture()
     cleanups.push(fixture.cleanup)

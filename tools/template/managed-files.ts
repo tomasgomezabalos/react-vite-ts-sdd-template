@@ -123,10 +123,8 @@ const updateIndexHtml = (
       'index.html no contiene el marcador gestionado de título.',
     )
   }
-  return content.replace(
-    /<title>[^<]*<\/title>/,
-    `<title>${htmlText(config.identity.htmlTitle)}</title>`,
-  )
+  const title = `<title>${htmlText(config.identity.htmlTitle)}</title>`
+  return content.replace(/<title>[^<]*<\/title>/, () => title)
 }
 
 const loadRequiredContent = async (

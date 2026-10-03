@@ -6,7 +6,10 @@ import { mkdir, readFile, stat, writeFile } from 'node:fs/promises'
 import { dirname, resolve } from 'node:path'
 import { afterEach, describe, expect, it } from 'vitest'
 import { hashText } from '../../../tools/template/config.ts'
-import { buildPreview } from '../../../tools/template/managed-files.ts'
+import {
+  buildPreview,
+  renderManagedOutputs,
+} from '../../../tools/template/managed-files.ts'
 import { readProjectFile } from '../../../tools/template/project.ts'
 import {
   applyPreview,
@@ -37,6 +40,34 @@ const stableSnapshot = (
   )
 
 describe('project initialization', () => {
+  it.each([
+    ['Cash $& Co', 'Cash $&amp; Co'],
+    ['Price $$ App', 'Price $$ App'],
+    ["Tom's $` App", "Tom's $` App"],
+    ["Quote $' App", "Quote $' App"],
+    [
+      'Group $1 $<name> App',
+      'Group $1 $<name> App'.replace('<', '&lt;').replace('>', '&gt;'),
+    ],
+    ['Plain & <App>', 'Plain &amp; &lt;App&gt;'],
+  ])(
+    'writes the display name %j literally in the HTML title',
+    async (displayName, expectedTitle) => {
+      const fixture = await createProjectFixture()
+      cleanups.push(fixture.cleanup)
+
+      const outputs = await renderManagedOutputs(fixture.target, {
+        ...fixture.config,
+        identity: { ...fixture.config.identity, displayName },
+      })
+
+      const html = outputs.get('index.html') ?? ''
+      expect(html).toContain(`<title>${expectedTitle}</title>`)
+      expect(html.match(/<title>/g)).toHaveLength(1)
+      expect(html).not.toContain('react-vite-ts-sdd-template')
+    },
+  )
+
   it(
     'previews deterministically without modifying the project',
     async () => {
