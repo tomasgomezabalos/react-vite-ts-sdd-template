@@ -121,6 +121,59 @@ describe('template doctor', () => {
     ).toBe(gitBefore)
   })
 
+  const initialized = async () => {
+    const fixture = await createProjectFixture()
+    cleanups.push(fixture.cleanup)
+    await applyPreview(
+      await buildPreview(fixture.target, fixture.config, fixture.manifest),
+    )
+    return fixture
+  }
+  const diagnose = async (
+    fixture: Awaited<ReturnType<typeof initialized>>,
+    code: string,
+  ) =>
+    (
+      await runDiagnostics(fixture.target, fixture.config, fixture.manifest)
+    ).find((entry) => entry.code === code)
+
+  it.each([
+    [
+      'comments, blank lines and valid names',
+      '# Variables públicas\n# secret token\n\nVITE_API_URL=http://x\n',
+      'PASS',
+    ],
+    ['a sensitive name', 'VITE_API_TOKEN=x\n', 'FAIL'],
+    ['a name without the public prefix', 'API_URL=x\n', 'FAIL'],
+  ])('checks .env.example with %s', async (_name, content, status) => {
+    const fixture = await initialized()
+    await writeFile(resolve(fixture.target, '.env.example'), content)
+
+    expect(await diagnose(fixture, 'PUBLIC_ENVIRONMENT')).toMatchObject({
+      status,
+    })
+  })
+
+  it.each([
+    ['canonical under another remote name', ['upstream', 'canonical'], 'FAIL'],
+    ['only foreign remotes', ['upstream', 'foreign'], 'PASS'],
+  ])('reports SOURCE_REMOTE with %s', async (_name, [name, kind], status) => {
+    const fixture = await initialized()
+    const git = (...parameters: string[]) =>
+      spawnSync('git', ['-C', fixture.target, ...parameters]).status
+    expect(git('init')).toBe(0)
+    expect(
+      git('remote', 'add', 'origin', 'https://example.com/other/app.git'),
+    ).toBe(0)
+    const url =
+      kind === 'canonical'
+        ? fixture.manifest.canonicalRemote
+        : 'https://example.com/another/app.git'
+    expect(git('remote', 'add', name as string, url)).toBe(0)
+
+    expect(await diagnose(fixture, 'SOURCE_REMOTE')).toMatchObject({ status })
+  })
+
   it('fails managed outputs when a derived file diverges from the configuration', async () => {
     const fixture = await createProjectFixture()
     cleanups.push(fixture.cleanup)

@@ -267,6 +267,18 @@ export const checkDocumentation = async (root: string): Promise<QualityRun> => {
         continue
       }
       if (externalDestination(link.destination)) continue
+      if (link.destination.startsWith('/')) {
+        diagnostics.push(
+          diagnostic(
+            'DOC_LINK_UNCHECKABLE',
+            path,
+            `El enlace absoluto no puede comprobarse dentro del repositorio: ${link.destination}.`,
+            link.line,
+            link.column,
+          ),
+        )
+        continue
+      }
       const resolved = resolveDestination(
         absoluteRoot,
         source,

@@ -288,3 +288,24 @@ describe('QUICK change records', () => {
     expect((await checkDocumentation(fixture.root)).diagnostics).toEqual([])
   })
 })
+
+describe('unverifiable local links', () => {
+  it.each([
+    ['an absolute path', '[x](/etc/hosts)', /absoluto/],
+    ['an invalid encoding', '[x](%E0%A4%A.md)', /codificación inválida/],
+  ])('describes %s precisely', async (_name, link, message) => {
+    const fixture = await createQualityFixture()
+    cleanups.push(fixture.cleanup)
+    await populateDocumentationFixture(fixture)
+    await fixture.write('README.md', `# Readme\n\n${link}\n`)
+
+    const result = await checkDocumentation(fixture.root)
+
+    expect(result.diagnostics).toEqual([
+      expect.objectContaining({
+        code: 'DOC_LINK_UNCHECKABLE',
+        message: expect.stringMatching(message) as string,
+      }),
+    ])
+  })
+})

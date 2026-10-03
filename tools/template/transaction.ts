@@ -10,7 +10,7 @@ import {
   unlink,
   writeFile,
 } from 'node:fs/promises'
-import { dirname, relative, resolve } from 'node:path'
+import { dirname, relative, resolve, sep } from 'node:path'
 import { hashText } from './config.ts'
 import {
   ProjectError,
@@ -55,13 +55,18 @@ const writeReplacement = async (
 ) => {
   const destination = await resolveSafePath(target, operation.path)
   await mkdir(dirname(destination), { recursive: true })
+  await chmod(stagedPath, operation.mode)
   await rename(stagedPath, destination)
-  await chmod(destination, operation.mode)
+}
+
+const isOutside = (root: string, candidate: string): boolean => {
+  const difference = relative(root, candidate)
+  return difference === '..' || difference.startsWith(`..${sep}`)
 }
 
 const removeEmptyParents = async (target: string, path: string) => {
   let current = dirname(path)
-  while (current !== target && current.startsWith(`${target}/`)) {
+  while (current !== target && !isOutside(target, current)) {
     try {
       await rmdir(current)
       current = dirname(current)

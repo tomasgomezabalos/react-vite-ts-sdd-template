@@ -21,7 +21,7 @@ const TEMPLATE_ONLY_END = '<!-- template-only:end -->'
 const prettyJson = (value: unknown): string =>
   `${JSON.stringify(value, null, 2)}\n`
 
-const htmlText = (value: string): string =>
+export const htmlText = (value: string): string =>
   value.replaceAll('&', '&amp;').replaceAll('<', '&lt;').replaceAll('>', '&gt;')
 
 const renderReadme = (

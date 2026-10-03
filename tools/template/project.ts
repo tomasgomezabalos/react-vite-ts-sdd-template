@@ -166,7 +166,7 @@ export const readProjectFile = async (
   }
 }
 
-const normalizeRemote = (value: string): string => {
+export const normalizeRemote = (value: string): string => {
   const trimmed = value
     .trim()
     .replace(/\.git$/, '')
@@ -185,17 +185,43 @@ const normalizeRemote = (value: string): string => {
   }
 }
 
-export const readOriginRemote = (target: string): string | null => {
+export type ConfiguredRemote = { name: string; url: string }
+
+export const readRemotes = (target: string): ConfiguredRemote[] | null => {
   const result = spawnSync(
     'git',
-    ['-C', target, 'remote', 'get-url', 'origin'],
-    {
-      encoding: 'utf8',
-      stdio: ['ignore', 'pipe', 'ignore'],
-    },
+    [
+      '-C',
+      target,
+      'config',
+      '--local',
+      '--get-regexp',
+      String.raw`^remote\..+\.(url|pushurl)$`,
+    ],
+    { encoding: 'utf8', stdio: ['ignore', 'pipe', 'ignore'] },
   )
-  if (result.status !== 0 || !result.stdout.trim()) return null
-  return normalizeRemote(result.stdout)
+  if (result.status === 1 && result.stdout.trim() === '') return []
+  if (result.status !== 0) return null
+  const remotes: ConfiguredRemote[] = []
+  for (const line of result.stdout.split('\n')) {
+    const match = line.match(/^remote\.(.+)\.(?:url|pushurl) (.+)$/)
+    if (match?.[1] && match[2]) remotes.push({ name: match[1], url: match[2] })
+  }
+  return remotes
+}
+
+export const canonicalRemoteNames = (
+  remotes: ConfiguredRemote[],
+  canonicalRemote: string,
+): string[] => {
+  const canonical = normalizeRemote(canonicalRemote)
+  return [
+    ...new Set(
+      remotes
+        .filter((remote) => normalizeRemote(remote.url) === canonical)
+        .map((remote) => remote.name),
+    ),
+  ].sort()
 }
 
 const lstatExists = async (path: string): Promise<boolean> => {
@@ -244,10 +270,13 @@ export const assertProjectContext = async (
     }
   }
 
-  const remote = readOriginRemote(target)
-  if (remote && remote === normalizeRemote(manifest.canonicalRemote)) {
+  const canonicalNames = canonicalRemoteNames(
+    readRemotes(target) ?? [],
+    manifest.canonicalRemote,
+  )
+  if (canonicalNames.length > 0) {
     throw new ProjectError(
-      'El destino conserva el remoto canónico de la plantilla fuente.',
+      `El destino conserva el remoto canónico de la plantilla fuente (remoto ${canonicalNames.join(', ')}).`,
     )
   }
 

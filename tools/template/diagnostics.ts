@@ -1,8 +1,12 @@
 import { readdir } from 'node:fs/promises'
 import { resolve } from 'node:path'
 import { effectiveProjectConfig, QUALITY_COMMAND } from './config.ts'
-import { renderManagedOutputs } from './managed-files.ts'
-import { readOriginRemote, readProjectFile } from './project.ts'
+import { htmlText, renderManagedOutputs } from './managed-files.ts'
+import {
+  canonicalRemoteNames,
+  readProjectFile,
+  readRemotes,
+} from './project.ts'
 import type { BaselineManifest, Diagnostic, ProjectConfig } from './types.ts'
 
 const result = (
@@ -91,16 +95,6 @@ const walkNames = async (
   }
   return names
 }
-
-const htmlText = (value: string): string =>
-  value.replaceAll('&', '&amp;').replaceAll('<', '&lt;').replaceAll('>', '&gt;')
-
-const canonicalRemote = (value: string): string =>
-  value
-    .trim()
-    .replace(/\.git$/, '')
-    .replace(/\/$/, '')
-    .toLowerCase()
 
 export const runDiagnostics = async (
   target: string,
@@ -260,7 +254,7 @@ export const runDiagnostics = async (
   if (envExample) {
     const invalidNames = envExample.content
       .split('\n')
-      .filter((line) => line.trim() !== '')
+      .filter((line) => line.trim() !== '' && !line.trim().startsWith('#'))
       .map((line) => line.split('=', 1)[0] ?? '')
       .filter(
         (name) =>
@@ -353,19 +347,25 @@ export const runDiagnostics = async (
     ),
   )
 
-  const remote = readOriginRemote(target)
-  const sourceRemote = canonicalRemote(manifest.canonicalRemote)
+  const remotes = readRemotes(target) ?? []
+  const canonicalNames = canonicalRemoteNames(remotes, manifest.canonicalRemote)
+  const remoteStatus =
+    remotes.length === 0
+      ? 'UNKNOWN'
+      : canonicalNames.length > 0
+        ? 'FAIL'
+        : 'PASS'
   diagnostics.push(
     result(
       'SOURCE_REMOTE',
-      remote === null ? 'UNKNOWN' : remote === sourceRemote ? 'FAIL' : 'PASS',
-      remote === null
-        ? 'No se pudo observar el remoto origin.'
-        : remote === sourceRemote
-          ? 'El proyecto conserva el remoto canónico de la plantilla.'
-          : 'El remoto origin es distinto del origen de la plantilla.',
+      remoteStatus,
+      remoteStatus === 'UNKNOWN'
+        ? 'No se pudo observar ningún remoto.'
+        : remoteStatus === 'FAIL'
+          ? `El proyecto conserva el remoto canónico de la plantilla (remoto ${canonicalNames.join(', ')}).`
+          : 'Ningún remoto configurado coincide con el origen de la plantilla.',
       undefined,
-      remote === null
+      remoteStatus === 'UNKNOWN'
         ? 'Sin remoto observable, la procedencia se limita al fingerprint local de baseline y a las salidas gestionadas.'
         : undefined,
     ),

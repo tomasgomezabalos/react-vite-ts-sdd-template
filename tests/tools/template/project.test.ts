@@ -67,6 +67,44 @@ describe('project safety', () => {
     ).rejects.toThrow(/remoto canónico/)
   })
 
+  it.each([
+    ['another remote name', ['remote', 'add', 'upstream']],
+    ['a push URL', ['remote', 'set-url', '--push', 'origin']],
+  ])('rejects the canonical source remote through %s', async (_name, args) => {
+    const fixture = await createProjectFixture()
+    cleanups.push(fixture.cleanup)
+    const manifest = fixture.manifest
+    const git = (...parameters: string[]) =>
+      spawnSync('git', ['-C', fixture.target, ...parameters]).status
+    expect(git('init')).toBe(0)
+    expect(
+      git('remote', 'add', 'origin', 'https://example.com/other/app.git'),
+    ).toBe(0)
+    expect(git(...args, manifest.canonicalRemote)).toBe(0)
+
+    await expect(
+      assertProjectContext(fixture.target, fixture.config, manifest),
+    ).rejects.toThrow(/remoto canónico.*(upstream|origin)/)
+  })
+
+  it('accepts foreign remotes only', async () => {
+    const fixture = await createProjectFixture()
+    cleanups.push(fixture.cleanup)
+    const git = (...parameters: string[]) =>
+      spawnSync('git', ['-C', fixture.target, ...parameters]).status
+    expect(git('init')).toBe(0)
+    expect(
+      git('remote', 'add', 'origin', 'https://example.com/a/app.git'),
+    ).toBe(0)
+    expect(git('remote', 'add', 'upstream', 'git@example.com:b/app.git')).toBe(
+      0,
+    )
+
+    await expect(
+      assertProjectContext(fixture.target, fixture.config, fixture.manifest),
+    ).resolves.toBeUndefined()
+  })
+
   it('accepts a matching baseline without requiring a remote or declared evidence', async () => {
     const fixture = await createProjectFixture()
     cleanups.push(fixture.cleanup)
