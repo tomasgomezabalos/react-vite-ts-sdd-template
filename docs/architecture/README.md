@@ -29,6 +29,7 @@ Este directorio registra decisiones técnicas vinculantes y guías para aplicarl
 ## Guías vigentes
 
 - [Adoptar RTK Query](guides/adoptar-rtk-query.md): criterios y estructura para proyectos que aprueben esta capacidad opcional.
+- [Robustez de la SPA en un derivado](guides/robustez-spa-en-derivados.md): 404, errores de render, chunks fallidos, título/foco, `index.html` y cabeceras que cada derivado debe decidir.
 
 ## Regla de lectura
 
