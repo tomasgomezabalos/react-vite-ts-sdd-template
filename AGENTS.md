@@ -63,7 +63,7 @@ Al finalizar un alcance `FULL` o un `QUICK` que necesite evidencia persistente, 
 - Antes de ejecutar el bootstrap, revisar la configuración (`project.config.json` ubicado fuera del destino), ejecutar el modo preview y presentar su lista de operaciones y token; `--apply` requiere autorización expresa para ese token y estado.
 - No aplicar el bootstrap sobre el remoto canónico de la plantilla ni forzar archivos, symlinks o contenido divergente. Una recuperación transaccional requiere revisar el identificador y autorizar `--recover` expresamente.
 - No añadir secretos a `project.config.json`; la inicialización no autoriza instalaciones, cambios Git, red, commit, despliegue ni publicación.
-- Aplicar ADR-0014: ejecutar `template:init` y `template:doctor` desde la plantilla contra `--target`; copiar la plantilla respetando `derivation.exclude` de `tools/template/baseline-manifest.json`, de modo que el derivado no reciba `tools/template/**`, `tests/tools/template/**`, `project.config.json`, `.template-state.json` ni `.claude/settings.local.json`. Al modificar `tools/template/`, regenerar los hashes del manifiesto.
+- Aplicar ADR-0014: ejecutar `template:init` y `template:doctor` desde la plantilla contra `--target`; copiar la plantilla respetando `derivation.exclude` de `tools/template/baseline-manifest.json`, de modo que el derivado no reciba `tools/template/**`, `tests/tools/template/**`, `project.config.json`, `.template-state.json`, `.claude/settings.local.json` ni `docs/superpowers/`. Al modificar `tools/template/`, regenerar los hashes del manifiesto.
 <!-- template-only:end -->
 
 ## Organización modular

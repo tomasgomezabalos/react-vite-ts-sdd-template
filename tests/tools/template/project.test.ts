@@ -82,6 +82,7 @@ describe('project safety', () => {
     ['project.config.json', 'project.config.json'],
     ['.template-state.json', '.template-state.json'],
     ['.claude/settings.local.json', '.claude/settings.local.json'],
+    ['docs/superpowers/plans/plan.md', 'docs/superpowers'],
   ])(
     'rejects a target that contains the excluded path %s',
     async (file, reported) => {

@@ -13,7 +13,7 @@ describe('template baseline manifest', () => {
     const manifest = await loadBaselineManifest()
 
     expect(manifest.baselineId).toBe(
-      'react-vite-ts-sdd-template@2026-10-03-plat-013.1',
+      'react-vite-ts-sdd-template@2026-10-03-plat-014.1',
     )
     for (const [path, expectedHash] of Object.entries(manifest.managedFiles)) {
       const content = await readFile(resolve(repositoryRoot, path))
@@ -33,6 +33,7 @@ describe('template baseline manifest', () => {
         'project.config.json',
         '.template-state.json',
         '.claude/settings.local.json',
+        'docs/superpowers/**',
       ]),
     )
   })
