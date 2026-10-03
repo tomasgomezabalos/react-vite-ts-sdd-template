@@ -53,8 +53,14 @@ describe('quality runtime and coverage configuration', () => {
     expect(packageJson.scripts?.['test:watch']).toBe(
       'vitest --exclude "tests/tools/**"',
     )
+    expect(packageJson.scripts?.['format:check']).toBe(
+      'prettier --check "**/*.{ts,tsx,js,scss,json}"',
+    )
+    expect(packageJson.scripts?.format).toBe(
+      'prettier --write "**/*.{ts,tsx,js,scss,json}"',
+    )
     expect(packageJson.scripts?.check).toBe(
-      'npm run lint && npm run docs:check && npm run architecture:check && npm run test:coverage && npm run build',
+      'npm run lint && npm run format:check && npm run docs:check && npm run architecture:check && npm run test:coverage && npm run build',
     )
     expect(packageLock.packages?.['']?.engines).toEqual(packageJson.engines)
   })

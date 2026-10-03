@@ -9,7 +9,8 @@ Plantilla mínima para iniciar SPA React renderizadas en cliente mediante Spec-D
 - Vitest, React Testing Library, jest-dom, user-event y jsdom.
 - Mock Service Worker para desarrollo local explícito y pruebas HTTP.
 - i18next y react-i18next con un idioma inicial.
-- ESLint para análisis estático, con reglas de TypeScript, React Hooks y React Refresh.
+- ESLint para análisis estático, con reglas de TypeScript con información de tipos (`recommendedTypeChecked`), React Hooks y React Refresh.
+- Prettier para el formato de `ts`, `tsx`, `js`, `scss` y `json`.
 - Sass/SCSS para estilos, mediante la integración nativa de Vite.
 
 ## Puesta en marcha
@@ -34,9 +35,10 @@ Comprobación completa, utilizada también por CI:
 npm run check
 ```
 
-La puerta de aplicación ejecuta una sola vez lint, integridad documental, límites arquitectónicos, pruebas con cobertura y build. Excluye las pruebas propias de `tools/`. Para aislar un diagnóstico pueden utilizarse:
+La puerta de aplicación ejecuta una sola vez lint, comprobación de formato, integridad documental, límites arquitectónicos, pruebas con cobertura y build. Excluye las pruebas propias de `tools/`. Para aislar un diagnóstico pueden utilizarse:
 
 ```bash
+npm run format:check
 npm run docs:check
 npm run architecture:check
 npm run test:coverage
@@ -56,7 +58,7 @@ Las utilidades de la plantilla conservan una suite separada, sin formar parte de
 npm run test:tools
 ```
 
-`docs:check` valida enlaces Markdown locales, índices y metadatos SDD objetivos sin acceder a la red ni decidir si una aprobación es auténtica. `architecture:check` valida imports resolubles y las fronteras objetivas de ADR-0008; no infiere si dos features o entidades hermanas comparten semántica. Superar la puerta no demuestra por sí solo corrección funcional completa, accesibilidad visual, ausencia de vulnerabilidades ni validez jurídica.
+`docs:check` valida enlaces Markdown locales, índices y metadatos SDD objetivos sin acceder a la red ni decidir si una aprobación es auténtica. `architecture:check` valida imports resolubles y las fronteras objetivas de ADR-0008; no infiere si dos features o entidades hermanas comparten semántica. `format:check` solo verifica el formato de `ts`, `tsx`, `js`, `scss` y `json`; `npm run format` lo aplica. Las claves de i18next están tipadas en `src/i18n/i18next.d.ts`, de modo que una clave inexistente falla al compilar. No hay análisis estático de accesibilidad en JSX, porque `eslint-plugin-jsx-a11y` no declara soporte para ESLint 10 ([ADR-0015](docs/architecture/decisions/0015-endurecimiento-lint-formato-y-tipado.md)). Superar la puerta no demuestra por sí solo corrección funcional completa, accesibilidad visual, ausencia de vulnerabilidades ni validez jurídica.
 
 `.github/workflows/quality.yml` ejecuta `npm ci` y la misma puerta de aplicación en pushes a `main` y pull requests. Solo en el repositorio canónico `tomasgomezabalos/react-vite-ts-sdd-template` ejecuta además `npm run test:tools`; los proyectos derivados no incorporan esa suite a su puerta. Una inspección local del YAML no equivale a una ejecución real en GitHub.
 

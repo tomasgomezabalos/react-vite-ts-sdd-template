@@ -14,7 +14,7 @@
     "test:watch": "vitest --exclude \"tests/tools/**\"",
     "docs:check": "node tools/quality/docs-check.ts",
     "architecture:check": "node tools/quality/architecture-check.ts",
-    "check": "npm run lint && npm run docs:check && npm run architecture:check && npm run test:coverage && npm run build",
+    "check": "npm run lint && npm run format:check && npm run docs:check && npm run architecture:check && npm run test:coverage && npm run build",
     "preview": "vite preview",
     "template:init": "node tools/template/init.ts",
     "template:doctor": "node tools/template/doctor.ts",
