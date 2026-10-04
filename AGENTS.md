@@ -108,6 +108,7 @@ Al finalizar un alcance `FULL` o un `QUICK` que necesite evidencia persistente, 
 - Utilizar Node `22.23.2` y npm `10.9.8` conforme a `.nvmrc`, `packageManager` y `devEngines`; no relajar sus rangos ni actualizar una declaración de forma aislada.
 - Utilizar `npm ci` para instalaciones limpias basadas en el lockfile.
 - Mantener `npm run check` como puerta de aplicación local y de CI: lint, `format:check`, `docs:check`, `architecture:check`, pruebas con cobertura exclusiva de `src/` y build; no ejecutar `tests/tools/**` dentro de esa puerta.
+- Aplicar el formato con `npm run format` antes de ejecutar la puerta; `format:check` solo lo verifica y falla si algún archivo no cumple.
 - Mantener `npm run test:tools` como suite separada de mantenimiento de la plantilla, fuera de la cobertura y de la puerta de proyectos derivados; ejecutarla adicionalmente al modificar `tools/` o infraestructura propia de la plantilla.
 - No omitir ni duplicar etapas de la puerta en CI; los comandos focalizados sirven para diagnóstico, no sustituyen el resultado completo.
 - Mantener `docs:check` y `architecture:check` deterministas, sin red y de solo lectura respecto al repositorio.

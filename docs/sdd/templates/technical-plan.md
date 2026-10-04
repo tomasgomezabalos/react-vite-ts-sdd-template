@@ -23,7 +23,7 @@
 ## Decisiones y diseño
 
 - ADR aplicables: <identificadores aprobados>
-- Componentes propios: cargar `@react-ts-feature-pattern` y declarar modo.
+- Componentes propios: cargar `@react-ts-feature-pattern` y declarar modo (`strict` para componentes nuevos o con cambios de comportamiento observable, según `AGENTS.md`).
 - Responsabilidades y flujo de datos: <diseño mínimo necesario>
 - Alternativas descartadas: <solo si afectan a la decisión>
 
@@ -46,7 +46,7 @@
 ## Estrategia de pruebas
 
 - Unitarias: <alcance y herramienta>.
-- Componentes/hooks: <comportamiento observable>.
+- Componentes/hooks: <comportamiento observable>, incluida la aserción `expectNoAccessibilityViolations` por página o componente con interfaz.
 - HTTP/MSW: <contratos y escenarios, si aplica>.
 - Manuales: <comprobaciones, si aplica>.
 

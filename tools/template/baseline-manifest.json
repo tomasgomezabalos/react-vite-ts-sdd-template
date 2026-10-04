@@ -1,6 +1,6 @@
 {
   "schemaVersion": 2,
-  "baselineId": "react-vite-ts-sdd-template@2026-10-03-plat-022.1",
+  "baselineId": "react-vite-ts-sdd-template@2026-10-03-plat-023.1",
   "canonicalRemote": "https://github.com/tomasgomezabalos/react-vite-ts-sdd-template.git",
   "derivation": {
     "exclude": [
@@ -13,7 +13,7 @@
     ]
   },
   "managedFiles": {
-    "AGENTS.md": "713d4236c179f70890ca379719984d61060befbc5edec833c859c2a106cc30f3",
+    "AGENTS.md": "0ac5dc2e65cf3da5fb5c21a01f93a93283c9563598a4e09d6fd2faf61cef7669",
     "README.md": "c5dd6c1ae63b49fbf54c74d8f229b71815c03a348541ca8b43b75617f0aced97",
     "index.html": "a1739bf8471fede0d2e86afaa1f3046d04cfabbfdc075fd1758436f2c70c2e26",
     "package-lock.json": "4274fef0b820519f2cfa18f0960824a235755fee99834415dee02acaab23cc74",
