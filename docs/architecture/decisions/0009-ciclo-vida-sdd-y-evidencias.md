@@ -14,6 +14,8 @@
 
 **Relación:** Modifica el modelo de estados de `docs/sdd/workflow.md` y precisa la trazabilidad definida en la constitución y en `docs/sdd/change-policy.md`; su aplicación documental requiere una puerta separada.
 
+**Modificada por:** ADR-0018 modifica parcialmente la sección 4 en lo relativo a dónde se registra la entrega de los cambios `QUICK` (por defecto, la sección de entrega de su propio `quick-change.md`; el informe independiente sigue exigido en los `FULL`). El resto de esta decisión permanece vigente.
+
 ## Contexto
 
 El workflow vigente utiliza una única propiedad `Estado` con valores como `DRAFT`, `APPROVED`, `IMPLEMENTED`, `VALIDATED`, `BLOCKED` y `SUPERSEDED`. Ese modelo mezcla dos responsabilidades diferentes:
