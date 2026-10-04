@@ -14,6 +14,8 @@
 
 **Relación:** Modifica parcialmente ADR-0010 en la puerta de idoneidad, los datos mínimos de derivación y el alcance de `template:doctor`; su aplicación se especificará mediante PLAT-005.
 
+**Modificada por:** ADR-0014 modifica parcialmente sus secciones 3, 7 y 8. El resto de esta decisión permanece vigente.
+
 ## Contexto
 
 El uso previsto de la plantilla parte siempre de una copia nueva de `react-vite-ts-sdd-template` y no de la adopción o reconfiguración de un proyecto existente. La elección expresa de esta plantilla selecciona una SPA React renderizada en cliente, con Vite, React Router declarativo y el gobierno SDD heredado.

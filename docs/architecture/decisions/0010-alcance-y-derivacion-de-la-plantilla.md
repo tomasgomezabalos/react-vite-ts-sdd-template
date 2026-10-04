@@ -14,6 +14,8 @@
 
 **Relación:** Precisa ADR-0001 y ADR-0004, separa las especificaciones históricas de plataforma de las futuras especificaciones de producto y define el marco del bootstrap y `template:doctor`; su aplicación requiere una puerta separada.
 
+**Modificada por:** ADR-0012 modifica parcialmente la puerta de idoneidad, los datos mínimos de derivación y el alcance de `template:doctor`; ADR-0014 modifica parcialmente su sección 5. El resto de esta decisión permanece vigente.
+
 ## Contexto
 
 La plantilla proporciona una aplicación React, Vite y TypeScript con renderizado cliente, React Router en modo declarativo, pruebas, MSW, i18n y un flujo SDD. Esa combinación es apropiada para muchas SPA, pero no cubre por sí sola renderizado en servidor, generación estática, React Server Components, backend, rutas de servidor ni otras capacidades integradas de un framework.

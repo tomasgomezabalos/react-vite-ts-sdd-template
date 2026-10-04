@@ -14,6 +14,8 @@
 
 **Relación:** Modifica parcialmente las secciones 2 y 4 de ADR-0011 y se aplica mediante PLAT-006.
 
+**Modificada por:** ADR-0014 modifica parcialmente su sección 2. El resto de esta decisión permanece vigente.
+
 ## Contexto
 
 ADR-0011 y PLAT-004 incorporaron `src/**/*.{ts,tsx}` y `tools/**/*.ts` al mismo contrato global de cobertura y ejecutaron todas sus pruebas dentro de `npm run check`. Esa unión mezcla dos responsabilidades distintas:

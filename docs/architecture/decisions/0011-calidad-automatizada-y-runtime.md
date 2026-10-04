@@ -14,6 +14,8 @@
 
 **Relación:** Amplía ADR-0001 y ADR-0002, automatiza reglas de ADR-0008 y aplica el ciclo de ADR-0009. Complementa ADR-0010 y PLAT-003; su aplicación se especificará mediante PLAT-004.
 
+**Modificada por:** ADR-0013 modifica parcialmente las secciones 2 y 4 (separación entre pruebas de aplicación y de plantilla); ADR-0015 modifica parcialmente la sección 2 (`format:check` en la secuencia de `npm run check`); ADR-0017 modifica parcialmente la sección 1 (runtime de Node y npm), con aplicación pendiente de PLAT-019. El resto de esta decisión permanece vigente.
+
 ## Contexto
 
 La plantilla dispone de lint, pruebas, cobertura y build, pero `npm run check` no ejecuta todavía la cobertura ni comprueba enlaces documentales o límites arquitectónicos. Tampoco existe un workflow de integración continua que aplique la misma puerta en cada cambio.
