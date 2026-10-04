@@ -13,7 +13,7 @@ describe('template baseline manifest', () => {
     const manifest = await loadBaselineManifest()
 
     expect(manifest.baselineId).toBe(
-      'react-vite-ts-sdd-template@2026-10-03-plat-026.1',
+      'react-vite-ts-sdd-template@2026-10-04-plat-027.1',
     )
     for (const [path, expectedHash] of Object.entries(manifest.managedFiles)) {
       const content = await readFile(resolve(repositoryRoot, path))
@@ -37,6 +37,23 @@ describe('template baseline manifest', () => {
         '.github/workflows/template-tools.yml',
       ]),
     )
+  })
+
+  it('derives the shared Claude settings and the formatting hook', async () => {
+    const manifest = await loadBaselineManifest()
+
+    for (const path of [
+      '.claude/settings.json',
+      'tools/quality/format-edited-file.ts',
+    ]) {
+      expect(
+        manifest.derivation.exclude.some((pattern) => pattern === path),
+        path,
+      ).toBe(false)
+      await expect(
+        readFile(resolve(repositoryRoot, path), 'utf8'),
+      ).resolves.toBeTruthy()
+    }
   })
 
   it('removes only the template-only blocks from AGENTS.md', async () => {
