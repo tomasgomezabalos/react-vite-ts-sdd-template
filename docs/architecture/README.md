@@ -29,6 +29,7 @@ Este directorio registra decisiones técnicas vinculantes y guías para aplicarl
 | [ADR-0016](decisions/0016-pruebas-de-accesibilidad-con-axe-core.md) | `APPROVED` | Pruebas de accesibilidad con `axe-core` en Vitest; e2e y presupuesto de bundle fuera de la baseline. | Completa ADR-0015; precisa la estrategia de pruebas de ADR-0001 y ADR-0013; su aplicación requiere un cambio `QUICK`. |
 | [ADR-0017](decisions/0017-runtime-node-lts-vigente.md) | `APPROVED` | Permanecer en Node 22.23.2 y migrar a Node 26 cuando entre en LTS (2026-10-28). | Modifica parcialmente ADR-0011 §1 y PLAT-004 REQ-01/AC-01 cuando se aplique; su aplicación requiere un cambio `QUICK`. |
 | [ADR-0018](decisions/0018-registro-de-entrega-de-los-cambios-quick.md) | `APPROVED` | La entrega de los cambios QUICK se registra por defecto en su propio `quick-change.md`, sin el criterio de «trivial»; el informe independiente queda para FULL. | Modifica parcialmente ADR-0009 §4; su aplicación se especifica mediante PLAT-024. |
+| [ADR-0019](decisions/0019-ci-de-herramientas-solo-en-la-plantilla.md) | `APPROVED` | La CI de `test:tools` pasa a un workflow propio de la plantilla, excluido de la derivación; `quality.yml` queda limpio. | Modifica parcialmente ADR-0013 §3; aplica el principio de ADR-0014; su aplicación se especifica mediante PLAT-025. |
 
 ## Guías vigentes
 

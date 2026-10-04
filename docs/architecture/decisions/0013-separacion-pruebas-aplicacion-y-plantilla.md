@@ -14,7 +14,7 @@
 
 **Relación:** Modifica parcialmente las secciones 2 y 4 de ADR-0011 y se aplica mediante PLAT-006.
 
-**Modificada por:** ADR-0014 modifica parcialmente su sección 2. El resto de esta decisión permanece vigente.
+**Modificada por:** ADR-0014 modifica parcialmente su sección 2; ADR-0019 modifica parcialmente su sección 3 (el paso de `npm run test:tools` pasa de `quality.yml`, condicionado por el nombre del repositorio, a un workflow propio de la plantilla). El resto de esta decisión permanece vigente.
 
 ## Contexto
 
