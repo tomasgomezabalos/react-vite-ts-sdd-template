@@ -60,6 +60,7 @@ Al finalizar un alcance `FULL`, utilizar `docs/sdd/templates/validation-report.m
 <!-- template-only:start -->
 - No asumir remoto, credenciales, licencia, visibilidad ni estrategia Git durante una derivación.
 - Mantener bootstrap y diagnóstico separados conforme a PLAT-003 y PLAT-005: `template:doctor` será de solo lectura, comprobará solo la derivación técnica y no corregirá archivos.
+- Antes de ejecutar el bootstrap, ejecutar `npm run template:freshness` desde la plantilla y presentar su informe (solo lectura, ADR-0020). Con elementos `ATTENTION`, la persona responsable decide entre actualizar la plantilla mediante el flujo SDD y repetir la comprobación, o continuar dejando constancia de la deuda aceptada; la comprobación nunca actualiza nada.
 - Antes de ejecutar el bootstrap, revisar la configuración (`project.config.json` ubicado fuera del destino), ejecutar el modo preview y presentar su lista de operaciones y token; `--apply` requiere autorización expresa para ese token y estado.
 - No aplicar el bootstrap sobre el remoto canónico de la plantilla ni forzar archivos, symlinks o contenido divergente. Una recuperación transaccional requiere revisar el identificador y autorizar `--recover` expresamente.
 - No añadir secretos a `project.config.json`; la inicialización no autoriza instalaciones, cambios Git, red, commit, despliegue ni publicación.

@@ -195,6 +195,14 @@ El token deja de ser válido si cambia la configuración, el destino o cualquier
 
 En el destino modifica `package.json` y `package-lock.json` (identidad y retirada de los scripts `template:*`), `index.html` (título), `README.md` (renderizado sin referencias al bootstrap) y `AGENTS.md` (sin el bloque `template-only`). La inicialización no genera visión, métricas, despliegue ni `.env.example`; tampoco instala dependencias, modifica Git, usa la red, publica o despliega.
 
+### Frescura de la plantilla
+
+```bash
+npm run template:freshness
+```
+
+Antes de derivar un proyecto, `template:freshness` informa, en modo de solo lectura, de lo que está desactualizado o pendiente en la plantilla: dependencias de npm por tamaño del salto, vulnerabilidades de producción, la línea de Node frente a su calendario oficial, la vigencia de las reglas de ignorado de Dependabot, los pull requests de Dependabot abiertos, el estado de CI de `main` y los cambios de plataforma sin aplicar. Cada entrada es `ATTENTION` (requiere decisión), `BLOCKED` (bloqueada a propósito, con su causa), `CURRENT` o `UNKNOWN` (no comprobable, por ejemplo sin red o sin `gh`); el código de salida es `1` si alguna es `ATTENTION`. Admite `--format json`. No actualiza nada: las actualizaciones siguen el flujo SDD ([ADR-0020](docs/architecture/decisions/0020-mantenimiento-de-la-frescura-de-la-plantilla.md)). No forma parte de `npm run check`, que sigue siendo determinista y sin red, y el proyecto derivado no recibe este comando. Una tarea programada mensual ejecuta la misma comprobación y avisa del resultado.
+
 ### Diagnóstico
 
 ```bash

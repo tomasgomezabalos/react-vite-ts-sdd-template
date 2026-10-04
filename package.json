@@ -19,7 +19,8 @@
     "template:init": "node tools/template/init.ts",
     "template:doctor": "node tools/template/doctor.ts",
     "format": "prettier --write \"**/*.{ts,tsx,js,scss,json}\"",
-    "format:check": "prettier --check \"**/*.{ts,tsx,js,scss,json}\""
+    "format:check": "prettier --check \"**/*.{ts,tsx,js,scss,json}\"",
+    "template:freshness": "node tools/template/freshness.ts"
   },
   "packageManager": "npm@10.9.8",
   "engines": {

@@ -14,7 +14,11 @@ import type {
   ProjectConfig,
 } from './types.ts'
 
-const TEMPLATE_SCRIPTS = ['template:init', 'template:doctor'] as const
+const TEMPLATE_SCRIPTS = [
+  'template:init',
+  'template:doctor',
+  'template:freshness',
+] as const
 const TEMPLATE_ONLY_START = '<!-- template-only:start -->'
 const TEMPLATE_ONLY_END = '<!-- template-only:end -->'
 
