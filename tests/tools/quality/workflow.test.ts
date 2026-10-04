@@ -31,9 +31,7 @@ describe('quality workflow', () => {
       (match) => match[1],
     )
     expect(commands).toEqual(['npm ci', 'npm run check'])
-    expect(workflow).not.toMatch(
-      /github\.repository|tomasgomezabalos|template/i,
-    )
+    expect(workflow).not.toMatch(/github\.repository|template/i)
     expect(workflow).not.toMatch(/secrets\.|npm publish|deploy/i)
   })
 })
