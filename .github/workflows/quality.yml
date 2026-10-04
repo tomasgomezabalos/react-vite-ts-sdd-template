@@ -35,7 +35,3 @@ jobs:
 
       - name: Run quality gate
         run: npm run check
-
-      - name: Test template tooling
-        if: github.repository == 'tomasgomezabalos/react-vite-ts-sdd-template'
-        run: npm run test:tools

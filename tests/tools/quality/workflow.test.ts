@@ -30,9 +30,9 @@ describe('quality workflow', () => {
     const commands = [...workflow.matchAll(/^\s+run:\s+(.+)$/gm)].map(
       (match) => match[1],
     )
-    expect(commands).toEqual(['npm ci', 'npm run check', 'npm run test:tools'])
-    expect(workflow).toContain(
-      "if: github.repository == 'tomasgomezabalos/react-vite-ts-sdd-template'",
+    expect(commands).toEqual(['npm ci', 'npm run check'])
+    expect(workflow).not.toMatch(
+      /github\.repository|tomasgomezabalos|template/i,
     )
     expect(workflow).not.toMatch(/secrets\.|npm publish|deploy/i)
   })

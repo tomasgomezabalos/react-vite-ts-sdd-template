@@ -121,6 +121,10 @@ describe('project safety', () => {
     ['.template-state.json', '.template-state.json'],
     ['.claude/settings.local.json', '.claude/settings.local.json'],
     ['docs/superpowers/plans/plan.md', 'docs/superpowers'],
+    [
+      '.github/workflows/template-tools.yml',
+      '.github/workflows/template-tools.yml',
+    ],
   ])(
     'rejects a target that contains the excluded path %s',
     async (file, reported) => {

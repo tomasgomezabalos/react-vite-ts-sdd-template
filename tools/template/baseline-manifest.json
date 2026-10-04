@@ -1,6 +1,6 @@
 {
   "schemaVersion": 2,
-  "baselineId": "react-vite-ts-sdd-template@2026-10-03-plat-024.1",
+  "baselineId": "react-vite-ts-sdd-template@2026-10-03-plat-025.1",
   "canonicalRemote": "https://github.com/tomasgomezabalos/react-vite-ts-sdd-template.git",
   "derivation": {
     "exclude": [
@@ -9,12 +9,13 @@
       "project.config.json",
       ".template-state.json",
       ".claude/settings.local.json",
-      "docs/superpowers/**"
+      "docs/superpowers/**",
+      ".github/workflows/template-tools.yml"
     ]
   },
   "managedFiles": {
-    "AGENTS.md": "abea469ad260d4c62dd0e97a5b57445d3bc237473d619b6495d68bfafb30bfbe",
-    "README.md": "c5dd6c1ae63b49fbf54c74d8f229b71815c03a348541ca8b43b75617f0aced97",
+    "AGENTS.md": "204f34078a050a5b7e70d0a32458075b4ca6c18e0c09f2b8b8a723427533338c",
+    "README.md": "4e3775cf9822de827d9ae6d2ea7ea6223303bd098dbf17f5dca7ae4d8f28993e",
     "index.html": "a1739bf8471fede0d2e86afaa1f3046d04cfabbfdc075fd1758436f2c70c2e26",
     "package-lock.json": "4274fef0b820519f2cfa18f0960824a235755fee99834415dee02acaab23cc74",
     "package.json": "30f3ee2473177052753830f53751ab1e479a177a081dec2497967d5de6d6409e",
