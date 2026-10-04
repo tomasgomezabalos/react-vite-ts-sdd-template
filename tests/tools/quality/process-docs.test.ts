@@ -34,4 +34,35 @@ describe('process documents', () => {
       expect.arrayContaining(['format', 'format:check']),
     )
   })
+
+  it('records the delivery of a QUICK change in its own record, without a trivial test', async () => {
+    const documents = {
+      workflow: await read('docs/sdd/workflow.md'),
+      policy: await read('docs/sdd/change-policy.md'),
+      template: await read('docs/sdd/templates/quick-change.md'),
+      agents: await read('AGENTS.md'),
+    }
+
+    for (const [name, content] of Object.entries(documents)) {
+      expect(content, name).not.toMatch(/trivial/i)
+    }
+    for (const name of ['workflow', 'policy', 'agents'] as const) {
+      expect(documents[name], name).toContain(
+        'sección de entrega del propio `quick-change.md`',
+      )
+    }
+    expect(documents.template).toContain('validation-report.md')
+  })
+
+  it('versions the workflow and the change policy after ADR-0018', async () => {
+    for (const path of ['docs/sdd/workflow.md', 'docs/sdd/change-policy.md']) {
+      const content = await read(path)
+
+      expect(content, path).toMatch(/\*\*Versión:\*\* 2\.1\.0/)
+      expect(content, path).toContain('ADR-0018')
+    }
+    expect(await read('docs/sdd/README.md')).not.toContain(
+      '`APPROVED 2.0.0` | Estados',
+    )
+  })
 })

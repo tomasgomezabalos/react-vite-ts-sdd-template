@@ -2,19 +2,19 @@
 
 **Estado documental:** APPROVED
 
-**Versión:** 2.0.0
+**Versión:** 2.1.0
 
 **Fecha:** 2026-08-27
 
-**Revisión:** 2026-08-28
+**Revisión:** 2026-10-04
 
 **Aprobado por:** Tomás, usuario solicitante
 
-**Fecha de aprobación:** 2026-08-28
+**Fecha de aprobación:** 2026-10-04
 
-**Evidencia de aprobación:** Aprobación expresa registrada en la conversación de trabajo.
+**Evidencia de aprobación:** Aprobación expresa registrada en la conversación de trabajo (versión 2.0.0, 2026-08-28). La revisión 2.1.0 se aprobó el 2026-10-04 mediante «Aprueba ADR-0018 y PLAT-024 e impleméntalo».
 
-**Decisión aplicable:** ADR-0009 (`APPROVED`).
+**Decisión aplicable:** ADR-0009 (`APPROVED`) y ADR-0018 (`APPROVED`).
 
 ## Propósito
 
@@ -67,7 +67,7 @@ Usar `QUICK` cuando el cambio:
 3. Comprobar referencias cruzadas y ausencia de contradicciones.
 4. Obtener aprobación del delta antes de implementar.
 5. Actualizar o añadir las pruebas necesarias e implementar el cambio.
-6. Registrar archivos, comprobaciones y desviaciones en `validation-report.md` o, cuando sea trivial, en la sección de entrega separada del propio registro `QUICK`.
+6. Registrar archivos, pruebas y resultados, desviaciones y aceptación en la sección de entrega del propio `quick-change.md`, separada del contrato aprobado; puede utilizarse un `validation-report.md` independiente cuando la evidencia sea demasiado extensa o la persona responsable lo pida (ADR-0018).
 7. Validar el comportamiento afectado y obtener aceptación expresa antes de registrar `VALIDATED`.
 
 Un cambio `QUICK` no exige regenerar automáticamente visión, plan completo ni desglose completo de tareas si esos artefactos continúan siendo correctos.

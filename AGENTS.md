@@ -44,7 +44,7 @@ Las reglas de aprobación de `docs/sdd/workflow.md` siguen siendo obligatorias p
 
 Para `DIRECT`, no se exige una nueva spec, plan o tareas si se ha confirmado que no cambia el comportamiento observable ni ningún contrato.
 
-Al finalizar un alcance `FULL` o un `QUICK` que necesite evidencia persistente, utilizar `docs/sdd/templates/validation-report.md`. El informe pasa a `IMPLEMENTED` cuando el alcance termina y solo a `VALIDATED` tras contrastar criterios y obtener aceptación expresa. Commit, push, merge, despliegue y publicación requieren autorizaciones independientes.
+Al finalizar un alcance `FULL`, utilizar `docs/sdd/templates/validation-report.md`; para un `QUICK`, registrar la entrega en la sección de entrega del propio `quick-change.md` (o en un informe independiente si la evidencia es demasiado extensa). El registro pasa a `IMPLEMENTED` cuando el alcance termina y solo a `VALIDATED` tras contrastar criterios y obtener aceptación expresa. Commit, push, merge, despliegue y publicación requieren autorizaciones independientes.
 
 ## Alcance y derivación de la plantilla
 

@@ -64,7 +64,7 @@ La aprobación autoriza implementar únicamente este delta cuando exista autoriz
 
 ## Registro de entrega opcional
 
-Utilizar esta sección solo cuando el cambio sea trivial y un informe independiente no aporte claridad. No modificar el contrato aprobado anterior.
+Registrar aquí la entrega del cambio, separada del contrato aprobado y sin modificar este último. Puede usarse un `validation-report.md` independiente si la evidencia es demasiado extensa.
 
 - Estado de entrega: `NOT_STARTED`
 - Archivos modificados: Pendiente

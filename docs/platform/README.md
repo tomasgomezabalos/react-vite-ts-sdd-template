@@ -29,6 +29,7 @@ Este directorio contiene el contrato y el histórico de capacidades incorporadas
 | `PLAT-021` | [`Cambio QUICK`](specs/021-alinear-la-skill-con-el-contrato-del-proyecto/quick-change.md) | `APPROVED` / `VALIDATED` | Alinea la skill `react-ts-feature-pattern` con `AGENTS.md`, ADR-0003, ADR-0008 y PLAT-017; Sonar solo bajo demanda. |
 | `PLAT-022` | [`Cambio QUICK`](specs/022-docs-check-secciones-obligatorias-de-cambios-quick/quick-change.md) | `APPROVED` / `VALIDATED` | `docs:check` exige las secciones obligatorias de los cambios QUICK aprobados. |
 | `PLAT-023` | [`Cambio QUICK`](specs/023-notas-de-plantilla-de-plan-y-agents/quick-change.md) | `APPROVED` / `VALIDATED` | Alinea la plantilla de plan técnico y `AGENTS.md` con `strict`, la aserción de accesibilidad y `npm run format`. |
+| `PLAT-024` | [`Cambio QUICK`](specs/024-aplicar-el-registro-de-entrega-embebido-en-quick/quick-change.md) | `APPROVED` / `IMPLEMENTED` | Aplica ADR-0018: registro de entrega embebido en los QUICK, sin el criterio de «trivial». |
 
 Los alias `PLAT-001` y `PLAT-002` permiten distinguir estas capacidades de las futuras features de producto. No reescriben los identificadores, estados ni evidencias de los artefactos originales.
 

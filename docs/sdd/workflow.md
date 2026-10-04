@@ -2,17 +2,19 @@
 
 **Estado documental:** APPROVED
 
-**Versión:** 2.0.0
+**Versión:** 2.1.0
 
 **Fecha:** 2026-08-28
 
+**Revisión:** 2026-10-04
+
 **Aprobado por:** Tomás, usuario solicitante
 
-**Fecha de aprobación:** 2026-08-28
+**Fecha de aprobación:** 2026-10-04
 
-**Evidencia de aprobación:** Aprobación expresa registrada en la conversación de trabajo.
+**Evidencia de aprobación:** Aprobación expresa registrada en la conversación de trabajo (versión 2.0.0, 2026-08-28). La revisión 2.1.0 se aprobó el 2026-10-04 mediante «Aprueba ADR-0018 y PLAT-024 e impleméntalo».
 
-**Decisión aplicable:** ADR-0009 (`APPROVED`).
+**Decisión aplicable:** ADR-0009 (`APPROVED`) y ADR-0018 (`APPROVED`).
 
 ## Estados documentales
 
@@ -30,7 +32,7 @@ Las especificaciones, planes, cambios `QUICK` y ADR utilizan estos estados. Una 
 - `BLOCKED`: una cuestión concreta impide avanzar.
 - `NOT_APPLICABLE`: decisión o artefacto sin entrega ejecutable independiente.
 
-Los estados de entrega se registran en `validation-report.md` cuando el flujo lo exige. `IN_PROGRESS` puede mantenerse en la tarea, issue o conversación y no requiere editar el repositorio en cada avance.
+Los estados de entrega se registran en `validation-report.md` o, en los cambios `QUICK`, en la sección de entrega de su `quick-change.md`. `IN_PROGRESS` puede mantenerse en la tarea, issue o conversación y no requiere editar el repositorio en cada avance.
 
 ## Aprobaciones
 
@@ -63,7 +65,7 @@ La clasificación determina los artefactos y puertas aplicables. Si el impacto c
 3. Comprobar referencias cruzadas y ausencia de contradicciones.
 4. Obtener aprobación del cambio antes de implementar.
 5. Actualizar o añadir pruebas e implementar únicamente el delta aprobado.
-6. Registrar resultados en `validation-report.md`; si el cambio es trivial, la evidencia puede añadirse al registro `QUICK` en una sección de entrega separada del contrato aprobado.
+6. Registrar archivos, pruebas y resultados, desviaciones y aceptación en la sección de entrega del propio `quick-change.md`, separada del contrato aprobado; puede utilizarse un `validation-report.md` independiente cuando la evidencia sea demasiado extensa o la persona responsable lo pida (ADR-0018).
 7. Validar el comportamiento afectado y registrar desviaciones y aceptación.
 
 ## Flujo DIRECT
