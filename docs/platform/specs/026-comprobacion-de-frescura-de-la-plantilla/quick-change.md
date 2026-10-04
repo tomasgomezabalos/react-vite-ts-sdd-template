@@ -119,8 +119,8 @@ La aprobación autoriza implementar únicamente este delta cuando exista autoriz
 
 ## Registro de entrega opcional
 
-- Estado de entrega: `IMPLEMENTED`
+- Estado de entrega: `VALIDATED`
 - Archivos modificados: `tools/template/freshness.ts`, `freshness-checks.ts`, `freshness-providers.ts` (nuevos), `tools/template/managed-files.ts`, `tools/template/baseline-manifest.json`, `package.json`, `AGENTS.md`, `README.md`, `tests/tools/template/freshness.test.ts` (nuevo), `tests/tools/template/baseline.test.ts`, ADR-0020 y su índice, índice de plataforma.
 - Pruebas y resultados: `npm run check` código `0`; `npm run test:tools` 15 archivos / 142 pruebas correctas (21 nuevas, con proveedores simulados); derivación real con `doctor` sin fallos, sin `tools/template/` ni script `template:freshness` en el derivado y `check` del derivado con código `0`; ejecución real con red: 2 `ATTENTION`, 4 `BLOCKED`, 3 `CURRENT`, código `1`; ejecución manual de la tarea programada `revisar-frescura-plantilla` (cron mensual `0 10 1 * *`): informe en español sin escrituras en el repositorio, coincidente con la ejecución real.
 - Desviaciones: ninguna.
-- Aceptación: Pendiente
+- Aceptación: 2026-10-04, Tomás, usuario solicitante. Aceptación expresa «Acepto PLAT-026 como VALIDATED» registrada en la conversación de trabajo tras contrastar los criterios con la evidencia de este registro. Tras el push (`3a0400c`), `Quality`, `Security` y `Template tools` finalizaron con `success`.

@@ -31,7 +31,7 @@ Este directorio contiene el contrato y el histórico de capacidades incorporadas
 | `PLAT-023` | [`Cambio QUICK`](specs/023-notas-de-plantilla-de-plan-y-agents/quick-change.md) | `APPROVED` / `VALIDATED` | Alinea la plantilla de plan técnico y `AGENTS.md` con `strict`, la aserción de accesibilidad y `npm run format`. |
 | `PLAT-024` | [`Cambio QUICK`](specs/024-aplicar-el-registro-de-entrega-embebido-en-quick/quick-change.md) | `APPROVED` / `IMPLEMENTED` | Aplica ADR-0018: registro de entrega embebido en los QUICK, sin el criterio de «trivial». |
 | `PLAT-025` | [`Cambio QUICK`](specs/025-ci-de-herramientas-fuera-del-workflow-heredable/quick-change.md) | `APPROVED` / `VALIDATED` | Aplica ADR-0019: `test:tools` se ejecuta en un workflow propio de la plantilla, excluido de la derivación. |
-| `PLAT-026` | [`Cambio QUICK`](specs/026-comprobacion-de-frescura-de-la-plantilla/quick-change.md) | `APPROVED` / `IMPLEMENTED` | Aplica ADR-0020: `template:freshness` como paso previo a derivar y aviso mensual. |
+| `PLAT-026` | [`Cambio QUICK`](specs/026-comprobacion-de-frescura-de-la-plantilla/quick-change.md) | `APPROVED` / `VALIDATED` | Aplica ADR-0020: `template:freshness` como paso previo a derivar y aviso mensual. |
 
 Los alias `PLAT-001` y `PLAT-002` permiten distinguir estas capacidades de las futuras features de producto. No reescriben los identificadores, estados ni evidencias de los artefactos originales.
 
