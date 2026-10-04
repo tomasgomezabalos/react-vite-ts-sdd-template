@@ -92,8 +92,8 @@ La aprobación autoriza implementar únicamente este delta cuando exista autoriz
 
 ## Registro de entrega opcional
 
-- Estado de entrega: `IMPLEMENTED`
+- Estado de entrega: `VALIDATED`
 - Archivos modificados: `docs/sdd/templates/technical-plan.md` (dos frases), `AGENTS.md` (una viñeta sobre `npm run format`, fuera de los bloques `template-only`), `tests/tools/quality/process-docs.test.ts` (2 casos), `tools/template/baseline-manifest.json` (hash de `AGENTS.md` y `baselineId` `react-vite-ts-sdd-template@2026-10-03-plat-023.1`), `tests/tools/template/baseline.test.ts`, `docs/platform/README.md`.
 - Pruebas y resultados (2026-10-04): antes del cambio fallaban los 2 casos de `process-docs.test.ts`; después pasan. `npm run check` y `npm run test:tools` finalizan con código `0` (10 pruebas de aplicación, 117 de herramientas). Derivación real en copia temporal (ya eliminada): `template:init` aplicado, `template:doctor` sin `FAIL`, el `AGENTS.md` del derivado contiene la viñeta de `npm run format`, su plantilla de plan técnico cita `strict` y su `npm run check` finaliza con código `0`.
 - Desviaciones: ninguna respecto al delta aprobado. El diff de `AGENTS.md` es una inserción de una línea. El punto 1 de la misma petición (viñetas «Modificada por» en ADR-0010 a 0013) se aplicó como cambio `DIRECT` editorial y no forma parte de este registro.
-- Aceptación: Pendiente
+- Aceptación: 2026-10-04, Tomás, usuario solicitante. Aceptación expresa «Acepto PLAT-023 como VALIDATED» registrada en la conversación de trabajo tras contrastar los criterios con la evidencia de este registro. En GitHub, tras el push de `ab1d004`, `Quality` (run `37186530140`) y `Security` (run `37186530128`) estaban `in_progress` cuando se registró la aceptación y finalizaron después con `success`, según una consulta posterior; la aceptación se basó en la evidencia local.
