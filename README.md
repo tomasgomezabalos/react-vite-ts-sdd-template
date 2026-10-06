@@ -50,7 +50,7 @@ Cobertura del código ejecutable:
 npm run test:coverage
 ```
 
-La cobertura utiliza V8 e incluye únicamente `src/**/*.{ts,tsx}`. `npm test`, `npm run test:watch` y `npm run test:coverage` excluyen `tests/tools/**`; también quedan fuera declaraciones `*.d.ts`, módulos exclusivamente de tipos y, por extensión, estilos y assets. El informe generado se guarda en `coverage/`, que queda fuera de Git y ESLint. Los mínimos globales son 70 % de statements, 55 % de branches, 75 % de functions y 75 % de lines; no se aplican umbrales por archivo ni actualización automática.
+La cobertura utiliza V8 e incluye únicamente `src/**/*.{ts,tsx}`. `npm test`, `npm run test:watch` y `npm run test:coverage` excluyen `tests/tools/**`; también quedan fuera declaraciones `*.d.ts`, módulos exclusivamente de tipos y, por extensión, estilos y assets. El informe generado se guarda en `coverage/`, que queda fuera de Git y ESLint. Los mínimos globales son del 90 % en statements, branches, functions y lines ([ADR-0022](docs/architecture/decisions/0022-cobertura-minima-del-90-por-ciento.md)); no se aplican umbrales por archivo ni actualización automática.
 
 Las utilidades de la plantilla conservan una suite separada, sin formar parte de la cobertura de aplicación:
 
@@ -155,7 +155,7 @@ RTK Query no forma parte de la baseline. Cuando una feature real de un proyecto 
 
 Todo código con comportamiento (componentes, hooks, `model/`, `api/`, utilidades, handlers de `mocks/` y scripts de herramientas) se desarrolla con TDD ([ADR-0021](docs/architecture/decisions/0021-desarrollo-guiado-por-pruebas.md)): se escribe una prueba, se verifica que falla por el comportamiento ausente, se implementa lo mínimo y se refactoriza con las pruebas en verde. En `FULL` y `QUICK`, cada criterio aprobado se convierte primero en una prueba fallida, y un defecto se corrige con una prueba que lo reproduce. La entrega registra la prueba y el motivo de fallo observado, y declara las excepciones (configuración sin lógica, SCSS, assets, código generado, prototipos descartables).
 
-TDD cubre el comportamiento observable, no la presentación visual. Ninguna comprobación automática verifica que se haya seguido el orden test-first, y no se añaden umbrales de cobertura a los ya vigentes. Stryker (mutation testing) es una práctica opcional: cada derivado decide si la adopta fuera de `npm run check`, sin dependencia en la baseline.
+TDD cubre el comportamiento observable, no la presentación visual. Ninguna comprobación automática verifica que se haya seguido el orden test-first, y la cobertura mínima global del 90 % comprueba el resultado, no el orden de trabajo. Stryker (mutation testing) es una práctica opcional: cada derivado decide si la adopta fuera de `npm run check`, sin dependencia en la baseline.
 
 ## Estilos
 

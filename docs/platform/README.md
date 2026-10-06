@@ -35,6 +35,7 @@ Este directorio contiene el contrato y el histórico de capacidades incorporadas
 | `PLAT-027` | [`Cambio QUICK`](specs/027-configuracion-compartida-de-claude/quick-change.md) | `APPROVED` / `VALIDATED` | Configuración compartida de Claude Code: permisos de `.claude/settings.json` y hook de formateo con Prettier. |
 | `PLAT-028` | [`Cambio QUICK`](specs/028-aplicar-desarrollo-guiado-por-pruebas/quick-change.md) | `APPROVED` / `VALIDATED` | Aplica ADR-0021: TDD (Red → Green → Refactor) en `AGENTS.md`, política de cambios, plantillas y skill. |
 | `PLAT-029` | [`Cambio QUICK`](specs/029-garantizar-la-skill-del-repositorio/quick-change.md) | `APPROVED` / `VALIDATED` | Garantiza (de forma declarativa y con una prueba de marcas) que se aplica la skill `react-ts-feature-pattern` del repositorio. |
+| `PLAT-030` | [`Cambio QUICK`](specs/030-cobertura-minima-del-90-por-ciento/quick-change.md) | `APPROVED` / `VALIDATED` | Aplica ADR-0022: umbrales globales de cobertura al 90 % en `vite.config.ts`, documentación y manifiesto. |
 
 Los alias `PLAT-001` y `PLAT-002` permiten distinguir estas capacidades de las futuras features de producto. No reescriben los identificadores, estados ni evidencias de los artefactos originales.
 
