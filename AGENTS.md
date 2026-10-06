@@ -84,7 +84,7 @@ Al finalizar un alcance `FULL`, utilizar `docs/sdd/templates/validation-report.m
 ## React y diseño
 
 - Utilizar React funcional y TypeScript estricto.
-- Antes de crear o modificar componentes React propios, cargar la skill del proyecto `.claude/skills/react-ts-feature-pattern/SKILL.md` (`@react-ts-feature-pattern`) y declarar el modo utilizado. Si la skill cargada no contiene la sección «Project skill (source of truth)», leer ese archivo y aplicarlo en lugar de la cargada; no utilizar copias externas al repositorio. Para componentes nuevos o con cambios de comportamiento observable usar el modo `strict`, que aplica TDD (ADR-0021); reservar `standard` para refactores estructurales sin impacto observable.
+- Antes de crear o modificar componentes React propios, cargar la skill del proyecto `.claude/skills/sdd-react-ts-feature-pattern/SKILL.md` (`@sdd-react-ts-feature-pattern`) y declarar el modo utilizado. Si la skill cargada no contiene la sección «Project skill (source of truth)», leer ese archivo y aplicarlo en lugar de la cargada; no utilizar copias externas al repositorio. Para componentes nuevos o con cambios de comportamiento observable usar el modo `strict`, que aplica TDD (ADR-0021); reservar `standard` para refactores estructurales sin impacto observable.
 - Crear componentes propios en `ComponentName/index.tsx` y sus pruebas espejo en `tests/.../ComponentName/index.test.tsx`.
 - Si la skill contradice documentación aprobada, detenerse y solicitar una decisión.
 - Cargar obligatoriamente todas las páginas reales de ruta mediante `React.lazy` e importaciones dinámicas, incluida la página inicial, dentro de una frontera `Suspense` que no retire el layout ni la navegación persistentes.

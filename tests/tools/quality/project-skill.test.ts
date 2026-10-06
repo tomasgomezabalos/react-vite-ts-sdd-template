@@ -5,17 +5,35 @@ import { resolve } from 'node:path'
 import { describe, expect, it } from 'vitest'
 
 const repositoryRoot = resolve(import.meta.dirname, '../../..')
-const skillPath = '.claude/skills/react-ts-feature-pattern/SKILL.md'
+const skillName = 'sdd-react-ts-feature-pattern'
+const skillPath = `.claude/skills/${skillName}/SKILL.md`
 
 const read = (path: string) => readFile(resolve(repositoryRoot, path), 'utf8')
 
-describe('project skill react-ts-feature-pattern', () => {
+describe(`project skill ${skillName}`, () => {
   it('identifies itself as the project copy that applies ADR-0021', async () => {
     const skill = await read(skillPath)
 
     expect(skill).toContain('## Project skill (source of truth)')
     expect(skill).toContain('Red-Green-Refactor')
     expect(skill).toContain('ADR-0021')
+  })
+
+  it('has a project-specific name and does not claim to outrank same-name copies', async () => {
+    const skill = await read(skillPath)
+
+    expect(skill).toContain(`name: ${skillName}`)
+    expect(skill).toContain('personal')
+    expect(skill).not.toContain('this one prevails')
+    await expect(
+      readFile(
+        resolve(
+          repositoryRoot,
+          '.claude/skills/react-ts-feature-pattern/SKILL.md',
+        ),
+        'utf8',
+      ),
+    ).rejects.toThrow()
   })
 
   it('is the copy that AGENTS.md tells agents to load, also in a derivation', async () => {

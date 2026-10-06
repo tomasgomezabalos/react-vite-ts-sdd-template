@@ -5,11 +5,11 @@ import { resolve } from 'node:path'
 import { describe, expect, it } from 'vitest'
 
 const repositoryRoot = resolve(import.meta.dirname, '../../..')
-const skillDirectory = '.claude/skills/react-ts-feature-pattern'
+const skillDirectory = '.claude/skills/sdd-react-ts-feature-pattern'
 
 const read = (path: string) => readFile(resolve(repositoryRoot, path), 'utf8')
 
-describe('react-ts-feature-pattern skill', () => {
+describe('sdd-react-ts-feature-pattern skill', () => {
   it('uses strict by default for new components, as AGENTS.md requires', async () => {
     const skill = await read(`${skillDirectory}/SKILL.md`)
     const agents = await read('AGENTS.md')

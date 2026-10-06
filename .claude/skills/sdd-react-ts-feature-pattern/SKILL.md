@@ -1,5 +1,5 @@
 ---
-name: react-ts-feature-pattern
+name: sdd-react-ts-feature-pattern
 description: Create or refactor TypeScript React feature components with a presentational-first module pattern, dedicated component types modules, typed hook contracts, safe deduplication, Sonar-like review, and optional strict testing or test audits. Use for TypeScript component or recursive folder refactors, index.tsx and component-hook conventions, type-safety cleanup, functional test-gap audits, or standard/strict/test-audit modes. Do not use for JavaScript or JSX components.
 ---
 
@@ -15,7 +15,7 @@ This skill supports two scopes:
 
 ## Project skill (source of truth)
 
-This file, `.claude/skills/react-ts-feature-pattern/SKILL.md`, is the copy distributed with the repository and it already applies ADR-0021 (Red-Green-Refactor in `strict`). If another skill with the same name is loaded from outside the repository (a personal, global or other tool copy), this one prevails: read and follow it instead.
+This file, `.claude/skills/sdd-react-ts-feature-pattern/SKILL.md`, is the copy distributed with the repository and it already applies ADR-0021 (Red-Green-Refactor in `strict`). Its name is specific to this template because, according to the official Claude Code documentation, a personal skill with the same name takes precedence over a project skill. If a skill with a similar purpose is loaded from outside the repository (a personal, global or other tool copy), do not use it: read and follow this file instead.
 
 ## Operating Modes
 
@@ -33,9 +33,9 @@ This repository's `AGENTS.md` takes precedence over the default above: use `stri
 
 Example invocations:
 
-- `Use /react-ts-feature-pattern on ComponentName.` -> `standard`
-- `Use /react-ts-feature-pattern in strict mode on this folder.`
-- `Use /react-ts-feature-pattern in test-audit mode on this component; do not implement.`
+- `Use /sdd-react-ts-feature-pattern on ComponentName.` -> `standard`
+- `Use /sdd-react-ts-feature-pattern in strict mode on this folder.`
+- `Use /sdd-react-ts-feature-pattern in test-audit mode on this component; do not implement.`
 
 ## Module Contract
 
@@ -444,14 +444,14 @@ Read `references/sonar-local-rules.md` only when the user provides Sonar or Sona
 You can invoke this skill for a file or a folder.
 
 - File target example:
-  - `usa /react-ts-feature-pattern en src/pages/<Page>/components/<Component>/index.tsx`
+  - `usa /sdd-react-ts-feature-pattern en src/pages/<Page>/components/<Component>/index.tsx`
 - Folder target example:
-  - `usa /react-ts-feature-pattern en la carpeta src/features/<capability>`
-  - `apply /react-ts-feature-pattern to folder src/pages/<Page>`
+  - `usa /sdd-react-ts-feature-pattern en la carpeta src/features/<capability>`
+  - `apply /sdd-react-ts-feature-pattern to folder src/pages/<Page>`
 - Mode examples:
-  - `usa /react-ts-feature-pattern en modo standard sobre ComponentName`
-  - `usa /react-ts-feature-pattern en modo strict sobre esta carpeta`
-  - `usa /react-ts-feature-pattern en modo test-audit; solo analiza, no implementes`
+  - `usa /sdd-react-ts-feature-pattern en modo standard sobre ComponentName`
+  - `usa /sdd-react-ts-feature-pattern en modo strict sobre esta carpeta`
+  - `usa /sdd-react-ts-feature-pattern en modo test-audit; solo analiza, no implementes`
 
 Notes:
 - You do not need `@` to target folders.

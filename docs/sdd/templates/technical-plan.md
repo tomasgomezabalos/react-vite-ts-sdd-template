@@ -23,7 +23,7 @@
 ## Decisiones y diseño
 
 - ADR aplicables: <identificadores aprobados>
-- Componentes propios: cargar `@react-ts-feature-pattern` y declarar modo (`strict` para componentes nuevos o con cambios de comportamiento observable, según `AGENTS.md`).
+- Componentes propios: cargar `@sdd-react-ts-feature-pattern` y declarar modo (`strict` para componentes nuevos o con cambios de comportamiento observable, según `AGENTS.md`).
 - Responsabilidades y flujo de datos: <diseño mínimo necesario>
 - Alternativas descartadas: <solo si afectan a la decisión>
 
