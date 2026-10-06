@@ -54,13 +54,18 @@ describe('process documents', () => {
     expect(documents.template).toContain('validation-report.md')
   })
 
-  it('versions the workflow and the change policy after ADR-0018', async () => {
-    for (const path of ['docs/sdd/workflow.md', 'docs/sdd/change-policy.md']) {
+  it('versions the workflow and the change policy after ADR-0018 and ADR-0021', async () => {
+    const versions = {
+      'docs/sdd/workflow.md': '2.1.0',
+      'docs/sdd/change-policy.md': '2.2.0',
+    }
+    for (const [path, version] of Object.entries(versions)) {
       const content = await read(path)
 
-      expect(content, path).toMatch(/\*\*Versión:\*\* 2\.1\.0/)
+      expect(content, path).toContain(`**Versión:** ${version}`)
       expect(content, path).toContain('ADR-0018')
     }
+    expect(await read('docs/sdd/change-policy.md')).toContain('ADR-0021')
     expect(await read('docs/sdd/README.md')).not.toContain(
       '`APPROVED 2.0.0` | Estados',
     )

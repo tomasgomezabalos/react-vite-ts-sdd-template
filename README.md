@@ -151,6 +151,12 @@ La separación debe comprobarse en la salida del build y en la red del navegador
 
 RTK Query no forma parte de la baseline. Cuando una feature real de un proyecto derivado necesite datos remotos, su adopción debe justificarse mediante la especificación y el plan técnico correspondientes, aplicando [ADR-0005](docs/architecture/decisions/0005-rtk-query-capacidad-opcional.md), la organización de [ADR-0008](docs/architecture/decisions/0008-organizacion-modular-por-propiedad.md) y la [guía de adopción](docs/architecture/guides/adoptar-rtk-query.md).
 
+## Desarrollo guiado por pruebas
+
+Todo código con comportamiento (componentes, hooks, `model/`, `api/`, utilidades, handlers de `mocks/` y scripts de herramientas) se desarrolla con TDD ([ADR-0021](docs/architecture/decisions/0021-desarrollo-guiado-por-pruebas.md)): se escribe una prueba, se verifica que falla por el comportamiento ausente, se implementa lo mínimo y se refactoriza con las pruebas en verde. En `FULL` y `QUICK`, cada criterio aprobado se convierte primero en una prueba fallida, y un defecto se corrige con una prueba que lo reproduce. La entrega registra la prueba y el motivo de fallo observado, y declara las excepciones (configuración sin lógica, SCSS, assets, código generado, prototipos descartables).
+
+TDD cubre el comportamiento observable, no la presentación visual. Ninguna comprobación automática verifica que se haya seguido el orden test-first, y no se añaden umbrales de cobertura a los ya vigentes. Stryker (mutation testing) es una práctica opcional: cada derivado decide si la adopta fuera de `npm run check`, sin dependencia en la baseline.
+
 ## Estilos
 
 `src/index.scss` contiene únicamente los estilos globales mínimos. Las futuras features pueden utilizar `styles.module.scss` para estilos locales. Los módulos Sass compartidos deben usar `@use` y `@forward`; no se crean variables, mixins o abstracciones hasta que exista una necesidad aprobada.

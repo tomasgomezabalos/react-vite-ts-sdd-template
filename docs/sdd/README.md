@@ -8,9 +8,9 @@ Este directorio define el proceso de cambio de la plantilla y de los proyectos d
 | --- | --- | --- |
 | [Constitución](constitution.md) | `APPROVED 2.0.0` | Principios no negociables y trazabilidad proporcional. |
 | [Workflow](workflow.md) | `APPROVED 2.1.0` | Estados documentales, entrega, etapas y puertas de aprobación. |
-| [Política de cambios](change-policy.md) | `APPROVED 2.1.0` | Clasificación `FULL`, `QUICK`, `DIRECT` y `ADR`. |
+| [Política de cambios](change-policy.md) | `APPROVED 2.2.0` | Clasificación `FULL`, `QUICK`, `DIRECT` y `ADR`. |
 
-La constitución `2.0.0` aplica ADR-0009; el workflow y la política de cambios `2.1.0` aplican además ADR-0018. Todas están vigentes desde su aprobación expresa. Las versiones anteriores permanecen como antecedente en el historial Git.
+La constitución `2.0.0` aplica ADR-0009; el workflow `2.1.0` y la política de cambios `2.2.0` aplican además ADR-0018, y esta última aplica también ADR-0021. Todas están vigentes desde su aprobación expresa. Las versiones anteriores permanecen como antecedente en el historial Git.
 
 ## Plantillas disponibles
 

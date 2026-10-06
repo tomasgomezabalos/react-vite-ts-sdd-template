@@ -49,7 +49,7 @@
 
 ## Pruebas y validación previstas
 
-- Automatizadas: <pruebas necesarias>.
+- Automatizadas: <pruebas necesarias, escritas antes de implementar y vistas fallar por el comportamiento ausente (ADR-0021)>.
 - Manuales o navegador: <comprobaciones o no aplica con justificación>.
 - Comando de regresión: <comando>.
 
@@ -68,6 +68,6 @@ Registrar aquí la entrega del cambio, separada del contrato aprobado y sin modi
 
 - Estado de entrega: `NOT_STARTED`
 - Archivos modificados: Pendiente
-- Pruebas y resultados: Pendiente
+- Pruebas y resultados: Pendiente (indicar por criterio la prueba y el motivo de fallo observado en Red, y las excepciones a TDD si las hay)
 - Desviaciones: Pendiente
 - Aceptación: Pendiente

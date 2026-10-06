@@ -84,7 +84,7 @@ Al finalizar un alcance `FULL`, utilizar `docs/sdd/templates/validation-report.m
 ## React y diseño
 
 - Utilizar React funcional y TypeScript estricto.
-- Antes de crear o modificar componentes React propios, cargar `@react-ts-feature-pattern` y declarar el modo utilizado. Para componentes nuevos o con cambios de comportamiento observable usar el modo `strict`; reservar `standard` para refactores estructurales sin impacto observable.
+- Antes de crear o modificar componentes React propios, cargar `@react-ts-feature-pattern` y declarar el modo utilizado. Para componentes nuevos o con cambios de comportamiento observable usar el modo `strict`, que aplica TDD (ADR-0021); reservar `standard` para refactores estructurales sin impacto observable.
 - Crear componentes propios en `ComponentName/index.tsx` y sus pruebas espejo en `tests/.../ComponentName/index.test.tsx`.
 - Si la skill contradice documentación aprobada, detenerse y solicitar una decisión.
 - Cargar obligatoriamente todas las páginas reales de ruta mediante `React.lazy` e importaciones dinámicas, incluida la página inicial, dentro de una frontera `Suspense` que no retire el layout ni la navegación persistentes.
@@ -118,6 +118,10 @@ Al finalizar un alcance `FULL`, utilizar `docs/sdd/templates/validation-report.m
 - Mantener las pruebas en `tests/`, reflejando la estructura de `src/` o `tools/` según su propietario; reservar `tests/setup/` para configuración compartida.
 - Usar Vitest y React Testing Library para componentes y hooks React; no usar React Testing Library para código ajeno a React.
 - Probar comportamiento observable y priorizar consultas accesibles.
+- Desarrollar con TDD todo código con comportamiento (componentes, hooks, `model/`, `api/`, utilidades, handlers de `mocks/` y scripts de herramientas): Red → Green → Refactor conforme a ADR-0021. Escribir una prueba, ejecutarla y verificar que falla por el comportamiento ausente (no por un error de importación, de tipos o de configuración); implementar lo mínimo para que pase; y refactorizar con las pruebas en verde sin añadir comportamiento.
+- En `FULL` y `QUICK`, convertir primero cada escenario o criterio aprobado en una prueba fallida; corregir un defecto con una prueba que lo reproduzca primero. `DIRECT` no exige prueba nueva, pero mantiene las existentes en verde y se reclasifica si revela comportamiento sin cubrir.
+- Registrar en la entrega (`quick-change.md` o `validation-report.md`) la prueba y el motivo de fallo observado en Red por criterio. Declarar allí las excepciones: configuración declarativa sin lógica, SCSS, assets, código generado y prototipos descartables que no se integran.
+- TDD cubre comportamiento observable, no la presentación visual; el orden test-first no lo verifica ninguna comprobación automática. No se añaden umbrales de cobertura a los ya vigentes. Stryker (mutation testing) es una práctica opcional que cada derivado puede decidir, sin dependencia en la baseline.
 - Incluir en la prueba de cada página o componente con interfaz una aserción con `expectNoAccessibilityViolations` (`tests/setup/axe.ts`, axe-core, WCAG 2.1 A y AA sin contraste), en los estados relevantes. Detecta solo un subconjunto de problemas y no sustituye la revisión manual de contraste, teclado, foco ni lector de pantalla (ADR-0016).
 - Usar `user-event` para interacciones normales y `fireEvent` solo para eventos de bajo nivel.
 - Fijar el idioma y restaurar handlers, mocks y estado global entre pruebas.

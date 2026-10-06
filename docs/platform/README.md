@@ -33,6 +33,7 @@ Este directorio contiene el contrato y el histórico de capacidades incorporadas
 | `PLAT-025` | [`Cambio QUICK`](specs/025-ci-de-herramientas-fuera-del-workflow-heredable/quick-change.md) | `APPROVED` / `VALIDATED` | Aplica ADR-0019: `test:tools` se ejecuta en un workflow propio de la plantilla, excluido de la derivación. |
 | `PLAT-026` | [`Cambio QUICK`](specs/026-comprobacion-de-frescura-de-la-plantilla/quick-change.md) | `APPROVED` / `VALIDATED` | Aplica ADR-0020: `template:freshness` como paso previo a derivar y aviso mensual. |
 | `PLAT-027` | [`Cambio QUICK`](specs/027-configuracion-compartida-de-claude/quick-change.md) | `APPROVED` / `VALIDATED` | Configuración compartida de Claude Code: permisos de `.claude/settings.json` y hook de formateo con Prettier. |
+| `PLAT-028` | [`Cambio QUICK`](specs/028-aplicar-desarrollo-guiado-por-pruebas/quick-change.md) | `APPROVED` / `VALIDATED` | Aplica ADR-0021: TDD (Red → Green → Refactor) en `AGENTS.md`, política de cambios, plantillas y skill. |
 
 Los alias `PLAT-001` y `PLAT-002` permiten distinguir estas capacidades de las futuras features de producto. No reescriben los identificadores, estados ni evidencias de los artefactos originales.
 
