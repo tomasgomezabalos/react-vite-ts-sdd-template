@@ -32,6 +32,7 @@ Este directorio registra decisiones técnicas vinculantes y guías para aplicarl
 | [ADR-0019](decisions/0019-ci-de-herramientas-solo-en-la-plantilla.md) | `APPROVED` | La CI de `test:tools` pasa a un workflow propio de la plantilla, excluido de la derivación; `quality.yml` queda limpio. | Modifica parcialmente ADR-0013 §3; aplica el principio de ADR-0014; su aplicación se especifica mediante PLAT-025. |
 | [ADR-0020](decisions/0020-mantenimiento-de-la-frescura-de-la-plantilla.md) | `APPROVED` | `template:freshness` (solo lectura) como paso previo a derivar y aviso mensual; las actualizaciones siguen el flujo SDD. | Complementa ADR-0011, ADR-0014 y ADR-0017; precisa el flujo de derivación de ADR-0010 y ADR-0012; su aplicación se especifica mediante PLAT-026. |
 | [ADR-0021](decisions/0021-desarrollo-guiado-por-pruebas.md) | `APPROVED` | TDD (Red → Green → Refactor) obligatorio para todo el código con comportamiento de la baseline y los derivados, con evidencia del fallo inicial en el registro de entrega. | Precisa la estrategia de pruebas de ADR-0001, ADR-0013 y ADR-0016; su aplicación requiere un cambio `QUICK` o `FULL`. |
+| [ADR-0022](decisions/0022-cobertura-minima-del-90-por-ciento.md) | `APPROVED` | Umbrales globales de cobertura al 90 % en statements, branches, functions y lines, heredados por los derivados. | Modifica parcialmente ADR-0011 §4, ADR-0013 §1 y ADR-0015 §6; corrige la premisa de ADR-0021 §7.A; su aplicación requiere un cambio `QUICK`. |
 
 ## Guías vigentes
 
