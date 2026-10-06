@@ -27,9 +27,9 @@
 
 ## Trazabilidad final
 
-| Requisito o criterio | Código o documentación | Prueba o validación | Resultado |
-| --- | --- | --- | --- |
-| `<REQ/AC>` | `<ruta>` | `<prueba o comprobación>` | <resultado> |
+| Requisito o criterio | Código o documentación | Prueba o validación | Red observado (ADR-0021) | Resultado |
+| --- | --- | --- | --- | --- |
+| `<REQ/AC>` | `<ruta>` | `<prueba o comprobación>` | <motivo del fallo inicial o excepción declarada> | <resultado> |
 
 ## Comprobaciones automatizadas
 

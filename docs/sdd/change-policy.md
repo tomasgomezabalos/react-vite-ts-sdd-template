@@ -2,19 +2,19 @@
 
 **Estado documental:** APPROVED
 
-**Versión:** 2.1.0
+**Versión:** 2.2.0
 
 **Fecha:** 2026-08-27
 
-**Revisión:** 2026-10-04
+**Revisión:** 2026-10-06
 
 **Aprobado por:** Tomás, usuario solicitante
 
-**Fecha de aprobación:** 2026-10-04
+**Fecha de aprobación:** 2026-10-06
 
-**Evidencia de aprobación:** Aprobación expresa registrada en la conversación de trabajo (versión 2.0.0, 2026-08-28). La revisión 2.1.0 se aprobó el 2026-10-04 mediante «Aprueba ADR-0018 y PLAT-024 e impleméntalo».
+**Evidencia de aprobación:** Aprobación expresa registrada en la conversación de trabajo (versión 2.0.0, 2026-08-28). La revisión 2.1.0 se aprobó el 2026-10-04 mediante «Aprueba ADR-0018 y PLAT-024 e impleméntalo». La revisión 2.2.0 se aprobó el 2026-10-06 mediante «Apruebo PLAT-028 con la opción mínima. Implementa» (aplica ADR-0021).
 
-**Decisión aplicable:** ADR-0009 (`APPROVED`) y ADR-0018 (`APPROVED`).
+**Decisión aplicable:** ADR-0009 (`APPROVED`), ADR-0018 (`APPROVED`) y ADR-0021 (`APPROVED`).
 
 ## Propósito
 
@@ -44,7 +44,7 @@ Usar `FULL` cuando el cambio:
 5. Actualizar diseño/plan técnico.
 6. Actualizar tareas.
 7. Obtener las aprobaciones exigidas por el workflow.
-8. Implementar.
+8. Convertir cada escenario o criterio aprobado en una prueba fallida, verificar que falla por el comportamiento ausente e implementar con TDD (ADR-0021).
 9. Registrar implementación, trazabilidad, comprobaciones y desviaciones en `validation-report.md`.
 10. Contrastar los criterios y obtener aceptación antes de registrar la entrega como `VALIDATED`.
 
@@ -66,8 +66,8 @@ Usar `QUICK` cuando el cambio:
 2. Preparar un `quick-change.md` con el delta y actualizar únicamente la documentación que realmente cambia.
 3. Comprobar referencias cruzadas y ausencia de contradicciones.
 4. Obtener aprobación del delta antes de implementar.
-5. Actualizar o añadir las pruebas necesarias e implementar el cambio.
-6. Registrar archivos, pruebas y resultados, desviaciones y aceptación en la sección de entrega del propio `quick-change.md`, separada del contrato aprobado; puede utilizarse un `validation-report.md` independiente cuando la evidencia sea demasiado extensa o la persona responsable lo pida (ADR-0018).
+5. Convertir cada criterio afectado en una prueba fallida, verificar que falla por el comportamiento ausente e implementar con TDD (ADR-0021). Un defecto se corrige con una prueba que lo reproduzca primero.
+6. Registrar archivos, pruebas y resultados (incluida la prueba y el motivo de fallo observado en Red por criterio), desviaciones y aceptación en la sección de entrega del propio `quick-change.md`, separada del contrato aprobado; puede utilizarse un `validation-report.md` independiente cuando la evidencia sea demasiado extensa o la persona responsable lo pida (ADR-0018).
 7. Validar el comportamiento afectado y obtener aceptación expresa antes de registrar `VALIDATED`.
 
 Un cambio `QUICK` no exige regenerar automáticamente visión, plan completo ni desglose completo de tareas si esos artefactos continúan siendo correctos.
@@ -98,9 +98,10 @@ Ejemplos habituales:
 ### Flujo
 
 1. Confirmar explícitamente que no existe impacto observable ni contractual.
-2. Modificar código y pruebas necesarias.
-3. Ejecutar las validaciones aplicables.
-4. Informar de los cambios y resultados.
+2. Modificar código y pruebas necesarias, manteniendo en verde las existentes; no se exige una prueba nueva porque el comportamiento no cambia.
+3. Si el cambio revela comportamiento sin cubrir, reclasificarlo como `QUICK` o `FULL` y aplicar TDD.
+4. Ejecutar las validaciones aplicables.
+5. Informar de los cambios y resultados.
 
 No es obligatorio actualizar una spec por un cambio `DIRECT`.
 

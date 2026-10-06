@@ -18,14 +18,14 @@ This skill supports two scopes:
 Resolve the mode from the user's request. If no mode is stated, use `standard`.
 
 - `standard` (default): apply the component pattern and Sonar-like review without inspecting, running, creating, modifying, or auditing unit tests.
-- `strict`: apply the component pattern and leave every new or materially refactored component functionally covered. Do not use percentage thresholds; cover its observable behaviors and ownership boundary.
+- `strict`: apply the component pattern with test-driven development (ADR-0021): for every new or changed behavior, write the test first, watch it fail for the expected reason, then implement (see Red-Green-Refactor). Leave every new or materially refactored component functionally covered. Do not use percentage thresholds; cover its observable behaviors and ownership boundary.
 - `test-audit`: inspect components and tests without editing source or test files. Return a functional behavior inventory, existing coverage, gaps, and recommended test cases.
 
 Accept natural-language equivalents such as `modo estricto`, `auditoria de pruebas`, `solo auditar tests`, or `standard mode`. An explicit user instruction always overrides the default.
 
 ### Project overrides
 
-This repository's `AGENTS.md` takes precedence over the default above: use `strict` when creating a component or changing its observable behavior, and use `standard` only for structural refactors with no observable impact or when the user asks for it. In `strict`, every new or changed component ships with its mirrored test under `tests/` and the accessibility assertion described in Test Assurance. If this skill and an approved project document disagree, stop and ask for a decision.
+This repository's `AGENTS.md` takes precedence over the default above: use `strict` when creating a component or changing its observable behavior, and use `standard` only for structural refactors with no observable impact or when the user asks for it. In `strict`, every new or changed component ships with its mirrored test under `tests/` and the accessibility assertion described in Test Assurance. If this skill and an approved project document disagree, stop and ask for a decision. ADR-0021 (test-driven development) is binding: if this skill contradicts it, ADR-0021 prevails. `standard` performs no test work inside this skill; the project gate `npm run check` still runs the whole suite regardless of mode.
 
 Example invocations:
 
@@ -114,6 +114,8 @@ Never create the global technical folders `src/components/`, `src/hooks/`, `src/
 
 ## Creation Workflow
 
+In `strict`, the order below is not the order of work: follow Red-Green-Refactor. Create the folder and the `types.ts` contract (steps 1 and 5) first, write and fail the test, then implement steps 2-4 and 6-9 as Green, and apply steps 11-12 as Refactor with the tests passing. `standard` follows the numbered order.
+
 1. Create the component folder using the feature naming convention already used in the target area.
 2. Create `index.tsx` with only rendering responsibilities:
    - receive props
@@ -140,11 +142,13 @@ Never create the global technical folders `src/components/`, `src/hooks/`, `src/
 7. Keep obvious single-use literals and one-off labels inline near their only usage; do not create a named module-level midpoint.
 8. Create `utils.ts` only for pure helpers used by hook/component.
 9. Create `styles.module.scss` only for component-specific styling.
-10. Apply test assurance only in `strict`; perform no unit-test work in `standard`.
+10. In `strict`, the tests already exist from the Red phase; run the whole suite here. Perform no unit-test work in `standard`.
 11. Apply the Safe Deduplication Gate.
 12. Finish with the Sonar-like quality review pass before validation.
 
 ## Refactor Workflow
+
+In `strict`, a structural-only refactor keeps the existing tests green and needs no new test. When the refactor changes behavior, write the test first and verify Red (see Red-Green-Refactor). When a materially refactored unit has no tests, write characterization tests first and label them as such (they pass immediately, so they are not Red).
 
 1. Inspect current component and identify logic in `index.tsx`.
 2. If `index.tsx` includes additional inline components, extract each one into its own component folder.
@@ -154,7 +158,7 @@ Never create the global technical folders `src/components/`, `src/hooks/`, `src/
 6. Move every component-owned type, including a single-use props contract, to the module's `types.ts`.
 7. Keep `index.tsx` focused on layout/rendering.
 8. Add or update the TypeScript props contract in `types.ts` when props exist, import it into `index.tsx`, and preserve optionality, unions, callback signatures, and nullability.
-9. Apply test assurance only in `strict`; perform no unit-test work in `standard`.
+9. In `strict`, apply Red-Green-Refactor for changed behavior and keep existing tests green; perform no unit-test work in `standard`.
 10. Apply the Safe Deduplication Gate.
 11. Run the Sonar-like quality review pass on every touched file.
 12. Preserve external behavior and props contract unless user requests API changes.
@@ -181,7 +185,7 @@ Use this mode when the user asks to apply the pattern to a whole folder.
 6. Keep each component's public API stable unless the user asks for API changes.
 7. Refactor in small safe batches if the folder is large.
 8. In `strict` mode, present the recursive inventory and batch plan before editing when the scope is large.
-9. Apply test assurance per migrated module only in `strict`; perform no unit-test work in `standard`.
+9. In `strict`, apply Red-Green-Refactor per migrated module for new or changed behavior; perform no unit-test work in `standard`.
 10. Apply the Safe Deduplication Gate per migrated batch.
 11. Run the Sonar-like quality review pass per migrated module.
 12. Finish with lint/build validation. Run tests only in `strict`; report audit findings only in `test-audit`.
@@ -193,8 +197,24 @@ Use this mode when the user asks to apply the pattern to a whole folder.
   - modules migrated
   - modules skipped and why
   - pending modules (if any)
-  - in `strict`: tests created, updated, or executed
+  - in `strict`: tests created, updated, or executed, and the failure observed in Red per behavior (or the declared exception)
   - in `test-audit`: functional gaps and recommended tests
+
+## Red-Green-Refactor (`strict` only)
+
+Defined by ADR-0021. It governs the component, its local hook and its utilities, and any standalone hook or pure logic this skill is applied to. Code outside this skill's scope (`model/`, `api/`, tools) follows the same cycle through `AGENTS.md`. Never apply this section in `standard`.
+
+For each behavior in the Functional Inventory, one at a time:
+
+1. **Contract.** Create the folder and `types.ts`, plus a minimal stub (a component that renders nothing, a hook that returns its typed contract with no logic) only so the test can import the unit.
+2. **Red.** Write one test for one behavior through the public contract (rendered output, user interaction, state, i18n text). Include `expectNoAccessibilityViolations` in the first test of any UI and in each relevant state. Run the test file and confirm it fails because the behavior is missing.
+3. **Green.** Write the minimum implementation that passes, then run the test file and the whole suite. Add no behavior that no test requires.
+4. **Refactor.** With every test passing, apply the Hook Extraction Gate (extract the hook only now; the component tests keep guarding the contract), the Constant Placement Gate, the Safe Deduplication Gate and the Sonar-like pass. Add no behavior.
+5. Repeat for the next behavior.
+
+A valid Red fails with an assertion about the missing behavior. These are not valid Red: an import or type error, a wrong selector, a configuration error, or a test that passes immediately (it covers existing behavior, so fix the test). Fixing a defect starts with a test that reproduces it.
+
+Report, per behavior or criterion, the test and the failure reason observed. Never claim a Red that was not actually run. Declare exceptions to TDD explicitly (declarative configuration without logic, SCSS, assets, generated code, throwaway prototypes). TDD covers observable behavior, not visual presentation; do not test static style declarations. No tool verifies the test-first order, so this report is the only evidence.
 
 ## Test Assurance (`strict` and `test-audit` only)
 
@@ -251,8 +271,8 @@ Do not test framework internals, implementation details, static styling declarat
 - `standard`: do not inspect, execute, create, update, or report on unit tests, regardless of impact classification.
 - Structural-only change in `strict`: run relevant existing tests without backfilling historical gaps unless the refactor is material.
 - Logic moved without behavior change: verify the public contract and update tests only when the move invalidates their ownership or setup.
-- Behavior changed in `strict`: add or update tests for the complete changed behavior.
-- New component in `strict`: cover its functional inventory.
+- Behavior changed in `strict`: write or update the tests for the complete changed behavior first and verify Red, then implement.
+- New component in `strict`: cover its functional inventory test-first.
 - Material refactor in `strict`: close functional gaps for that component even when some gaps pre-date the current change.
 - Mechanically touched file in `strict`: do not treat formatting, import updates, or path moves alone as a material refactor.
 - When the Hook Extraction Gate keeps a component visual, cover the component contract directly. Do not create a local hook, hook test, or helper file just to create a separate unit-test target.
@@ -275,7 +295,7 @@ In `test-audit`, do not edit code. Report each relevant unit with:
 - recommended test cases
 - risk or priority
 
-Use coverage tooling only as supporting evidence when it already exists. Never use a percentage as the sole definition of functional completeness.
+Test-first order cannot be verified after the fact; report only whether tests exist and note that Red evidence is not auditable. Use coverage tooling only as supporting evidence when it already exists. Never use a percentage as the sole definition of functional completeness.
 
 ## Sonar-Like Quality Review Pass
 
@@ -407,7 +427,7 @@ Read `references/sonar-local-rules.md` only when the user provides Sonar or Sona
 - The active test mode is explicit in the final summary.
 - `standard` performs no unit-test discovery, execution, creation, modification, audit, or reporting.
 - In `strict`, related existing tests were discovered and run when available.
-- In `strict`, new or changed behavior has functional tests.
+- In `strict`, new or changed behavior has functional tests written first, each observed failing for the expected reason before implementation, and the Red evidence (or declared exception) is reported.
 - `strict` mode includes a functional inventory for each new or materially refactored unit.
 - In `strict`, each page or component with UI has an `expectNoAccessibilityViolations` assertion (`tests/setup/axe.ts`) in its relevant states.
 - `test-audit` produces findings only and leaves the worktree unchanged.
