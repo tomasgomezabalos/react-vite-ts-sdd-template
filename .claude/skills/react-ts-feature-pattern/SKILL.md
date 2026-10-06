@@ -13,6 +13,10 @@ This skill supports two scopes:
 - single-component scope
 - folder scope (apply the same rules recursively to a target folder)
 
+## Project skill (source of truth)
+
+This file, `.claude/skills/react-ts-feature-pattern/SKILL.md`, is the copy distributed with the repository and it already applies ADR-0021 (Red-Green-Refactor in `strict`). If another skill with the same name is loaded from outside the repository (a personal, global or other tool copy), this one prevails: read and follow it instead.
+
 ## Operating Modes
 
 Resolve the mode from the user's request. If no mode is stated, use `standard`.
